@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      必背Linux基础命令 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">必背Linux基础命令</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2021-12-17 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/linux/" title="linux">
+                    <b>#</b> linux
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h3 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h3><h5 id="常用关机命令"><a href="#常用关机命令" class="headerlink" title="常用关机命令"></a>常用关机命令</h5><blockquote>
+<p>poweroff<br>halt </p>
+</blockquote>
+<h5 id="常用重启命令"><a href="#常用重启命令" class="headerlink" title="常用重启命令"></a>常用重启命令</h5><blockquote>
+<p>Reboot</p>
+</blockquote>
+<h5 id="Init命令"><a href="#Init命令" class="headerlink" title="Init命令"></a>Init命令</h5><blockquote>
+<p>#init 0 - 停机（千万不能把initdefault 设置为0 ）<br>#init 1 - 单用户模式<br>#init 2 - 多用户，没有 NFS 不联网<br>#init 3 - 完全多用户模式(标准的运行级)<br>#init 4 - 没有用到<br>#init 5 - X11 （xwindow) 图形化界面模式<br>#init 6 - 重新启动 （千万不要把initdefault 设置为6 ）</p>
+</blockquote>
+<h5 id="shutdown命令"><a href="#shutdown命令" class="headerlink" title="shutdown命令"></a>shutdown命令</h5><blockquote>
+<p>shutdown -c  取消前一个关机命令<br>shutdown -h 关机<br>Shutdown -h now<br>Shutdown -h 10<br>Shutdown -h 11:00<br>shutdown -r 重启<br>shutdown -r now<br>shutdown -r 10<br>shutdown -r 11:00</p>
+</blockquote>
+<h3 id="系统文件增删改查类"><a href="#系统文件增删改查类" class="headerlink" title="系统文件增删改查类"></a>系统文件增删改查类</h3><h5 id="ls命令"><a href="#ls命令" class="headerlink" title="ls命令"></a>ls命令</h5><blockquote>
+<p>ll -a<br>-a 显示隐藏文件<br>-l  显示详细列表<br>-lR  显示所有子目录相信列表<br>-al  显示所有包含隐藏文件.的列表</p>
+</blockquote>
+<h5 id="mkdir命令"><a href="#mkdir命令" class="headerlink" title="mkdir命令"></a>mkdir命令</h5><blockquote>
+<p>创建目录<br>Mkdir -p  递归创建所有目录 如：mkdir -p /a/b/c/d/e/f/<br>mkdir -p -m 755 d1/d2/d3/d4  创建并设置权限755的目录</p>
+</blockquote>
+<h5 id="touch命令"><a href="#touch命令" class="headerlink" title="touch命令"></a>touch命令</h5><blockquote>
+<p>touch test.txt 创建文件<br>touch 改文件时间<br>touch -a -m -t -d -c 修改时间  年月日时分秒 2020-10-11 11:11:10 date.txt<br>rm -rf /* （-f强制删除，-r递归删除，i信息提示）</p>
+</blockquote>
+<h5 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h5><blockquote>
+<p>cp -r /etc/ /root/bakcup/  （ -r 递归复制目录 -p 保留文件所有属性）</p>
+</blockquote>
+<h5 id="mv命令"><a href="#mv命令" class="headerlink" title="mv命令"></a>mv命令</h5><blockquote>
+<p>mv {选项} 源文件 目标文件<br>-f强制覆盖 -i 信息交互提示 -v 显示移动过程</p>
+</blockquote>
+<h5 id="查看命令"><a href="#查看命令" class="headerlink" title="查看命令"></a>查看命令</h5><blockquote>
+<p>cat 文件.TXT 查看文件<br>cat 文件1 文件2 &gt; 文件3  合并文件</p>
+</blockquote>
+<blockquote>
+<p>more [选项] 文件名  显示预览文件<br>q 或 Q 退出 more。<br>v 在当前行启动一个编辑器。<br>/ 字符串 搜索指定的字符串。 d 向下移动半页。 b 向上移动一页。<br>回车键 向下移动一行。 空格键 向下移动一页。</p>
+</blockquote>
+<blockquote>
+<p>head -n 5 a.txt  显示前5行</p>
+</blockquote>
+<blockquote>
+<p>tail -n 5 b.txt 显示后5行<br>tail -f c.txt  实时显示最后10 行内容，用于查实时日志</p>
+</blockquote>
+<h5 id="查找命令"><a href="#查找命令" class="headerlink" title="查找命令"></a>查找命令</h5><blockquote>
+<p>grep [选项] 模式 文件名  搜索符合关键字的文件内容并输出相关行<br>模式要么是字符（串），要么是正则表达式</p>
+</blockquote>
+<h5 id="解压缩类"><a href="#解压缩类" class="headerlink" title="解压缩类"></a>解压缩类</h5><blockquote>
+<p>bz2格式用 -j  gz格式用Z，创建归档压缩  -z是压缩gz -j是压缩bz2<br>归档并压缩<br>tar -zcvf 文件名.tar.gz /download<br>tar -jcvf 文件名.tar.bz2 /tmp/<br>解包解压缩<br>tar -zxvf 文件名.tar.gz<br>tar -jxvf 文件名.tar.bz2<br>unzip 文件名.zip        解压<br>zip 文件名.zip  /upload    压缩<br>zip unzip 需要单独安装 centos 下 yum install -y zip&amp;unzip</p>
+</blockquote>
+<h5 id="网络类"><a href="#网络类" class="headerlink" title="网络类"></a>网络类</h5><blockquote>
+<p>查看网络情况<br>netstat -ano  antlp  老版本<br>ss  -antlp  新版本  n显示端口还是名称</p>
+<p>/etc/service   端口与服务的对于关系文件，所有Linux系统都有。</p>
+<p>路由追踪<br>tracert.exe  ip //Windows<br>traceroute  IP //linux<br>解析ip<br>nslookup  baidu.com</p>
+</blockquote>
+<h5 id="服务类"><a href="#服务类" class="headerlink" title="服务类"></a>服务类</h5><blockquote>
+<p>top  查看占用CPU占用信息   回车更新 Q退出<br>ps -aux  杀死进程 kill -9 pid<br>w&amp;who  查看当前登录用户 W信息更详细一些。<br>启动服务项<br>systemctl stop/start/restart/status/enable/disable/ xxx</p>
+</blockquote>
+<h5 id="特殊操作"><a href="#特殊操作" class="headerlink" title="特殊操作"></a>特殊操作</h5><blockquote>
+<p>看指定目录占用大小<br>du -sh /<br>du -sh ./*<br>整个系统磁盘占用大小<br>df -h<br>后台运行并输出。<br>nohup &amp; </p>
+</blockquote>
+<h5 id="窗口切换管理工具"><a href="#窗口切换管理工具" class="headerlink" title="窗口切换管理工具"></a>窗口切换管理工具</h5><blockquote>
+<p>screen -ls  查看窗口列表<br>screen -S name1  新建<br>screen -rd name1  切入<br>ctrl+A+D    切出</p>
+</blockquote>
+<h5 id="命令行快捷键"><a href="#命令行快捷键" class="headerlink" title="命令行快捷键"></a>命令行快捷键</h5><blockquote>
+<p>Tab键：自动补齐<br>Ctrl+U：清空至行首<br>Ctrl+K：清空至行尾<br>Ctrl+L：清屏<br>Ctrl+C：中断命令执行<br>Ctrl+Z：后台挂起<br>Ctrl+D：退出Shell</p>
+</blockquote>
+<h5 id="Linux-挂载U盘"><a href="#Linux-挂载U盘" class="headerlink" title="Linux 挂载U盘"></a>Linux 挂载U盘</h5><blockquote>
+<p>mount /dev<br>挂载到了mnt目录下。需要创建文件夹，执行 </p>
+</blockquote>
+<h5 id="Python快速搭建http服务"><a href="#Python快速搭建http服务" class="headerlink" title="Python快速搭建http服务"></a>Python快速搭建http服务</h5><blockquote>
+<p>自动共享运行目录</p>
+<p>Python2 下</p>
+<p>Python -m SimpleHTTPServer 8080</p>
+<p>Python3下</p>
+<p>Python3 -m http.server 8080</p>
+</blockquote>
+<h5 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h5><blockquote>
+<p>/etc/service </p>
+<p>22改端口配置文件</p>
+<p>/etc/ssh/sshd_config</p>
+<p>firewall-cmd –state   //    检查防火墙是否开启<br>firewall-cmd –zone=public –list-ports   //列出当前防火墙的通过端口规则<br>firewall-cmd –zone=public –list-service  //列出当前防火墙的通过端口服务名称规则<br>firewall-cmd –zone=public –add-port=80/tcp –permanent   添加端口<br>firewall-cmd –zone=public –add-service=http –permanent  添加系统自定的/etc/service  服务名称<br>firewall-cmd –zone=public –remove-port=http –permanent  删除端口或服务</p>
+<p>firewall-cmd –reload  //更改完后需要 重新加载配置文件，使其生效。</p>
+</blockquote>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2021-12-17 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/linux/" title="linux">
+                        <b>#</b> linux
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2021/12/18/github%E5%85%8D%E8%B4%B9%E6%90%AD%E5%BB%BAhexo-blog%E5%8F%8A%E5%9F%9F%E5%90%8D%E9%85%8D%E7%BD%AE/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4"><span class="toc-text">基础命令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%85%B3%E6%9C%BA%E5%91%BD%E4%BB%A4"><span class="toc-text">常用关机命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E9%87%8D%E5%90%AF%E5%91%BD%E4%BB%A4"><span class="toc-text">常用重启命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Init%E5%91%BD%E4%BB%A4"><span class="toc-text">Init命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#shutdown%E5%91%BD%E4%BB%A4"><span class="toc-text">shutdown命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E7%B1%BB"><span class="toc-text">系统文件增删改查类</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ls%E5%91%BD%E4%BB%A4"><span class="toc-text">ls命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#mkdir%E5%91%BD%E4%BB%A4"><span class="toc-text">mkdir命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#touch%E5%91%BD%E4%BB%A4"><span class="toc-text">touch命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#cp%E5%91%BD%E4%BB%A4"><span class="toc-text">cp命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#mv%E5%91%BD%E4%BB%A4"><span class="toc-text">mv命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%91%BD%E4%BB%A4"><span class="toc-text">查看命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E5%91%BD%E4%BB%A4"><span class="toc-text">查找命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A7%A3%E5%8E%8B%E7%BC%A9%E7%B1%BB"><span class="toc-text">解压缩类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%B1%BB"><span class="toc-text">网络类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%B1%BB"><span class="toc-text">服务类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%93%8D%E4%BD%9C"><span class="toc-text">特殊操作</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AA%97%E5%8F%A3%E5%88%87%E6%8D%A2%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="toc-text">窗口切换管理工具</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-text">命令行快捷键</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Linux-%E6%8C%82%E8%BD%BDU%E7%9B%98"><span class="toc-text">Linux 挂载U盘</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Python%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAhttp%E6%9C%8D%E5%8A%A1"><span class="toc-text">Python快速搭建http服务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-text">防火墙</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: '',
+      clientSecret: '',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © Oranges 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%BF%85%E8%83%8CLinux%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4 + '&url=' + https%3A%2F%2Fbstark.me%2F2021%2F12%2F17%2FLinux%25E5%259F%25BA%25E7%25A1%2580%25E5%2591%25BD%25E4%25BB%25A4%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/2021/12/17/Linux%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
