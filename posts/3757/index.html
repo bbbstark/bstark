@@ -11,7 +11,7 @@
   
   <title>
     
-      子网掩码计算 
+      Linux与windows 命令的对比 
       
       
       |
@@ -134,19 +134,19 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">子网掩码计算</div>
+      <div class="post-title">Linux与windows 命令的对比</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2021-12-22 11:14:52
+          2021-12-20 20:54:52
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags" title="标签"></i>
                 
                 <span class="span--tag">
-                  <a href="/tags/%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81/" title="子网掩码">
-                    <b>#</b> 子网掩码
+                  <a href="/tags/%E5%91%BD%E4%BB%A4/" title="命令">
+                    <b>#</b> 命令
                   </a>
                 </span>
                 
@@ -154,140 +154,432 @@ MathJax = {
           
       </div>
       <div class="markdown-body">
-        <p>二进制转换表：</p>
+        <p>Windows不区分大小写，Linux区分大小写的。 </p>
 <table>
 <thead>
 <tr>
-<th>128</th>
-<th>64</th>
-<th>32</th>
-<th>16</th>
-<th>8</th>
-<th>4</th>
-<th>2</th>
-<th>1</th>
+<th>文件目录操作</th>
+<th></th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
-<td>1</td>
-<td>0</td>
-<td>1</td>
-<td>0</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
 </tr>
 <tr>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
+<td>批处理</td>
+<td>.sh</td>
+<td>.bat</td>
+</tr>
+<tr>
+<td>帮助</td>
+<td>cmd  –help / -h</td>
+<td></td>
+</tr>
+<tr>
+<td>列出目录文件</td>
+<td>ls/  ls -l</td>
+<td>dir</td>
+</tr>
+<tr>
+<td>改变当前目录</td>
+<td>cd</td>
+<td>cd</td>
+</tr>
+<tr>
+<td>进父目录</td>
+<td>cd  …</td>
+<td>cd  …</td>
+</tr>
+<tr>
+<td>进home目录</td>
+<td>cd  ~</td>
+<td></td>
+</tr>
+<tr>
+<td>复制</td>
+<td>cp</td>
+<td>copy</td>
+</tr>
+<tr>
+<td>删除</td>
+<td>rm  file_name</td>
+<td>del  file_name</td>
+</tr>
+<tr>
+<td>建目录</td>
+<td>mkdir  folderName</td>
+<td>md  folderName</td>
+</tr>
+<tr>
+<td>建文件</td>
+<td>touch  fileName</td>
+<td>touch  fileName</td>
+</tr>
+<tr>
+<td>删目录</td>
+<td>rmdir  folderName</td>
+<td>rmdir  folderName</td>
+</tr>
+<tr>
+<td>设置目录文件权限</td>
+<td>chmod  u+rwx file</td>
+<td></td>
+</tr>
+<tr>
+<td>设置目录文件所有者</td>
+<td>chown  user.group file</td>
+<td></td>
 </tr>
 </tbody></table>
-<p>如果值全为1，上面的数字全部相加等于255.</p>
-<blockquote>
-<p>例如<br>已知ip ：           141.14.72.24<br>已知子网掩码：255.255.255.128<br>求网段地址？</p>
-</blockquote>
 <table>
 <thead>
 <tr>
-<th>目标IP</th>
-<th>141</th>
-<th>14</th>
-<th>72</th>
-<th>24</th>
+<th>文件内容操作</th>
+<th></th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
-<td>目标ip二进制</td>
-<td>10001101</td>
-<td>00001110</td>
-<td>01001000</td>
-<td>00011000</td>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
 </tr>
 <tr>
-<td>子网掩码</td>
-<td>11111111</td>
-<td>11111111</td>
-<td>11111111</td>
-<td>10000000</td>
+<td>显示文件内容</td>
+<td>cat</td>
+<td>type</td>
 </tr>
 <tr>
-<td>最小ip范围</td>
-<td><strong>1</strong>000<strong>11</strong>0<strong>1</strong></td>
-<td>0000<strong>111</strong>0</td>
-<td>0<strong>1</strong>00<strong>1</strong>000</td>
-<td>00000000</td>
+<td></td>
+<td>more，less</td>
+<td>more</td>
+</tr>
+<tr>
+<td></td>
+<td>head、tail</td>
+<td></td>
+</tr>
+<tr>
+<td>统计行数</td>
+<td>wc</td>
+<td></td>
+</tr>
+<tr>
+<td>显示文件信息</td>
+<td>file</td>
+<td></td>
+</tr>
+<tr>
+<td>查找文件</td>
+<td>find  /bin -name ls</td>
+<td></td>
+</tr>
+<tr>
+<td>定位可执行文件位置</td>
+<td>which</td>
+<td></td>
+</tr>
+<tr>
+<td>在文本文件内查找</td>
+<td>grep  str1 1.txt</td>
+<td>find</td>
+</tr>
+<tr>
+<td>启动运行程序</td>
+<td>gnome-open/open</td>
+<td>start</td>
 </tr>
 </tbody></table>
-<p>算最小ip范围取相同1</p>
 <table>
 <thead>
 <tr>
-<th>目标ip</th>
-<th>141</th>
-<th>14</th>
-<th>72</th>
-<th>24</th>
+<th>系统信息查询</th>
+<th></th>
+<th align="center"></th>
 </tr>
 </thead>
 <tbody><tr>
-<td>目标ip二进制</td>
-<td>10001101</td>
-<td>00001110</td>
-<td>01001000</td>
-<td>00011000</td>
+<td>Command</td>
+<td>Linux</td>
+<td align="center">Windows</td>
 </tr>
 <tr>
-<td>子网掩码</td>
-<td><strong>11111111</strong></td>
-<td><strong>11111111</strong></td>
-<td><strong>11111111</strong></td>
-<td><strong>1</strong>0000000</td>
+<td>显示内核版本</td>
+<td>uname  -a</td>
+<td align="center"></td>
 </tr>
 <tr>
-<td>最大ip范围*</td>
-<td>10001101</td>
-<td>00001110</td>
-<td>01001000</td>
-<td>0<strong>1111111</strong></td>
+<td>显示发布版本</td>
+<td>lsb_release  -a</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td></td>
+<td>cat  /etc/issue</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示id信息</td>
+<td>id/whoami</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示当前登陆用户</td>
+<td>who</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示当前环境信息</td>
+<td>env</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示启动中检测到的硬件信息</td>
+<td>dmesg</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示系统的PCI设备</td>
+<td>lspci</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示系统的USB</td>
+<td>lsusb</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示cpu信息</td>
+<td>less  /proc/cpuinfo</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示内存</td>
+<td>less  /proc/menminfo</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>显示硬盘存储信息</td>
+<td>df  -h</td>
+<td align="center"></td>
 </tr>
 </tbody></table>
-<p>*注：最大ip范围取目标前三段不变。</p>
-<p>算最大ip范围，子网掩码相同的全部为不变，后面全填写1</p>
-<p>最后转2进制得：</p>
-<p>最小：141.14.72.0</p>
-<p>最大：141.14.72.127</p>
-<p>去掉一个广播地址：141.14.72.127</p>
-<p>范围即是：141.14.72.0——141.14.72.127</p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211222143630714.png" alt="image-20211222143630714"></p>
-<p>141.14.72.24</p>
-<p>255.255.192.0</p>
-<p>子网掩码为</p>
-<p>子网掩码<strong>11111111  1111111  11</strong>000000   0000000</p>
-<p>最小子网10001101  0001110  01000000  0000000</p>
-<p>最大子网10001101  0001110  0<strong>1111111  1111111</strong></p>
-<p>即：</p>
-<p>最大子网:141.14.64.0</p>
-<p>最小子网:141.14.127.255</p>
-<p>10.50.89.60/18</p>
-<p>00001010     00110010    01011001   11111100</p>
-<p>11111111     11111111    11000000   00000000</p>
-<p>10.50.64.0</p>
-<p>10.50.127.2</p>
-<p>11111111 11111111 11111111 11111100</p>
+<table>
+<thead>
+<tr>
+<th>进程/任务控制</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>显示进程信息</td>
+<td>ps  -auxf</td>
+<td></td>
+</tr>
+<tr>
+<td>杀死进程</td>
+<td>kill  proc_id</td>
+<td></td>
+</tr>
+<tr>
+<td>杀死所有</td>
+<td>killall  postgresql</td>
+<td></td>
+</tr>
+<tr>
+<td>暂停中断当前前台任务</td>
+<td>ctrl  - z</td>
+<td></td>
+</tr>
+<tr>
+<td>恢复任务到后台</td>
+<td>bg</td>
+<td></td>
+</tr>
+<tr>
+<td>恢复任务到前台</td>
+<td>fg</td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>网络命令</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>显示启动的网络服务</td>
+<td>netstat  -anli less</td>
+<td>netstat</td>
+</tr>
+<tr>
+<td>显示路由表信息</td>
+<td>netstat  -r</td>
+<td>netstat  -r</td>
+</tr>
+<tr>
+<td>显示ip</td>
+<td>ip  a/ifconfig</td>
+<td>ipconfig</td>
+</tr>
+<tr>
+<td>显示防火墙信息</td>
+<td>iptables  -list</td>
+<td></td>
+</tr>
+<tr>
+<td>远程登陆</td>
+<td>ssh  user@host</td>
+<td></td>
+</tr>
+<tr>
+<td>发送ping信息</td>
+<td>ping  ip</td>
+<td>ping  ip</td>
+</tr>
+<tr>
+<td>命令行下载</td>
+<td>wget  url/curl -o url</td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>用户管理</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>修改命令</td>
+<td>passwd</td>
+<td></td>
+</tr>
+<tr>
+<td>创建用户</td>
+<td>useradd</td>
+<td></td>
+</tr>
+<tr>
+<td>删除用户</td>
+<td>userdel</td>
+<td></td>
+</tr>
+<tr>
+<td>修改用户</td>
+<td>usermod</td>
+<td></td>
+</tr>
+<tr>
+<td>退出</td>
+<td>exit  / ctrl + D</td>
+<td></td>
+</tr>
+<tr>
+<td>切换用户至（默认root）</td>
+<td>su  [-]user</td>
+<td></td>
+</tr>
+<tr>
+<td>以su后的权限执行</td>
+<td>sudo  -u user cmd</td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>其他</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Command</td>
+<td>Linux</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>显示日期时间</td>
+<td>date</td>
+<td>date</td>
+</tr>
+<tr>
+<td>日历</td>
+<td>cal2014</td>
+<td></td>
+</tr>
+<tr>
+<td>清除屏幕</td>
+<td>clear</td>
+<td>cls</td>
+</tr>
+<tr>
+<td>搜索软件包</td>
+<td>yum  search tree</td>
+<td></td>
+</tr>
+<tr>
+<td>删除软件包</td>
+<td>yum  remove pkg_name</td>
+<td></td>
+</tr>
+<tr>
+<td>安装软件包</td>
+<td>yum  install pkg_name</td>
+<td></td>
+</tr>
+<tr>
+<td>重启系统</td>
+<td>reboot</td>
+<td></td>
+</tr>
+<tr>
+<td>关闭系统</td>
+<td>halt  -p</td>
+<td></td>
+</tr>
+<tr>
+<td>设置环境变量</td>
+<td>export  PATH=SPATH：～/bin</td>
+<td>set</td>
+</tr>
+<tr>
+<td>显示信息/环境变量</td>
+<td>echo  $HOME</td>
+<td>echo</td>
+</tr>
+</tbody></table>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2021/12/20/JavaScript%E5%9F%BA%E7%A1%80/" target="_self">
+              <a href="/posts/12629/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -296,15 +588,15 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2021-12-22 11:14:52
+              2021-12-20 20:54:52
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags" title="标签"></i>
                     
                     <span class="span--tag">
-                      <a href="/tags/%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81/" title="子网掩码">
-                        <b>#</b> 子网掩码
+                      <a href="/tags/%E5%91%BD%E4%BB%A4/" title="命令">
+                        <b>#</b> 命令
                       </a>
                     </span>
                     
@@ -312,6 +604,11 @@ MathJax = {
               
           </div>
           <div class="post-foot-prev">
+            
+              <a href="/posts/22236/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
             
           </div>
         </div>
@@ -643,12 +940,12 @@ MathJax = {
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E8%AE%A1%E7%AE%97 + '&url=' + https%3A%2F%2Fbstark.me%2F2021%2F12%2F22%2F%25E5%25AD%2590%25E7%25BD%2591%25E6%258E%25A9%25E7%25A0%2581%25E8%25AE%25A1%25E7%25AE%2597%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Linux%E4%B8%8Ewindows%20%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AF%B9%E6%AF%94 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F3757%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/2021/12/22/%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81%E8%AE%A1%E7%AE%97/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/3757/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
