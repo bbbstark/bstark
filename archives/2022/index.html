@@ -11,7 +11,7 @@
   
   <title>
     
-      centos-nginx+apache+mysql+php的安装 
+      archive_a: 2022 
       
       
       |
@@ -106,156 +106,102 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
 
-<!-- LaTex Display -->
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-</script>
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  }
-};
-</script>
+<!-- last: 按年份把文章分组，当前遍历到的年份 -->
+<!-- now: 当前遍历到的文章的发布年份 -->
 
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">centos-nginx+apache+mysql+php的安装</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2021-12-20 20:54:52
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags" title="标签"></i>
-                
-                <span class="span--tag">
-                  <a href="/tags/nginx/" title="nginx">
-                    <b>#</b> nginx
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <h2 id="nginx源码安装"><a href="#nginx源码安装" class="headerlink" title="nginx源码安装"></a>nginx源码安装</h2><h5 id="安装nginx依赖"><a href="#安装nginx依赖" class="headerlink" title="安装nginx依赖"></a>安装nginx依赖</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#yum install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel -y</span><br></pre></td></tr></table></figure>
-<h5 id="配置开启参数及模块，生成makefile文件"><a href="#配置开启参数及模块，生成makefile文件" class="headerlink" title="配置开启参数及模块，生成makefile文件"></a>配置开启参数及模块，生成makefile文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@localhost ~]#./configure --conf-path=/etc/nginx/nginx.conf --sbin-path=/usr/bin/nginx  //这里是加载模块 --add-module=/root/nginx-http-flv-module-master</span><br></pre></td></tr></table></figure>
-<h5 id="生成脚本及配置文件：make，编译步骤，根据Makefile文件生成相应的模块，创建目录，并将生成的模块和文件复制到相应的目录："><a href="#生成脚本及配置文件：make，编译步骤，根据Makefile文件生成相应的模块，创建目录，并将生成的模块和文件复制到相应的目录：" class="headerlink" title="生成脚本及配置文件：make，编译步骤，根据Makefile文件生成相应的模块，创建目录，并将生成的模块和文件复制到相应的目录："></a>生成脚本及配置文件：make，编译步骤，根据Makefile文件生成相应的模块，创建目录，并将生成的模块和文件复制到相应的目录：</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<h5 id="系统服务配置"><a href="#系统服务配置" class="headerlink" title="系统服务配置"></a>系统服务配置</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#systemctl stop firewalld //关闭防火墙</span><br><span class="line">[root@localhost ~]#systemctl enable nginx //设置nginx开机启动</span><br><span class="line">[root@localhost ~]#systemctl start nginx //启动服务nginx</span><br></pre></td></tr></table></figure>
-
-<h5 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#nginx</span><br></pre></td></tr></table></figure>
-<h2 id="安装apache-及相关依赖"><a href="#安装apache-及相关依赖" class="headerlink" title="安装apache 及相关依赖"></a>安装apache 及相关依赖</h2><blockquote>
-<p>httpd就是apache开源的其中一个最有名的项目，即是apache</p>
-</blockquote>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#yum install httpd httpd-devel httpd-manual mod_ssl -y //安装httpd及依赖</span><br><span class="line">[root@localhost ~]#systemctl enable httpd  //设置httpd开机启动</span><br><span class="line">[root@localhost ~]#systemctl start httpd   //启动服务httpd</span><br><span class="line">[root@localhost ~]#yum install mariadb-server -y //安装mysql</span><br><span class="line">[root@localhost ~]#systemctl enable mariadb  //设置mariadb开机启动</span><br><span class="line">[root@localhost ~]#systemctl start mariadb   //启动服务mariadb</span><br><span class="line">[root@localhost ~]#mysql_secure_installation    //配置mysql</span><br><span class="line">[root@localhost ~]#yum install  php php-mysql php-common php-gd php-mbstring php-mcrypt php-devel php-xml -y        //安装PHP及相关依赖</span><br><span class="line">[root@localhost ~]#systemctl restart httpd    //重新启动httpd</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Nginx默认web目录：/usr/local/nginx/html<br>Apache默认web目录：/var/www/html</p>
-</blockquote>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/posts/3757/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2021-12-20 20:54:52
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags" title="标签"></i>
-                    
-                    <span class="span--tag">
-                      <a href="/tags/nginx/" title="nginx">
-                        <b>#</b> nginx
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/posts/53226/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
+<div class="container archives">
+  <div class="post-list">
+    
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2022</span>
+          </h2>
         </div>
       
-    </div>
+      <div class="post-item" title="jquery ajax及XMLHttpRequest常用方法">
+        <div class="time-m-d">01-01</div>
+        <div class="title">
+          <a href="/posts/2353/">
+            <span>jquery ajax及XMLHttpRequest常用方法</span>
+          </a>
+        </div>
+      </div>
     
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85"><span class="toc-text">nginx源码安装</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%89%E8%A3%85nginx%E4%BE%9D%E8%B5%96"><span class="toc-text">安装nginx依赖</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%BC%80%E5%90%AF%E5%8F%82%E6%95%B0%E5%8F%8A%E6%A8%A1%E5%9D%97%EF%BC%8C%E7%94%9F%E6%88%90makefile%E6%96%87%E4%BB%B6"><span class="toc-text">配置开启参数及模块，生成makefile文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E8%84%9A%E6%9C%AC%E5%8F%8A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9Amake%EF%BC%8C%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%EF%BC%8C%E6%A0%B9%E6%8D%AEMakefile%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E7%9B%B8%E5%BA%94%E7%9A%84%E6%A8%A1%E5%9D%97%EF%BC%8C%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95%EF%BC%8C%E5%B9%B6%E5%B0%86%E7%94%9F%E6%88%90%E7%9A%84%E6%A8%A1%E5%9D%97%E5%92%8C%E6%96%87%E4%BB%B6%E5%A4%8D%E5%88%B6%E5%88%B0%E7%9B%B8%E5%BA%94%E7%9A%84%E7%9B%AE%E5%BD%95%EF%BC%9A"><span class="toc-text">生成脚本及配置文件：make，编译步骤，根据Makefile文件生成相应的模块，创建目录，并将生成的模块和文件复制到相应的目录：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">系统服务配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-text">启动</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85apache-%E5%8F%8A%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">安装apache 及相关依赖</span></a></li></ol>
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2021</span>
+          </h2>
+        </div>
+      
+      <div class="post-item" title="子网掩码计算">
+        <div class="time-m-d">12-22</div>
+        <div class="title">
+          <a href="/posts/49563/">
+            <span>子网掩码计算</span>
+          </a>
+        </div>
+      </div>
     
-      <div class="comments-container">
-        
-
-
-
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script src="/js/src/md5.min.js"></script>
-  <div id="gitalk-container"></div>
-
-  <script>
-    const gitalk = new Gitalk({
-      clientID: 'a8912b1aa74ebdeb8ecf',
-      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
-      repo: 'bstark',
-      owner: 'bbbstark',
-      admin: ['bbbstark'],
-      id: location.pathname,
-      distractionFreeMode: false
-    })
-
-    gitalk.render('gitalk-container')
-  </script>
-
-
+      <div class="post-item" title="VIM基础使用">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/819/">
+            <span>VIM基础使用</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="JavaScript基础">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/53226/">
+            <span>JavaScript基础</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="centos-nginx+apache+mysql+php的安装">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/22236/">
+            <span>centos-nginx+apache+mysql+php的安装</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="Linux与windows 命令的对比">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/3757/">
+            <span>Linux与windows 命令的对比</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="github搭建hexo-blog及域名配置">
+        <div class="time-m-d">12-18</div>
+        <div class="title">
+          <a href="/posts/12629/">
+            <span>github搭建hexo-blog及域名配置</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="必背Linux基础命令">
+        <div class="time-m-d">12-17</div>
+        <div class="title">
+          <a href="/posts/29722/">
+            <span>必背Linux基础命令</span>
+          </a>
+        </div>
       </div>
     
   </div>
-
+</div>
 
         <div class="footer">
   <div class="social">
@@ -542,24 +488,6 @@ MathJax = {
 
 
         
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + centos-nginx%2Bapache%2Bmysql%2Bphp%E7%9A%84%E5%AE%89%E8%A3%85 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F22236%2F + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/22236/" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
   
   
 <script src="/js/shares.js"></script>
