@@ -138,7 +138,7 @@ MathJax = {
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2022-01-03 19:08:02
+          2021-12-20 20:54:52
         </span>
         
               <span class="post-tags">
@@ -166,7 +166,7 @@ MathJax = {
 <li><p>赋值变量可不必声明变量的数据类型</p>
 </li>
 </ul>
-<p>递增递减运算</p>
+<h2 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h2><p>递增递减运算</p>
 <ul>
 <li>只能用于变量</li>
 </ul>
@@ -535,7 +535,7 @@ MathJax = {
 </ul>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$xm</span> = <span class="keyword">new</span> person; <span class="comment">//实例化对象</span></span><br><span class="line"><span class="variable">$xm</span> -&gt;name = <span class="string">&#x27;大帅比&#x27;</span>; <span class="comment">//对对象属性进行赋值</span></span><br><span class="line"><span class="variable">$xm</span> -&gt;say();     <span class="comment">//访问对象的方法</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="php文件处理"><a href="#php文件处理" class="headerlink" title="php文件处理"></a>php文件处理</h2><table>
+<h2 id="php文件读取"><a href="#php文件读取" class="headerlink" title="php文件读取"></a>php文件读取</h2><table>
 <thead>
 <tr>
 <th>操作步骤</th>
@@ -669,12 +669,157 @@ MathJax = {
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$filename</span> = <span class="string">&quot;hello.txt&quot;</span>;</span><br><span class="line"><span class="variable">$handle</span> = fopen(<span class="variable">$filename</span>,<span class="string">&#x27;r&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$handle</span>)&#123;</span><br><span class="line">    <span class="keyword">while</span>(!feof(handle))    <span class="comment">//!取反  检测是否到达文件末尾，到达文件末尾为真，</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$line</span> = fgets(&amp;handle);</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$line</span>.<span class="string">&#x27;&lt;br&gt;&#x27;</span>；</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(<span class="variable">$handle</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$filename</span> open failed&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
+
+<h2 id="php文件写入"><a href="#php文件写入" class="headerlink" title="php文件写入"></a>php文件写入</h2><ul>
+<li>fwrite()</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$file</span> = <span class="string">&#x27;log.txt&#x27;</span>;</span><br><span class="line"><span class="variable">$string</span> = <span class="string">&#x27;bb is dashuaibi!!&#x27;</span>;</span><br><span class="line"><span class="variable">$handle</span> = fopen(<span class="variable">$file</span>,<span class="string">&#x27;w&#x27;</span>);  <span class="comment">//or die (&#x27;cannot open file &#x27;.$file);</span></span><br><span class="line"><span class="variable">$write</span> = fwrite(<span class="variable">$handle</span>,<span class="variable">$string</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$write</span>)</span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">echo</span> <span class="string">&#x27;write successful!&#x27;</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;write failed!&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">fclose(<span class="variable">$handle</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>file_get_contents()&amp;file_put_contents函数读写文件</p>
+<p>无需打开文件关闭文件就可以操作读取写入</p>
+</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">echo</span> file_get_contents(<span class="string">&quot;test.txt&quot;</span>);<span class="comment">//读文件</span></span><br><span class="line"><span class="keyword">echo</span> file_put_contents(<span class="string">&quot;test.txt&quot;</span>,<span class="string">&quot;内容&quot;</span>,FILE_APPEND);<span class="comment">//以追加方式写文件</span></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$file</span> = <span class="string">&#x27;test.txt&#x27;</span>; </span><br><span class="line"><span class="variable">$data</span> = <span class="string">&#x27;bb is dashuaibi&#x27;</span>;</span><br><span class="line"><span class="variable">$write</span> = file_put_contents(<span class="variable">$file</span>,<span class="variable">$data</span>,FILE_APPEND); <span class="comment">//写文件,FILE_APPEND 追加模式</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$write</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;write successful!!&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> file_get_contents(<span class="variable">$file</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>文件复制、移动删除的函数</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>copy()</td>
+<td>copy(源文件，目标文件)</td>
+<td>复制文件</td>
+</tr>
+<tr>
+<td>unlink()</td>
+<td>unlink(目标文件)</td>
+<td>删除文件</td>
+</tr>
+<tr>
+<td>rename()</td>
+<td>rename(旧文件名，新文件名)</td>
+<td>重命名文件或目录，或移动文件</td>
+</tr>
+<tr>
+<td>ftruncate()</td>
+<td>ftruncate(目标文件资源，截取长度)</td>
+<td>将文件截断到指定长度</td>
+</tr>
+<tr>
+<td>file_exists</td>
+<td>file_exists(目标文件名)</td>
+<td>判断文件或文件夹是否存在</td>
+</tr>
+<tr>
+<td>is_file()</td>
+<td>is_file(文件名)</td>
+<td>判断指定的路径存在且为文件</td>
+</tr>
+</tbody></table>
+<ul>
+<li>获取文件的属性</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>filesize()</td>
+<td>只读，返回文件的大小</td>
+</tr>
+<tr>
+<td>filetype()</td>
+<td>只读，返回文件的类型，如文件文件夹</td>
+</tr>
+<tr>
+<td>filectime()</td>
+<td>返回文件创建的时间的时间戳</td>
+</tr>
+<tr>
+<td>filemtime()</td>
+<td>只读返回文件的修改时间</td>
+</tr>
+<tr>
+<td>realpath()</td>
+<td>返回文件的物理路径</td>
+</tr>
+<tr>
+<td>pathinfo()</td>
+<td>以数组形式返回文件的路径和文件名信息</td>
+</tr>
+</tbody></table>
+<ul>
+<li>目录的基本操作</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mkdir(pathname)</td>
+<td>新建一个指定的目录</td>
+<td>mkdir(‘temp’)</td>
+</tr>
+<tr>
+<td>rmdir(dirname)</td>
+<td>删除目录，该目录必须为空</td>
+<td>rmdir(‘data’)</td>
+</tr>
+<tr>
+<td>getcwd(void)</td>
+<td>取得当前文件所在的目录</td>
+<td>echo getcwd();</td>
+</tr>
+<tr>
+<td>chdir(dirname)</td>
+<td>改变当前目录</td>
+<td>chdir(‘…/‘);</td>
+</tr>
+<tr>
+<td>opendir(path)</td>
+<td>打开目录，返回目录的指针</td>
+<td>$dirh=opendir(‘temp’);</td>
+</tr>
+<tr>
+<td>closedir()</td>
+<td>关闭目录，参数为目录指针</td>
+<td>closedir($dirh);</td>
+</tr>
+<tr>
+<td>readdir()</td>
+<td>遍历目录</td>
+<td>$file=readdir($dirh);</td>
+</tr>
+<tr>
+<td>scandir(path,sort)</td>
+<td>以数组形式便利目录，sort参数可设置升序或降序排列</td>
+<td>$arr=scandir(‘D:\bb’1);</td>
+</tr>
+</tbody></table>
+
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/posts/49591/" target="_self">
+              <a href="/posts/12629/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -683,7 +828,7 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2022-01-03 19:08:02
+              2021-12-20 20:54:52
             </span>
             
                   <span class="post-tags">
@@ -700,6 +845,11 @@ MathJax = {
           </div>
           <div class="post-foot-prev">
             
+              <a href="/posts/3757/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -711,7 +861,7 @@ MathJax = {
   <div class="post-catalog hidden" id="catalog">
     <div class="title">目录</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">变量的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E8%AF%BB%E5%8F%96"><span class="toc-text">数组的创建和读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-text">数组的基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5"><span class="toc-text">判断语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="toc-text">循环语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-%E5%B8%B8%E9%87%8F"><span class="toc-text">PHP 常量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">自定全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">超级全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0"><span class="toc-text">常用字符串函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F%E5%87%BD%E6%95%B0"><span class="toc-text">常用变量函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%97%A5%E6%9C%9F%E5%87%BD%E6%95%B0"><span class="toc-text">时间日期函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB"><span class="toc-text">类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1"><span class="toc-text">对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86"><span class="toc-text">php文件处理</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">变量的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E8%AF%BB%E5%8F%96"><span class="toc-text">数组的创建和读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-text">数组的基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E8%AF%AD%E5%8F%A5"><span class="toc-text">判断语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="toc-text">循环语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-%E5%B8%B8%E9%87%8F"><span class="toc-text">PHP 常量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">自定全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%85%E7%BA%A7%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">超级全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0"><span class="toc-text">常用字符串函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F%E5%87%BD%E6%95%B0"><span class="toc-text">常用变量函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%97%A5%E6%9C%9F%E5%87%BD%E6%95%B0"><span class="toc-text">时间日期函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB"><span class="toc-text">类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1"><span class="toc-text">对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="toc-text">php文件读取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5"><span class="toc-text">php文件写入</span></a></li></ol>
     </div>
   </div>
 
