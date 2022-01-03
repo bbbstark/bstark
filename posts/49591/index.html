@@ -11,7 +11,7 @@
   
   <title>
     
-      归档 
+      与、或、非、与非、或非、异或、同或 
       
       
       |
@@ -106,120 +106,132 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2022</span>
-          </h2>
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">与、或、非、与非、或非、异或、同或</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-03 19:04:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E7%BC%96%E7%A8%8B/" title="编程">
+                    <b>#</b> 编程
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">与：and  -&gt;逻辑乘法 有<span class="number">0</span>出<span class="number">0</span>；全<span class="number">1</span>出<span class="number">1</span> 例：<span class="number">00</span>=<span class="number">0</span>,<span class="number">01</span>=<span class="number">0</span>,<span class="number">10</span>=<span class="number">0</span>,<span class="number">11</span>=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">或：or   -&gt;逻辑加法 有<span class="number">1</span>出<span class="number">1</span>，全<span class="number">0</span>出<span class="number">0</span> 例：<span class="number">00</span>=<span class="number">0</span>,<span class="number">01</span>=<span class="number">1</span>,<span class="number">10</span>=<span class="number">1</span>,<span class="number">11</span>=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">非：not  -&gt;逻辑否定 有<span class="number">1</span>出<span class="number">0</span>，有<span class="number">0</span>出<span class="number">1</span> 取相反值</span><br><span class="line"></span><br><span class="line">与非：nand	-&gt;先按与的操作，然后结果取反 例:<span class="number">00</span>=<span class="number">1</span>,<span class="number">01</span>=<span class="number">1</span>,<span class="number">10</span>=<span class="number">1</span>,<span class="number">11</span>=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">或非：nor	-&gt;先按或的操作，然后结果取反 例:<span class="number">00</span>=<span class="number">1</span>,<span class="number">01</span>=<span class="number">0</span>,<span class="number">10</span>=<span class="number">0</span>,<span class="number">11</span>=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">异或：xor	-&gt;相同得<span class="number">0</span>;相异得<span class="number">1</span> 例:<span class="number">00</span>=<span class="number">0</span>,<span class="number">01</span>=<span class="number">1</span>,<span class="number">10</span>=<span class="number">1</span>,<span class="number">11</span>=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">同或：xnor	-&gt;相同得<span class="number">1</span>;相异得<span class="number">0</span> 例:<span class="number">00</span>=<span class="number">1</span>,<span class="number">01</span>=<span class="number">0</span>,<span class="number">10</span>=<span class="number">0</span> <span class="number">11</span>=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+<p>首先记住与、或、非。与非、或非只需要先按照与、或判断，再非一下。异或、与或关键词在于《异：不同》为1、《与：相同》为1。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/2353/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-03 19:04:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E7%BC%96%E7%A8%8B/" title="编程">
+                        <b>#</b> 编程
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/54224/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
       
-      <div class="post-item" title="php基础语法">
-        <div class="time-m-d">01-03</div>
-        <div class="title">
-          <a href="/posts/54224/">
-            <span>php基础语法</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="与、或、非、与非、或非、异或、同或">
-        <div class="time-m-d">01-03</div>
-        <div class="title">
-          <a href="/posts/49591/">
-            <span>与、或、非、与非、或非、异或、同或</span>
-          </a>
-        </div>
-      </div>
+
     
-      <div class="post-item" title="jquery ajax及XMLHttpRequest常用方法">
-        <div class="time-m-d">01-01</div>
-        <div class="title">
-          <a href="/posts/2353/">
-            <span>jquery ajax及XMLHttpRequest常用方法</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2021</span>
-          </h2>
-        </div>
-      
-      <div class="post-item" title="子网掩码计算">
-        <div class="time-m-d">12-22</div>
-        <div class="title">
-          <a href="/posts/49563/">
-            <span>子网掩码计算</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="VIM基础使用">
-        <div class="time-m-d">12-20</div>
-        <div class="title">
-          <a href="/posts/819/">
-            <span>VIM基础使用</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JavaScript基础">
-        <div class="time-m-d">12-20</div>
-        <div class="title">
-          <a href="/posts/53226/">
-            <span>JavaScript基础</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="centos-nginx+apache+mysql+php的安装">
-        <div class="time-m-d">12-20</div>
-        <div class="title">
-          <a href="/posts/22236/">
-            <span>centos-nginx+apache+mysql+php的安装</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux与windows 命令的对比">
-        <div class="time-m-d">12-20</div>
-        <div class="title">
-          <a href="/posts/3757/">
-            <span>Linux与windows 命令的对比</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="github搭建hexo-blog及域名配置">
-        <div class="time-m-d">12-18</div>
-        <div class="title">
-          <a href="/posts/12629/">
-            <span>github搭建hexo-blog及域名配置</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="必背Linux基础命令">
-        <div class="time-m-d">12-17</div>
-        <div class="title">
-          <a href="/posts/29722/">
-            <span>必背Linux基础命令</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
       </div>
     
   </div>
-</div>
+
 
         <div class="footer">
   <div class="social">
@@ -506,6 +518,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E4%B8%8E%E3%80%81%E6%88%96%E3%80%81%E9%9D%9E%E3%80%81%E4%B8%8E%E9%9D%9E%E3%80%81%E6%88%96%E9%9D%9E%E3%80%81%E5%BC%82%E6%88%96%E3%80%81%E5%90%8C%E6%88%96 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F49591%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/49591/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
