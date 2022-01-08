@@ -8,13 +8,10 @@
   <meta name="author" content="B Stark" />
   <meta name="description" content="" />
   
+    <meta name="robots" content="noindex" />
+  
   
   <title>
-    
-      github搭建hexo-blog及域名配置 
-      
-      
-      |
     
      B.Stark&#39;Blog
   </title>
@@ -106,190 +103,45 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-<!-- LaTex Display -->
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-</script>
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  }
-};
-</script>
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">github搭建hexo-blog及域名配置</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2021-12-18 20:54:52
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags" title="标签"></i>
-                
-                <span class="span--tag">
-                  <a href="/tags/github/" title="github">
-                    <b>#</b> github
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p>免费无需云服务器，安全稳定，极低的维护成本，无需备案，域名使用godaddy，顶级域名.cc.me.pw.几块钱一个，搭建blog方便快捷。</p>
-<h3 id="安装hexo及环境"><a href="#安装hexo及环境" class="headerlink" title="安装hexo及环境"></a>安装hexo及环境</h3><p>安装 nodejs</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">choco install nodejs</span><br></pre></td></tr></table></figure>
-<p>安装git</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">choco install git</span><br></pre></td></tr></table></figure>
-<p>npm安装hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-<p>创建目录blog-name并拉取hexo源码，需要CD到指定目录执行。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init blog-name</span><br></pre></td></tr></table></figure>
-<p>测试是否安装成功</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="github部署"><a href="#github部署" class="headerlink" title="github部署"></a>github部署</h3><p>注册github.com账号生成密钥</p>
-<p>本地生成密钥</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;你的邮箱&quot;</span></span><br></pre></td></tr></table></figure>
-<p>敲回车键三次</p>
-<p>复制刚刚创建的密钥<code>windows</code> 用户可以在 <code>C://用户//admin//.ssh</code> 目录下查找，mac 用户可以在 <code>~/.ssh</code> 目录下找到。复制 <code>id_rsa.pub</code> 文件里的信息</p>
-<p>粘贴到—githup点击头像—Settings—SSH and GPG keys—设置SSH keys</p>
-<p>此时你还需要配置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;liuxianan&quot;</span>// 你的github用户名，非昵称</span><br><span class="line">git config --global user.email  <span class="string">&quot;xxx@qq.com&quot;</span>// 填写你的github注册邮箱</span><br></pre></td></tr></table></figure>
-
-<p>github新建项目</p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211217231243707.png" alt="image-20211217231243707"></p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211217231438850.png" alt="image-20211217231438850"></p>
-<p>修改站点配置文件 _config.yml 配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:bbbstark/bstarks.git</span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
-
-<p>安装 hexo-deployer-git</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save </span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>运行 </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="github域名绑定"><a href="#github域名绑定" class="headerlink" title="github域名绑定"></a>github域名绑定</h3><p>godaddy注册域名<br>注册域名可支付宝付款。</p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211218201701123.png" alt="image-20211218201701123"></p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211218201511019.png" alt="image-20211218201511019"></p>
-<p>添加DNS  A记录 其中2条即可</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">185.199.108.153</span><br><span class="line">185.199.109.153</span><br><span class="line">185.199.110.153</span><br><span class="line">185.199.111.153</span><br></pre></td></tr></table></figure>
-<p>添加CNAME记录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitHub用户名.github.io .</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211218201556457.png" alt="image-20211218201556457"></p>
-<p>如图添加完后 等待 DNS 配置生效，一般10分钟内就会生效。</p>
-<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20211218201429680.png" alt="image-20211218201429680"></p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
+        <div class="container index">
+  <div class="post-list">
+    <!-- 遍历渲染文章 -->
+    
+      <div class="post-item" title="github搭建hexo-blog及域名配置">
+        <div class="time-m-d">2021-12-18</div>
+        <div class="title">
+          <a href="/posts/12629/">
             
-              <a href="/posts/29722/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2021-12-18 20:54:52
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags" title="标签"></i>
-                    
-                    <span class="span--tag">
-                      <a href="/tags/github/" title="github">
-                        <b>#</b> github
-                      </a>
-                    </span>
-                    
-                  </span>
               
-          </div>
-          <div class="post-foot-prev">
+                <span>github搭建hexo-blog及域名配置</span>
+              
             
-              <a href="/posts/3757/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
+          </a>
         </div>
-      
-    </div>
+      </div>
     
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85hexo%E5%8F%8A%E7%8E%AF%E5%A2%83"><span class="toc-text">安装hexo及环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#github%E9%83%A8%E7%BD%B2"><span class="toc-text">github部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#github%E5%9F%9F%E5%90%8D%E7%BB%91%E5%AE%9A"><span class="toc-text">github域名绑定</span></a></li></ol>
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script src="/js/src/md5.min.js"></script>
-  <div id="gitalk-container"></div>
-
-  <script>
-    const gitalk = new Gitalk({
-      clientID: 'a8912b1aa74ebdeb8ecf',
-      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
-      repo: 'bstark',
-      owner: 'bbbstark',
-      admin: ['bbbstark'],
-      id: location.pathname,
-      distractionFreeMode: false
-    })
-
-    gitalk.render('gitalk-container')
-  </script>
-
-
+      <div class="post-item" title="必背Linux基础命令">
+        <div class="time-m-d">2021-12-17</div>
+        <div class="title">
+          <a href="/posts/29722/">
+            
+              
+                <span>必背Linux基础命令</span>
+              
+            
+          </a>
+        </div>
       </div>
     
   </div>
-
+  <nav class="post-navigation">
+    
+      <a href="/"><i class="iconfont icon-angleleft"></i></a>
+    
+    <span class="page-num">2 / 2</span>
+    
+  </nav>
+</div>
 
         <div class="footer">
   <div class="social">
@@ -576,24 +428,6 @@ MathJax = {
 
 
         
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + github%E6%90%AD%E5%BB%BAhexo-blog%E5%8F%8A%E5%9F%9F%E5%90%8D%E9%85%8D%E7%BD%AE + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F12629%2F + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/12629/" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
   
   
 <script src="/js/shares.js"></script>
