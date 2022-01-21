@@ -11,6 +11,11 @@
   
   <title>
     
+      archive_a: 2021 
+      
+      
+      |
+    
      B.Stark&#39;Blog
   </title>
 
@@ -101,116 +106,237 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
 
-<!-- LaTex Display -->
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-</script>
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  }
-};
-</script>
+<!-- last: 按年份把文章分组，当前遍历到的年份 -->
+<!-- now: 当前遍历到的文章的发布年份 -->
 
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title"></div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2022-01-17 12:50:49
-        </span>
-        
-      </div>
-      <div class="markdown-body">
-        <hr>
-<p>title:Ubantu 安卓Nessus<br>tags:工具<br>date:2021-12-20 20:20:20</p>
-<hr>
-<p>下载地址:<a target="_blank" rel="noopener" href="http://www.tenable.com/products/nessus/select-your-operating-system#tos">http://www.tenable.com/products/nessus/select-your-operating-system#tos</a></p>
-<p>选择Ubuntu18.10,需要下载Ubuntu相应版本的Nessus</p>
-<p>安装Nessus<br>将文件拷贝到到/opt文件夹下：</p>
-<p>sudo cp Nessus-8.0.1-ubuntu1110_amd64.deb /opt<br>安装Nessus:</p>
-<p>sudo dpkg -i Nessus-8.0.1-ubuntu1110_amd64.deb<br>启动Nessus服务</p>
-<p>sudo  /bin/systemctl start nessusd.service<br>设置账号密码1</p>
-<p>打开浏览器：<a target="_blank" rel="noopener" href="https://127.0.0.1:8834/">https://127.0.0.1:8834/</a></p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/posts/63374/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2022-01-17 12:50:49
-            </span>
-            
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/posts/3/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
+<div class="container archives">
+  <div class="post-list">
+    
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2022</span>
+          </h2>
         </div>
       
-    </div>
+      <div class="post-item" title="SQL注入常见字符WAF绕过">
+        <div class="time-m-d">01-20</div>
+        <div class="title">
+          <a href="/posts/24561/">
+            <span>SQL注入常见字符WAF绕过</span>
+          </a>
+        </div>
+      </div>
     
-
+      <div class="post-item" title="sqlmap 基础命令">
+        <div class="time-m-d">01-15</div>
+        <div class="title">
+          <a href="/posts/21446/">
+            <span>sqlmap 基础命令</span>
+          </a>
+        </div>
+      </div>
     
-      <div class="comments-container">
-        
-
-
-
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script src="/js/src/md5.min.js"></script>
-  <div id="gitalk-container"></div>
-
-  <script>
-    const gitalk = new Gitalk({
-      clientID: 'a8912b1aa74ebdeb8ecf',
-      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
-      repo: 'bstark',
-      owner: 'bbbstark',
-      admin: ['bbbstark'],
-      id: location.pathname,
-      distractionFreeMode: false
-    })
-
-    gitalk.render('gitalk-container')
-  </script>
-
-
+      <div class="post-item" title="linux 安装包安装：JDK">
+        <div class="time-m-d">01-10</div>
+        <div class="title">
+          <a href="/posts/63374/">
+            <span>linux 安装包安装：JDK</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="php基础语法">
+        <div class="time-m-d">01-08</div>
+        <div class="title">
+          <a href="/posts/54224/">
+            <span>php基础语法</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="mac os ssh IP变更后出现Host key verification failed.">
+        <div class="time-m-d">01-08</div>
+        <div class="title">
+          <a href="/posts/39942/">
+            <span>mac os ssh IP变更后出现Host key verification failed.</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="php读数据库">
+        <div class="time-m-d">01-08</div>
+        <div class="title">
+          <a href="/posts/36387/">
+            <span>php读数据库</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="while mysql_fetch_array 死循环原因">
+        <div class="time-m-d">01-08</div>
+        <div class="title">
+          <a href="/posts/19927/">
+            <span>while mysql_fetch_array 死循环原因</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="mysql语句基础">
+        <div class="time-m-d">01-08</div>
+        <div class="title">
+          <a href="/posts/49263/">
+            <span>mysql语句基础</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="与、或、非、与非、或非、异或、同或">
+        <div class="time-m-d">01-03</div>
+        <div class="title">
+          <a href="/posts/49591/">
+            <span>与、或、非、与非、或非、异或、同或</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="jquery ajax及XMLHttpRequest常用方法">
+        <div class="time-m-d">01-01</div>
+        <div class="title">
+          <a href="/posts/2353/">
+            <span>jquery ajax及XMLHttpRequest常用方法</span>
+          </a>
+        </div>
+      </div>
+    
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2021</span>
+          </h2>
+        </div>
+      
+      <div class="post-item" title="子网掩码计算">
+        <div class="time-m-d">12-22</div>
+        <div class="title">
+          <a href="/posts/49563/">
+            <span>子网掩码计算</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="VIM基础使用">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/819/">
+            <span>VIM基础使用</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="JavaScript基础">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/53226/">
+            <span>JavaScript基础</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="centos-nginx+apache+mysql+php的安装">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/22236/">
+            <span>centos-nginx+apache+mysql+php的安装</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="Linux与windows 命令的对比">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/3757/">
+            <span>Linux与windows 命令的对比</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="apt-get kali源">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/22626/">
+            <span>apt-get kali源</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="域渗透常用命令">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/45214/">
+            <span>域渗透常用命令</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="sql注入">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/31899/">
+            <span>sql注入</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="Ubantu 安卓Nessus">
+        <div class="time-m-d">12-20</div>
+        <div class="title">
+          <a href="/posts/8500/">
+            <span>Ubantu 安卓Nessus</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="github搭建hexo-blog及域名配置">
+        <div class="time-m-d">12-18</div>
+        <div class="title">
+          <a href="/posts/12629/">
+            <span>github搭建hexo-blog及域名配置</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="linux 用户权限控制">
+        <div class="time-m-d">12-18</div>
+        <div class="title">
+          <a href="/posts/35674/">
+            <span>linux 用户权限控制</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="必背Linux基础命令">
+        <div class="time-m-d">12-17</div>
+        <div class="title">
+          <a href="/posts/29722/">
+            <span>必背Linux基础命令</span>
+          </a>
+        </div>
+      </div>
+    
+      <div class="post-item" title="windows 基础命令">
+        <div class="time-m-d">12-17</div>
+        <div class="title">
+          <a href="/posts/47555/">
+            <span>windows 基础命令</span>
+          </a>
+        </div>
       </div>
     
   </div>
-
+</div>
 
         <div class="footer">
   <div class="social">
@@ -497,24 +623,6 @@ MathJax = {
 
 
         
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' +  + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F2%2F + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/2/" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
   
   
 <script src="/js/shares.js"></script>
