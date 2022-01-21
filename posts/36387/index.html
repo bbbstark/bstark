@@ -8,10 +8,13 @@
   <meta name="author" content="B Stark" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      php读数据库 
+      
+      
+      |
     
      B.Stark&#39;Blog
   </title>
@@ -103,151 +106,128 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="while mysql_fetch_array 死循环原因">
-        <div class="time-m-d">2022-01-08</div>
-        <div class="title">
-          <a href="/posts/19927/">
-            
-              
-                <span>while mysql_fetch_array 死循环原因</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">php读数据库</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E6%BA%90%E7%A0%81/" title="源码">
+                    <b>#</b> 源码
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="mysql语句基础">
-        <div class="time-m-d">2022-01-08</div>
-        <div class="title">
-          <a href="/posts/49263/">
-            
-              
-                <span>mysql语句基础</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> /&gt;</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$conn</span> = @mysql_connect(<span class="string">&quot;192.168.241.89&quot;</span>, <span class="string">&quot;root&quot;</span>, <span class="string">&quot;Vega2010##&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;X Connect failed&quot;</span>);</span><br><span class="line">mysql_select_db(<span class="string">&quot;chacha_cloud&quot;</span>, <span class="variable">$conn</span>);</span><br><span class="line">mysql_query(<span class="string">&quot;set names &#x27;UTF-8&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="variable">$sql</span>=<span class="string">&quot;select username,password,phone from user limit 12500000,500000&quot;</span>;</span><br><span class="line">  <span class="variable">$query</span>=mysql_query(<span class="variable">$sql</span>);</span><br><span class="line">  <span class="keyword">while</span>(<span class="variable">$row</span>=mysql_fetch_array(<span class="variable">$query</span>))&#123;</span><br><span class="line">    <span class="variable">$fp</span> = fopen(<span class="string">&#x27;t4/14.csv&#x27;</span>, <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    fwrite(<span class="variable">$fp</span>,<span class="string">&#x27;&quot;&#x27;</span>.@<span class="variable">$row</span>[username].<span class="string">&#x27;&quot;,&quot;&#x27;</span>.@<span class="variable">$row</span>[password].<span class="string">&#x27;&quot;&#x27;</span>.<span class="string">&#x27;&quot;,&quot;&#x27;</span>.@<span class="variable">$row</span>[phone].<span class="string">&#x27;&quot;&#x27;</span>.<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    fclose(<span class="variable">$fp</span>);</span><br><span class="line">  &#125;  </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;finished&#x27;</span>;</span><br><span class="line">  <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
       </div>
-    
-      <div class="post-item" title="与、或、非、与非、或非、异或、同或">
-        <div class="time-m-d">2022-01-03</div>
-        <div class="title">
-          <a href="/posts/49591/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>与、或、非、与非、或非、异或、同或</span>
-              
+              <a href="/posts/19927/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E6%BA%90%E7%A0%81/" title="源码">
+                        <b>#</b> 源码
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/39942/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="子网掩码计算">
-        <div class="time-m-d">2021-12-22</div>
-        <div class="title">
-          <a href="/posts/49563/">
-            
-              
-                <span>子网掩码计算</span>
-              
-            
-          </a>
-        </div>
-      </div>
+
     
-      <div class="post-item" title="VIM基础使用">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/819/">
-            
-              
-                <span>VIM基础使用</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JavaScript基础">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/53226/">
-            
-              
-                <span>JavaScript基础</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="centos-nginx+apache+mysql+php的安装">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/22236/">
-            
-              
-                <span>centos-nginx+apache+mysql+php的安装</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux与windows 命令的对比">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/3757/">
-            
-              
-                <span>Linux与windows 命令的对比</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="apt-get kali源">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/22626/">
-            
-              
-                <span>apt-get kali源</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="github搭建hexo-blog及域名配置">
-        <div class="time-m-d">2021-12-18</div>
-        <div class="title">
-          <a href="/posts/12629/">
-            
-              
-                <span>github搭建hexo-blog及域名配置</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">2 / 3</span>
-    
-      <a href="/page/3/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
@@ -534,6 +514,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + php%E8%AF%BB%E6%95%B0%E6%8D%AE%E5%BA%93 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F36387%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/36387/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>

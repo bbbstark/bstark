@@ -8,10 +8,13 @@
   <meta name="author" content="B Stark" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      linux 安装包安装：JDK 
+      
+      
+      |
     
      B.Stark&#39;Blog
   </title>
@@ -103,151 +106,149 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="while mysql_fetch_array 死循环原因">
-        <div class="time-m-d">2022-01-08</div>
-        <div class="title">
-          <a href="/posts/19927/">
-            
-              
-                <span>while mysql_fetch_array 死循环原因</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">linux 安装包安装：JDK</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-10 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/linux/" title="linux">
+                    <b>#</b> linux
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="mysql语句基础">
-        <div class="time-m-d">2022-01-08</div>
-        <div class="title">
-          <a href="/posts/49263/">
-            
-              
-                <span>mysql语句基础</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>1）：官方下载对应的.gz包，这里以jdk-8u181-linux-x64.tar.gz为例<br>2）：创建一个目录用于存放解压后的文件，并解压缩到该目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /usr/lib/jvm</span><br><span class="line">sudo tar -zxvf jdk-8u181-linux-x64.tar.gz -C /usr/lib/jvm</span><br></pre></td></tr></table></figure>
+
+<p>3）：修改环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>4）：文件末尾追加如下内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#set oracle jdk environment</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/jdk1.8.0_181  <span class="comment">## 这里要注意目录要换成自己解压的jdk 目录</span></span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre  </span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JRE_HOME&#125;</span>/lib  </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span>  </span><br></pre></td></tr></table></figure>
+
+<p>5）：使环境变量生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>6）：设置默认jdk</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk1.8.0_181/bin/java 300  </span><br><span class="line">sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk1.8.0_181/bin/javac 300  </span><br><span class="line">sudo update-alternatives --install /usr/bin/jar jar /usr/lib/jvm/jdk1.8.0_181/bin/jar 300   </span><br><span class="line">sudo update-alternatives --install /usr/bin/javah javah /usr/lib/jvm/jdk1.8.0_181/bin/javah 300   </span><br><span class="line">sudo update-alternatives --install /usr/bin/javap javap /usr/lib/jvm/jdk1.8.0_181/bin/javap 300</span><br></pre></td></tr></table></figure>
+
+<p>7）：执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo update-alternatives --config java</span><br></pre></td></tr></table></figure>
+
+<p>8）：测试是否安装成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br><span class="line">javac -version</span><br></pre></td></tr></table></figure>
+
+
       </div>
-    
-      <div class="post-item" title="与、或、非、与非、或非、异或、同或">
-        <div class="time-m-d">2022-01-03</div>
-        <div class="title">
-          <a href="/posts/49591/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>与、或、非、与非、或非、异或、同或</span>
-              
+              <a href="/posts/1/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-10 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/linux/" title="linux">
+                        <b>#</b> linux
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/2/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="子网掩码计算">
-        <div class="time-m-d">2021-12-22</div>
-        <div class="title">
-          <a href="/posts/49563/">
-            
-              
-                <span>子网掩码计算</span>
-              
-            
-          </a>
-        </div>
-      </div>
+
     
-      <div class="post-item" title="VIM基础使用">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/819/">
-            
-              
-                <span>VIM基础使用</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="JavaScript基础">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/53226/">
-            
-              
-                <span>JavaScript基础</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="centos-nginx+apache+mysql+php的安装">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/22236/">
-            
-              
-                <span>centos-nginx+apache+mysql+php的安装</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Linux与windows 命令的对比">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/3757/">
-            
-              
-                <span>Linux与windows 命令的对比</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="apt-get kali源">
-        <div class="time-m-d">2021-12-20</div>
-        <div class="title">
-          <a href="/posts/22626/">
-            
-              
-                <span>apt-get kali源</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="github搭建hexo-blog及域名配置">
-        <div class="time-m-d">2021-12-18</div>
-        <div class="title">
-          <a href="/posts/12629/">
-            
-              
-                <span>github搭建hexo-blog及域名配置</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">2 / 3</span>
-    
-      <a href="/page/3/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         <div class="footer">
   <div class="social">
@@ -534,6 +535,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + linux%20%E5%AE%89%E8%A3%85%E5%8C%85%E5%AE%89%E8%A3%85%EF%BC%9AJDK + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F63374%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/63374/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
