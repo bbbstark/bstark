@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title"></div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-22 13:43:34
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h2 id="Nmap-常用命令"><a href="#Nmap-常用命令" class="headerlink" title="Nmap 常用命令"></a>Nmap 常用命令</h2><p><strong>格式：</strong><br><strong>nmap [ &lt;扫描类型&gt; …] [ &lt;选项&gt; ] { &lt;扫描目标说明&gt; }</strong></p>
+<ul>
+<li>-sP/-sn    使用ping扫描,查看主机存活,不进行端口扫描</li>
+<li>-P             指定端口扫描</li>
+<li>sT            TCP全连接扫描,建立完整的三次握手过程</li>
+<li>sS             SYN半连接扫描,只进行三次握手的前两次</li>
+<li>-sV           显示详细的版本信息</li>
+<li>-O            显示操作系统版本</li>
+<li>Pn            不对主机进行ping检测,直接扫描该主机</li>
+</ul>
+<h2 id="常用扫描"><a href="#常用扫描" class="headerlink" title="常用扫描"></a>常用扫描</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">nmap <span class="operator">-</span>sV <span class="operator">-</span>sT <span class="operator">-</span>Pn <span class="comment">--open -v 192.168.1.1 			不使用ping对ip进行服务识别 使用tcp发包 返回</span></span><br><span class="line">端口开放的结果</span><br><span class="line">nmap <span class="operator">-</span>sT <span class="operator">-</span>Pn <span class="comment">--open -v banner.nse 192.168.1.1 	获取服务器的banner信息</span></span><br><span class="line">nmap <span class="operator">-</span>sP <span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span><span class="operator">/</span><span class="number">24</span> 		判断哪些主机存活</span><br><span class="line">nmap <span class="operator">-</span>sT <span class="number">192.168</span><span class="number">.0</span><span class="number">.3</span> 			开放了哪些端口</span><br><span class="line">nmap <span class="operator">-</span>sS <span class="number">192.168</span><span class="number">.0</span><span class="number">.127</span> 			开放了哪些端口（隐蔽扫描）</span><br><span class="line">nmap <span class="operator">-</span>sU <span class="number">192.168</span><span class="number">.0</span><span class="number">.127</span> 			开放了哪些端口（UDP）</span><br><span class="line">nmap <span class="operator">-</span>sS <span class="operator">-</span>O <span class="number">192.168</span><span class="number">.0</span><span class="number">.127</span> 		操作系统识别</span><br><span class="line">nmap <span class="operator">-</span>sT <span class="operator">-</span>p <span class="number">80</span> <span class="operator">-</span>oG – <span class="number">192.168</span><span class="number">.1</span>.<span class="operator">*</span> <span class="operator">|</span> grep <span class="keyword">open</span>	 列出开放了指定端口的主机列表</span><br><span class="line">nmap <span class="operator">-</span>sV <span class="operator">-</span>p <span class="number">80</span> baidu.com 		列出服务器类型(列出操作系统，开发端口，服务器类型,网站脚本类型等)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">-</span>sL 仅仅是显示,扫描的IP数目,不会进行任何扫描</span><br><span class="line"><span class="operator">-</span>sn ping扫描,即主机发现</span><br><span class="line"><span class="operator">-</span>Pn 不检测主机存活</span><br><span class="line"><span class="operator">-</span>PS<span class="operator">/</span>PA<span class="operator">/</span>PU<span class="operator">/</span>PY[portlist] TCP SYN Ping<span class="operator">/</span>TCP ACK Ping<span class="operator">/</span>UDP Ping发现</span><br><span class="line"><span class="operator">-</span>PE<span class="operator">/</span>PP<span class="operator">/</span>PM 使用ICMP echo, <span class="type">timestamp</span> <span class="keyword">and</span> netmask 请求包发现主机</span><br><span class="line"><span class="operator">-</span>PO[prococol list] 使用IP协议包探测对方主机是否开启</span><br><span class="line"><span class="operator">-</span>n<span class="operator">/</span><span class="operator">-</span>R 不对IP进行域名反向解析<span class="operator">/</span>为所有的IP都进行域名的反响解析</span><br></pre></td></tr></table></figure>
+<h2 id="扫描技巧"><a href="#扫描技巧" class="headerlink" title="扫描技巧"></a>扫描技巧</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">-</span>sS<span class="operator">/</span>sT<span class="operator">/</span>sA<span class="operator">/</span>sW<span class="operator">/</span>sM TCP SYN<span class="operator">/</span>TCP <span class="keyword">connect</span>()	<span class="operator">/</span>ACK<span class="operator">/</span>TCP窗口扫描<span class="operator">/</span>TCP Maimon扫描</span><br><span class="line"><span class="operator">-</span>sU 		UDP扫描</span><br><span class="line"><span class="operator">-</span>sN<span class="operator">/</span>sF<span class="operator">/</span>sX 	TCP <span class="keyword">Null</span>，FIN，<span class="keyword">and</span> Xmas扫描</span><br><span class="line"><span class="comment">--scanflags 自定义TCP包中的flags</span></span><br><span class="line"><span class="operator">-</span>sI zombie 	host[:probeport] Idlescan</span><br><span class="line"><span class="operator">-</span>sY<span class="operator">/</span>sZ SCTP INIT<span class="operator">/</span>COOKIE<span class="operator">-</span>ECHO 扫描</span><br><span class="line"><span class="operator">-</span>sO 使用IP protocol 扫描确定目标机支持的协议类型</span><br><span class="line"><span class="operator">-</span>b “FTP relay host” 使用FTP bounce scan</span><br></pre></td></tr></table></figure>
+<h2 id="批量扫描"><a href="#批量扫描" class="headerlink" title="批量扫描"></a>批量扫描</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nmap <span class="operator">-</span>sT <span class="operator">-</span>sV <span class="operator">-</span>p80<span class="number">-89</span>,<span class="number">8080</span><span class="number">-8099</span>,<span class="number">8000</span><span class="number">-8009</span>,<span class="number">7001</span><span class="number">-7009</span>,<span class="number">9000</span><span class="operator">-</span></span><br><span class="line"><span class="number">9099</span>,<span class="number">21</span>,<span class="number">443</span>,<span class="number">873</span>,<span class="number">2601</span>,<span class="number">2604</span>,<span class="number">3128</span>,<span class="number">4440</span>,<span class="number">6082</span>,<span class="number">6379</span>,<span class="number">8888</span>,<span class="number">3389</span>,<span class="number">9200</span>,<span class="number">11211</span>,<span class="number">27017</span>,<span class="number">2801</span></span><br><span class="line"><span class="number">7</span>,<span class="number">389</span>,<span class="number">8443</span>,<span class="number">4848</span>,<span class="number">8649</span>,<span class="number">995</span>,<span class="number">9440</span>,<span class="number">9871</span>,<span class="number">2222</span>,<span class="number">2082</span>,<span class="number">3311</span>,<span class="number">18100</span>,<span class="number">9956</span>,<span class="number">1433</span>,<span class="number">3306</span>,<span class="number">1900</span>,<span class="number">4</span></span><br><span class="line"><span class="number">9705</span>,<span class="number">50030</span>,<span class="number">7778</span>,<span class="number">5432</span>,<span class="number">7080</span>,<span class="number">5900</span>,<span class="number">50070</span>,<span class="number">5000</span>,<span class="number">5560</span>,<span class="number">10000</span> <span class="comment">--open --max-hostgroup</span></span><br><span class="line"><span class="number">10</span> <span class="comment">--max-parallelism 10 --max-rtt-timeout 1000ms --host-timeout 800s --max scan-delay 2000ms -iL ~/Desktop/ip.txt -oN ~/Desktop/result/result.txt</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nmap <span class="operator">-</span>sT <span class="operator">-</span>sV <span class="operator">-</span>O <span class="operator">-</span>P0 <span class="comment">--open -n -oN result.txt -p80-89,8080-8099,8000-</span></span><br><span class="line"><span class="number">8009</span>,<span class="number">7001</span><span class="number">-7009</span>,<span class="number">9000</span><span class="operator">-</span></span><br><span class="line"><span class="number">9099</span>,<span class="number">21</span>,<span class="number">443</span>,<span class="number">873</span>,<span class="number">2601</span>,<span class="number">2604</span>,<span class="number">3128</span>,<span class="number">4440</span>,<span class="number">6082</span>,<span class="number">6379</span>,<span class="number">8888</span>,<span class="number">3389</span>,<span class="number">9200</span>,<span class="number">11211</span>,<span class="number">27017</span>,<span class="number">2801</span></span><br><span class="line"><span class="number">7</span>,<span class="number">389</span>,<span class="number">8443</span>,<span class="number">4848</span>,<span class="number">8649</span>,<span class="number">995</span>,<span class="number">9440</span>,<span class="number">9871</span>,<span class="number">2222</span>,<span class="number">2082</span>,<span class="number">3311</span>,<span class="number">18100</span>,<span class="number">9956</span>,<span class="number">1433</span>,<span class="number">3306</span>,<span class="number">1900</span>,<span class="number">4</span></span><br><span class="line"><span class="number">9705</span>,<span class="number">50030</span>,<span class="number">7778</span>,<span class="number">5432</span>,<span class="number">7080</span>,<span class="number">5900</span>,<span class="number">50070</span>,<span class="number">5000</span>,<span class="number">5560</span>,<span class="number">10000</span> <span class="operator">-</span>iL ip.txt</span><br><span class="line"><span class="comment">--open 只输出端口开放的结果 输出到result.txt文件</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="OS识别"><a href="#OS识别" class="headerlink" title="OS识别"></a>OS识别</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">-</span>O 启用操作系统检测,<span class="operator">-</span>A来同时启用操作系统检测和版本检测</span><br><span class="line"><span class="comment">--osscan-limit 针对指定的目标进行操作系统检测(至少需确知该主机分别有一个open和</span></span><br><span class="line">closed的端口)</span><br><span class="line"><span class="comment">--osscan-guess 推测操作系统检测结果,当Nmap无法确定所检测的操作系统时，会尽可能地提</span></span><br><span class="line">供最相近的匹配，Nmap默认进行这种匹配</span><br></pre></td></tr></table></figure>
+
+<h2 id="防火墙-IDS躲避和哄骗"><a href="#防火墙-IDS躲避和哄骗" class="headerlink" title="防火墙/IDS躲避和哄骗"></a>防火墙/IDS躲避和哄骗</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">-</span>f; <span class="comment">--mtu value 指定使用分片、指定数据包的MTU.</span></span><br><span class="line"><span class="operator">-</span>D decoy1,decoy2,ME 使用诱饵隐蔽扫描</span><br><span class="line"><span class="operator">-</span>S IP<span class="operator">-</span>ADDRESS 源地址欺骗</span><br><span class="line"><span class="operator">-</span>e interface 使用指定的接口</span><br><span class="line"><span class="operator">-</span>g<span class="operator">/</span> <span class="comment">--source-port PROTNUM 使用指定源端口</span></span><br><span class="line"><span class="comment">--proxies url1,[url2],... 使用HTTP或者SOCKS4的代理</span></span><br><span class="line"><span class="comment">--data-length NUM 填充随机数据让数据包长度达到NUM</span></span><br><span class="line"><span class="comment">--ip-options OPTIONS 使用指定的IP选项来发送数据包</span></span><br><span class="line"><span class="comment">--ttl VALUE 设置IP time-to-live域</span></span><br><span class="line"><span class="comment">--spoof-mac ADDR/PREFIX/VEBDOR MAC地址伪装</span></span><br><span class="line"><span class="comment">--badsum 使用错误的checksum来发送数据包</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Nmap输出"><a href="#Nmap输出" class="headerlink" title="Nmap输出"></a>Nmap输出</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">-</span><span class="keyword">oN</span> 将标准输出直接写入指定的文件</span><br><span class="line"><span class="operator">-</span>oX 输出xml文件</span><br><span class="line"><span class="operator">-</span>oS 将所有的输出都改为大写</span><br><span class="line"><span class="operator">-</span>oG 输出便于通过bash或者perl处理的格式,非xml</span><br><span class="line"><span class="operator">-</span>oA BASENAME 可将扫描结果以标准格式、XML格式和Grep格式一次性输出</span><br><span class="line"><span class="operator">-</span>v 提高输出信息的详细度</span><br><span class="line"><span class="operator">-</span>d level 设置debug级别,最高是<span class="number">9</span></span><br><span class="line"><span class="comment">--reason 显示端口处于带确认状态的原因</span></span><br><span class="line"><span class="comment">--open 只输出端口状态为open的端口</span></span><br><span class="line"><span class="comment">--packet-trace 显示所有发送或者接收到的数据包</span></span><br><span class="line"><span class="comment">--iflist 显示路由信息和接口,便于调试</span></span><br><span class="line"><span class="comment">--log-errors 把日志等级为errors/warings的日志输出</span></span><br><span class="line"><span class="comment">--append-output 追加到指定的文件</span></span><br><span class="line"><span class="comment">--resume FILENAME 恢复已停止的扫描</span></span><br><span class="line"><span class="comment">--stylesheet PATH/URL 设置XSL样式表，转换XML输出</span></span><br><span class="line"><span class="comment">--webxml 从namp.org得到XML的样式</span></span><br><span class="line"><span class="comment">--no-sytlesheet 忽略XML声明的XSL样式表</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他nmap选项"><a href="#其他nmap选项" class="headerlink" title="其他nmap选项"></a>其他nmap选项</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-6</span> 开启IPv6</span><br><span class="line"><span class="operator">-</span>A OS识别,版本探测,脚本扫描和traceroute</span><br><span class="line"><span class="comment">--datedir DIRNAME 说明用户Nmap数据文件位置</span></span><br><span class="line"><span class="comment">--send-eth / --send-ip 使用原以太网帧发送/在原IP层发送</span></span><br><span class="line"><span class="comment">--privileged 假定用户具有全部权限</span></span><br><span class="line"><span class="comment">--unprovoleged 假定用户不具有全部权限,创建原始套接字需要root权限</span></span><br><span class="line"><span class="operator">-</span>V 打印版本信息</span><br><span class="line"><span class="operator">-</span>h 输出帮助<span class="operator">*</span><span class="operator">*</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="脚本扫描"><a href="#脚本扫描" class="headerlink" title="脚本扫描"></a>脚本扫描</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-sC 							根据端口识别的服务,调用默认脚本</span><br><span class="line">--script=”Lua scripts” 			调用的脚本名</span><br><span class="line">--script-args=n1=v1,[n2=v2] 	调用的脚本传递的参数</span><br><span class="line">--script-args-file=filename 	使用文本传递参数</span><br><span class="line">--script-trace 					显示所有发送和接收到的数据</span><br><span class="line">--script-updatedb 				更新脚本的数据库</span><br><span class="line">--script-help=”Lua script” 		显示指定脚本的帮助</span><br><span class="line">nmap -sV --script=ssl-heartbleed target_ip 		扫描心脏滴血漏洞</span><br><span class="line">nmap -p 6379 --script redis-info target_ip		扫描redis未授权访问漏洞</span><br><span class="line">nmap -p 27017 --script mongodb-info target_ip 	扫描mongodb未授权访问漏洞</span><br><span class="line">nmap -p 21 --script ftp-anon.nse -v target_ip 	扫描ftp匿名访问的漏洞</span><br><span class="line">nmap -p 21 --script ftp-brute.nse -v target_ip 	对目标IP进行ftp弱口令爆破</span><br><span class="line">nmap -p 22 --script ssh-brute.nse -v target_ip 	对目标IP进行ssh口令爆破</span><br><span class="line">nmap -p445 –script smb-vuln-ms17-010 target_ip/mask 对目标网段进行永恒之蓝漏洞扫描</span><br><span class="line">nmap --script		参数使用。 写出示例，扫描心脏滴血，扫描redis未授权，扫描ftp匿名访问，扫描永恒之蓝</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/24561/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-22 13:43:34
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/26454/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Nmap-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">Nmap 常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%89%AB%E6%8F%8F"><span class="toc-text">常用扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E5%8F%91%E7%8E%B0"><span class="toc-text">主机发现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E6%8F%8F%E6%8A%80%E5%B7%A7"><span class="toc-text">扫描技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E6%89%AB%E6%8F%8F"><span class="toc-text">批量扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OS%E8%AF%86%E5%88%AB"><span class="toc-text">OS识别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99-IDS%E8%BA%B2%E9%81%BF%E5%92%8C%E5%93%84%E9%AA%97"><span class="toc-text">防火墙&#x2F;IDS躲避和哄骗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nmap%E8%BE%93%E5%87%BA"><span class="toc-text">Nmap输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96nmap%E9%80%89%E9%A1%B9"><span class="toc-text">其他nmap选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E6%89%AB%E6%8F%8F"><span class="toc-text">脚本扫描</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' +  + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F0%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/0/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
