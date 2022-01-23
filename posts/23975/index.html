@@ -11,7 +11,7 @@
   
   <title>
     
-      windows 基础命令 
+      OSI7层网络模型 
       
       
       |
@@ -134,19 +134,19 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">windows 基础命令</div>
+      <div class="post-title">OSI7层网络模型</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2021-12-17 20:54:52
+          2020-12-20 20:20:20
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags" title="标签"></i>
                 
                 <span class="span--tag">
-                  <a href="/tags/window/" title="window">
-                    <b>#</b> window
+                  <a href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" title="网络基础">
+                    <b>#</b> 网络基础
                   </a>
                 </span>
                 
@@ -154,46 +154,222 @@ MathJax = {
           
       </div>
       <div class="markdown-body">
-        <h1 id="待完善"><a href="#待完善" class="headerlink" title="待完善"></a>待完善</h1><p>mstsc  远程桌面连接 </p>
-<p>ipconfig  /all</p>
-<p>ipconfig /release</p>
-<p>ipconfig /renew</p>
-<p>rename  </p>
-<p>tasklist  查看进程</p>
-<p>kill /pid id 杀进程</p>
-<p>查看防火墙</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall show allprofiles</span><br></pre></td></tr></table></figure>
-
-<p>添加防火墙规则</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh advfirewall firewall add rule name=icqtest dir=<span class="keyword">in</span>  action=allow protocol=tcp localport=3389</span><br></pre></td></tr></table></figure>
-
-<p>删除防火墙规则</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh advfirewall firewall delete rule name=icqtest protocol=tcp localport=3389</span><br></pre></td></tr></table></figure>
-
+        <blockquote>
+<p>OSI是<code>Open System Interconnection</code>的缩写，国际标准化组织（ISO）制定了OSI模型，该模型定义了不同计算机互联的标准，是设计和描述计算机网络通信的基本框架。加粗为四层模型</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="center">参考模型（从上至下）</th>
+<th align="center">各层含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>应用层</strong></td>
+<td align="center">为应用程序提供服务，如HTTP、FTP、SMTP、POP3等</td>
+</tr>
+<tr>
+<td align="center">表示层</td>
+<td align="center">数据格式转换翻译、数据加密解密、压缩解压缩</td>
+</tr>
+<tr>
+<td align="center">会话层</td>
+<td align="center">不同机器之间的用户建立及管理会话</td>
+</tr>
+<tr>
+<td align="center"><strong>传输层</strong></td>
+<td align="center">建立管理和维护端到端的连接，TCP、UDP</td>
+</tr>
+<tr>
+<td align="center"><strong>网络层</strong></td>
+<td align="center">IP地址及路由选择</td>
+</tr>
+<tr>
+<td align="center"><strong>数据链路层</strong></td>
+<td align="center">物理寻址，将原始比特流转化为逻辑传输线路</td>
+</tr>
+<tr>
+<td align="center">物理层</td>
+<td align="center">机械、电子、定时接口通信信道上上的原始比特流传输</td>
+</tr>
+</tbody></table>
+<h2 id="1-传输层"><a href="#1-传输层" class="headerlink" title="1. 传输层"></a>1. 传输层</h2><blockquote>
+<p>接受上一次的数据，将数据进行分割，保证数据准确到达对端。</p>
+</blockquote>
+<h2 id="2-TCP"><a href="#2-TCP" class="headerlink" title="2. TCP"></a>2. TCP</h2><blockquote>
+<p>TCP是面向连接的无状态的协议。为了连接的可靠性，每次连接的建立都需要3次握手。</p>
+</blockquote>
+<h3 id="2-1-建立连接（3次握手）"><a href="#2-1-建立连接（3次握手）" class="headerlink" title="2.1 建立连接（3次握手）"></a>2.1 建立连接（3次握手）</h3><blockquote>
+<p>3次握手的目的：</p>
+<ol>
+<li>同步连接双方的序列号和确认号；</li>
+<li>交换TCP窗口大小信息。</li>
+</ol>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="center">客户端(状态）</th>
+<th align="center">建立连接（三次握手）</th>
+<th align="center">服务端（状态）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>CLOSED</code></td>
+<td align="center"></td>
+<td align="center"><code>LISTEN</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"><code>SYN seq=0</code> ==》</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"><code>SYN_SENT</code></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">《== <code>SYN ACK ack=1,seq=0</code></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"><code>SYN_RCVD</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">ACK <code>ack=1,seq=1</code> ==》</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"><code>ESTABLISHED</code></td>
+<td align="center"></td>
+<td align="center"><code>ESTABLISHED</code></td>
+</tr>
+</tbody></table>
+<ul>
+<li>第一次握手: 建立连接。客户端发送连接请求，发送SYN报文，随机生成seq，本例默认为0。然后，客户端进入<code>SYN_SEND</code>状态，等待服务器的确认。</li>
+<li>第二次握手: 服务器收到客户端的SYN报文段。需要对这个SYN报文段进行确认，发送ACK报文，将ack设置为1（ack值为对方<code>seq+1</code>或者<code>seq+L</code>(数据长度L)）。同时，自己还要发送SYN请求信息，将seq为0。服务器端将上述所有信息一并发送给客户端，此时服务器进入<code>SYN_RECV</code>状态。</li>
+<li>第三次握手: 客户端收到服务器的ACK和SYN报文后，进行确认，然后将ack设置为1，seq设置为1，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务器端都进入<code>ESTABLISHED</code>状态，完成TCP三次握手。</li>
+</ul>
+<h3 id="2-2-数据传输"><a href="#2-2-数据传输" class="headerlink" title="2.2 数据传输"></a>2.2 数据传输</h3><table>
+<thead>
+<tr>
+<th align="center">客户端</th>
+<th align="center">数据传输</th>
+<th align="center">服务端</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"></td>
+<td align="center"><code>PSH seq=1， ACK ack=1（segmentLen = 99）</code> ==》</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">《== <code>PSH seq=1, ACK ack=100 （segmentLen = 119）</code></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"><code>ACK ack=120,seq=100</code> ==》</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<ul>
+<li>客户端先向服务器发送数据，该数据报是长度为99的数据。</li>
+<li>服务器收到报文后, 也向客户端发送了一个数据进行确认（<code>ACK</code>），并且返回客户端要请求的数据，数据的长度为111，将seq设置为1，ack设置为120（1 + 119）。</li>
+<li>客户端收到服务器返回的数据后进行确认（ACK），将seq设置为100， ack设置为112（1 + 111）。</li>
+</ul>
+<h3 id="2-3-断开链接（4次挥手）"><a href="#2-3-断开链接（4次挥手）" class="headerlink" title="2.3 断开链接（4次挥手）"></a>2.3 断开链接（4次挥手）</h3><table>
+<thead>
+<tr>
+<th align="center">客户端(状态）</th>
+<th align="center">断开连接</th>
+<th align="center">服务端（状态）</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"></td>
+<td align="center"><code>FIN ACK ack=120，seq=100</code> ==》</td>
+<td align="center"></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"><code>FIN_WAIT_1</code></td>
+<td align="center"></td>
+<td align="center"></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">《== <code>ACK ack=101,seq=120</code></td>
+<td align="center"></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"><code>FIN_WAIT_2</code></td>
+<td align="center"></td>
+<td align="center"><code>CLOSE_WAIT</code></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">《== <code>ACK ack=101,seq=120</code></td>
+<td align="center"></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"><code>LAST_ACK</code></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"><code>ACK ack=121,seq=101</code> ==》</td>
+<td align="center"></td>
+<td></td>
+</tr>
+<tr>
+<td align="center"><code>TIME_WAIT</code></td>
+<td align="center"></td>
+<td align="center"><code>CLOSE</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>第一次挥手：客户端向服务器发送一个FIN报文段，将设置seq为100和ack为120，;此时，客户端进入 FIN_WAIT_1状态,这表示客户端没有数据要发送服务器了，请求关闭连接;</li>
+<li>第二次挥手：服务器收到了客户端发送的FIN报文段，向客户端回一个ACK报文段，ack设置为101，seq设置为120;服务器进入了CLOSE_WAIT状态，客户端收到服务器返回的ACK报文后，进入FIN_WAIT_2状态;</li>
+<li>第三次挥手：服务器会观察自己是否还有数据没有发送给客户端，如果有，先把数据发送给客户端，再发送FIN报文；如果没有，那么服务器直接发送FIN报文给客户端。请求关闭连接，同时服务器进入LAST_ACK状态;</li>
+<li>第四次挥手：客户端收到服务器发送的FIN报文段，向服务器发送ACK报文段，将seq设置为101，将ack设置为121，然后客户端进入TIME_WAIT状态;服务器收到客户端的ACK报文段以后，就关闭连接;此时，客户端等待2MSL后依然没有收到回复，则证明Server端已正常关闭，客户端也可以关闭连接了。</li>
+</ul>
+<blockquote>
+<p><strong>计算规则：</strong><br>seq 为序列号<br>ack 为应答码<br>seq = 对方上次的ack；（首次发送时seq为系统随机生成）<br>ack = 对方的seq+1（无数据传输时） 或者 seq+L（报文数据的长度L</p>
+</blockquote>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/posts/23975/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
           </div>
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2021-12-17 20:54:52
+              2020-12-20 20:20:20
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags" title="标签"></i>
                     
                     <span class="span--tag">
-                      <a href="/tags/window/" title="window">
-                        <b>#</b> window
+                      <a href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" title="网络基础">
+                        <b>#</b> 网络基础
                       </a>
                     </span>
                     
@@ -202,7 +378,7 @@ MathJax = {
           </div>
           <div class="post-foot-prev">
             
-              <a href="/posts/29722/" target="_self">
+              <a href="/posts/47555/" target="_self">
                 <span>下一页</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -218,7 +394,7 @@ MathJax = {
   <div class="post-catalog hidden" id="catalog">
     <div class="title">目录</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%85%E5%AE%8C%E5%96%84"><span class="toc-text">待完善</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-text">1. 传输层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-TCP"><span class="toc-text">2. TCP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%EF%BC%883%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%89"><span class="toc-text">2.1 建立连接（3次握手）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-text">2.2 数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E6%96%AD%E5%BC%80%E9%93%BE%E6%8E%A5%EF%BC%884%E6%AC%A1%E6%8C%A5%E6%89%8B%EF%BC%89"><span class="toc-text">2.3 断开链接（4次挥手）</span></a></li></ol></li></ol>
     </div>
   </div>
 
@@ -552,12 +728,12 @@ MathJax = {
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + windows%20%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F47555%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + OSI7%E5%B1%82%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F23975%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/47555/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/23975/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
