@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      frida定位和还原简单请求参数signature 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">frida定位和还原简单请求参数signature</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-30 15:01:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                    <b>#</b> 逆向
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>当对APP抓包时，请求参数存在signature签名，导致我们就不能对url进行修改,测试. 这时候我们需要对APP进行逆向分析，找出signature关键代码，进行分析算法，在利用python进行复刻，从而实现改写url实现发包测试.其中Frida更多是扮演了验证我们猜想的辅助工具.</p>
+<p>开始今天的分析:</p>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220317214616640.png" alt="image-20220317214616640"></p>
+<p>这个APP存在请求参数signature:e6f47b91bb6fb89dc69079fdcb49d7dc</p>
+<p>我们jadx进行反编译分析,根据请求参数,我们利用搜索关键字的方法匹配到signature,由于请求参数名是已知的,在java源码中也是”signature”字符串的形式.</p>
+<p><img src="C:/Users/zlb/AppData/Roaming/Typora/typora-user-images/image-20220317215144779.png" alt="image-20220317215144779"></p>
+<p>定位到第二行<img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220317215247105.png" alt="image-20220317215247105"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b(&quot;signature&quot;, a(udid, valueOf)).a();</span><br></pre></td></tr></table></figure>
+
+<p>根据代码可知signature的值用a方法传入两个变量,生成了signature,向上跟踪变量udid和valueOf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String udid = MyApplication.getInstance().getUDID();</span><br><span class="line">String valueOf = String.valueOf(System.currentTimeMillis() / 1000);</span><br></pre></td></tr></table></figure>
+
+<p>根据currentTimeMillis方法可知其中valueOf是一个到秒的时间戳</p>
+<p>继续向上跟踪getUDID()的方法</p>
+<p><img src="C:/Users/zlb/AppData/Roaming/Typora/typora-user-images/image-20220317215928902.png" alt="image-20220317215928902"></p>
+<p>根据代码可知,getUDID()是一个拼接手机IMEI+IMSI的两个字符串</p>
+<p>到此两个a方法的两个udid,valueOf变量都分析完了,接着我们往下走,去分析 a()方法是怎么构造的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">a</span><span class="params">(String str, String str2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> com.hualong.framework.b.a.a(String.format(<span class="string">&quot;%s&amp;&amp;%s&amp;&amp;%s&quot;</span>, str, str2, <span class="string">&quot;f1190aca-d08e-4041-8666-29931cd89dde&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>a()方法是一个拼接字符串的操作,拼接成<code>str&amp;&amp;str2&amp;&amp;&amp;&amp;f1190aca-d08e-4041-8666-29931cd89dde</code></p>
+<p>其中str是我们上面分析的udid,也就是IMEI+IMSI, str2是到秒的时间戳.继续往下跟方法a它怎么处理的这个字符串</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hualong.framework.b;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.security.MessageDigest;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* loaded from: classes.dex */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">a</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">a</span><span class="params">(String str)</span> </span>&#123;  <span class="comment">//传进去一个字符串</span></span><br><span class="line">        <span class="keyword">if</span> (str == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        StringBuffer stringBuffer = <span class="keyword">new</span> StringBuffer();<span class="comment">//new StringBuffer</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            MessageDigest instance = MessageDigest.getInstance(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line">            instance.update(str.getBytes());</span><br><span class="line">            <span class="keyword">byte</span>[] digest = instance.digest();<span class="comment">//输出MessageDigest,md5加密的值到digest数组</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">byte</span> b2 : digest) &#123;  <span class="comment">//遍历digest数组</span></span><br><span class="line">                stringBuffer.append(Integer.toString((b2 &gt;&gt;&gt; <span class="number">4</span>) &amp; <span class="number">15</span>, <span class="number">16</span>)).append(Integer.toString(b2 &amp; <span class="number">15</span>, <span class="number">16</span>));<span class="comment">////无符号右移后在进行且运算,Integer.toString(argv,16),表示把argv转成16进制表示的字符串.</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stringBuffer.toString();<span class="comment">//输出字符串</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据代码我们用Frida hook来验证我们的猜想</p>
+<p>先hook 这个类com.hualong.framework.b.a中的a方法,打印出他的 return stringBuffer.toString();.</p>
+<p>hook代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Java.perform(</span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> act = Java.use(<span class="string">&#x27;com.hualong.framework.b.a&#x27;</span>)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;1111&#x27;</span>)</span><br><span class="line">    act.a.implementation = <span class="function"><span class="keyword">function</span>(<span class="params">p</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;2222&#x27;</span>)</span><br><span class="line">    <span class="keyword">var</span> tt = <span class="built_in">this</span>.a(p)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;yc:&#x27;</span>+p)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;mc:&#x27;</span>+tt)</span><br><span class="line">    <span class="keyword">return</span> tt</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220317224805678.png" alt="image-20220317224805678"></p>
+<p>打印出了IMEI867686022237711-IMSI460NNNNNNNNNNNN&amp;&amp;1647521541&amp;&amp;f1190aca-d08e-4041-8666-29931cd89dde和加密后的字符串,可知我们的猜想是对的,接下来我们在进一步判断用js hook复刻这个a方法.我们把字符串传入看看和生成的是否一致</p>
+<p>hook代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;   <span class="comment">//由于源代码传入的是一个字符串,我们需要use这个java.lang.String类,new一个对象出来</span></span><br><span class="line"><span class="keyword">var</span> str = Java.use(<span class="string">&#x27;java.lang.String&#x27;</span>).$new(<span class="string">&#x27;IMEI867686022237711-IMSI460NNNNNNNNNNNN&amp;&amp;1647521541&amp;&amp;f1190aca-d08e-4041-8666-29931cd89dde&#x27;</span>)</span><br><span class="line"> <span class="built_in">console</span>.log(str)</span><br><span class="line"> <span class="keyword">var</span> stringbuffer = Java.use(<span class="string">&#x27;java.lang.StringBuffer&#x27;</span>).$new() <span class="comment">//new一个StringBuffer类,源代码也是new出来的类</span></span><br><span class="line"> <span class="keyword">var</span> instance = Java.use(<span class="string">&#x27;java.security.MessageDigest&#x27;</span>).getInstance(<span class="string">&quot;MD5&quot;</span>);<span class="comment">//直接使用它引用的类,不需要new</span></span><br><span class="line"> <span class="keyword">var</span> integer = Java.use(<span class="string">&#x27;java.lang.Integer&#x27;</span>)</span><br><span class="line"> instance.update(str.getBytes());<span class="comment">//MessageDigest的update方法去指定byte 数组</span></span><br><span class="line"> <span class="keyword">var</span> digest = instance.digest()<span class="comment">//接收digest数组</span></span><br><span class="line"> <span class="keyword">var</span> len = digest.length   <span class="comment">//返回digest数组的长度</span></span><br><span class="line"> <span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;len;i++)  <span class="comment">//循环遍历</span></span><br><span class="line"> &#123;</span><br><span class="line">    stringbuffer.append(integer.toString((digest[i] &gt;&gt;&gt; <span class="number">4</span>) &amp; <span class="number">15</span>, <span class="number">16</span>)).append(integer.toString(digest[i]  &amp; <span class="number">15</span>, <span class="number">16</span>));<span class="comment">////无符号右移后在进行且运算,Integer.toString(argv,16),表示把argv转成16进制表示的字符串.</span></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">console</span>.log(stringbuffer.toString())<span class="comment">//输出stringbuffer字符串</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220317232539087.png" alt="image-20220317232539087"></p>
+<p>可见输出的bd078eb5ff0b276712d5887254639872 和源程序输出一样,证明我们的猜想是正确的.根据上面的分析</p>
+<p>下一步我们开始把这个算法写成python</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="built_in">str</span> = <span class="string">&#x27;IMEI867979020991839-IMSI460NNNNNNNNNNNN&amp;&amp;1629812392&amp;&amp;f1190aca-d08e-4041-8666-29931cd89dde&#x27;</span></span><br><span class="line">sig = <span class="string">&#x27;&#x27;</span></span><br><span class="line">instance = hashlib.md5()</span><br><span class="line">instance.update(<span class="built_in">bytearray</span>(<span class="built_in">str</span>.encode(<span class="string">&#x27;utf8&#x27;</span>)))</span><br><span class="line">digest = instance.digest()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> digest:</span><br><span class="line">    sig = sig + <span class="built_in">format</span>((i&gt;&gt;<span class="number">4</span>)&amp;<span class="number">15</span>, <span class="string">&#x27;x&#x27;</span>) + <span class="built_in">format</span>(i&amp;<span class="number">15</span>, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;sig:&#x27;</span>+sig)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">bytearray</span>(<span class="built_in">str</span>.encode(<span class="string">&#x27;utf8&#x27;</span>)):</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line">m = hashlib.md5()</span><br><span class="line">m.update(<span class="built_in">bytearray</span>(<span class="built_in">str</span>.encode(<span class="string">&#x27;utf8&#x27;</span>)))</span><br><span class="line"><span class="built_in">print</span>(m.digest())</span><br><span class="line"></span><br><span class="line">str_cons = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">bytearray</span>(m.digest()):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;i:&#x27;</span>,i)</span><br><span class="line">    <span class="comment">#print((i&gt;&gt;4) &amp; 15)</span></span><br><span class="line">    str_cons = str_cons + <span class="built_in">format</span>(((i&gt;&gt;<span class="number">4</span>) &amp;<span class="number">15</span>), <span class="string">&#x27;x&#x27;</span>) + <span class="built_in">format</span>(i &amp; <span class="number">15</span>, <span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(str_cons)</span><br></pre></td></tr></table></figure>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/0/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-30 15:01:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                        <b>#</b> 逆向
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/21357/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + frida%E5%AE%9A%E4%BD%8D%E5%92%8C%E8%BF%98%E5%8E%9F%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0signature + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F44205%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/44205/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

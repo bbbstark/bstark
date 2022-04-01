@@ -182,7 +182,11 @@ MathJax = {
 <h5 id="Linux-挂载U盘"><a href="#Linux-挂载U盘" class="headerlink" title="Linux 挂载U盘"></a>Linux 挂载U盘</h5><p>mount /dev<br>挂载到了mnt目录下。需要创建文件夹，执行 </p>
 <h5 id="Python快速搭建http服务"><a href="#Python快速搭建http服务" class="headerlink" title="Python快速搭建http服务"></a>Python快速搭建http服务</h5><p> 自动共享运行目录<br> Python2 下<br> Python -m SimpleHTTPServer 8080<br> Python3下<br> Python3 -m http.server 8080</p>
 <h5 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h5><p> /etc/service<br> 22改端口配置文件<br>/etc/ssh/sshd_config<br>firewall-cmd –state   //    检查防火墙是否开启<br>firewall-cmd –zone=public –list-ports   //列出当前防火墙的通过端口规则<br>firewall-cmd –zone=public –list-service  //列出当前防火墙的通过端口服务名称规则<br>firewall-cmd –zone=public –add-port=80/tcp –permanent   添加端口<br>firewall-cmd –zone=public –add-service=http –permanent  添加系统自定的/etc/service  服务名称<br>firewall-cmd –zone=public –remove-port=http –permanent  删除端口或服务<br>firewall-cmd –reload  //更改完后需要 重新加载配置文件，使其生效。</p>
-<h2 id="常用配置文件"><a href="#常用配置文件" class="headerlink" title="常用配置文件"></a>常用配置文件</h2><p>vim ~/.bashrc         //  shell的个性配置文件</p>
+<h2 id="常用配置文件"><a href="#常用配置文件" class="headerlink" title="常用配置文件"></a>常用配置文件</h2><p>网卡配置文件:</p>
+<p>/etc/network/interface.d/ens33    ubuntu 16以下版本</p>
+<p>/etc/netplan/01-network-manager-all.yaml   ubuntu 18以上</p>
+<p>/etc/sysconfig/network-scripts/ifcfg-eth0   centos/redhat</p>
+<p>vim ~/.bashrc         //  shell的个性配置文件</p>
 <p>source ~/.bashrc   //从新加载配置文件生效</p>
 <p>设置别名永远生效:在~/.bashrc  修改当前用户家目录里的.bashrc, 仅对当前用户生效,是个人配置文件./etc/bashrc 对所有用户生效,是全局配置文件.)</p>
 <p>关闭linux防火墙:/etc/selinux/config–将selinux 由enforcing 改为disabled.</p>

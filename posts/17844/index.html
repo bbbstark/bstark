@@ -154,7 +154,29 @@ MathJax = {
           
       </div>
       <div class="markdown-body">
-        <h1 id="待补充————————"><a href="#待补充————————" class="headerlink" title="待补充————————"></a>待补充————————</h1><p>get_magic_quotes_runtime()    // php.ini文件</p>
+        <p>常见的PHP危险函数</p>
+<p>SQL注入:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line"></span><br><span class="line">代码执行:</span><br><span class="line"></span><br><span class="line">```php</span><br><span class="line">eval()、assert()、preg_replace()、create_function()</span><br><span class="line"></span><br><span class="line">array_map()、call_user_func()、call_user_func_array()，array_filter，usort，uasort()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>命令执行:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system()、exec()、passthru()、shell_exec()、popen()、proc_open()、pcntl_exec()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>xss:</p>
+<p>xss漏洞关键就是寻找参数未过滤的输出函数:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo、printf、print、print_r、sprintf、die 、var_dump、 var_export</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>安装环节</p>
+<p>header 检测lock文件是否存在</p>
+<p>header文件只跳转 后面代码还是会执行</p>
+<h1 id="待补充————————"><a href="#待补充————————" class="headerlink" title="待补充————————"></a>待补充————————</h1><p>get_magic_quotes_runtime()    // php.ini文件</p>
 <p>二次注入</p>
 <p>mysql_escape_string()</p>
 <p>二次注入</p>
@@ -197,7 +219,7 @@ MathJax = {
           </div>
           <div class="post-foot-prev">
             
-              <a href="/posts/0/" target="_self">
+              <a href="/posts/4/" target="_self">
                 <span>下一页</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>

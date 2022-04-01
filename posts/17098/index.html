@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      python 常见基础模块的使用 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">python 常见基础模块的使用</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-02-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E7%BC%96%E7%A8%8B/" title="编程">
+                    <b>#</b> 编程
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="requests"><a href="#requests" class="headerlink" title="requests"></a>requests</h2><p>默认会对url进行编码.</p>
+<p><strong>get请求</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">payload = &#123;<span class="string">&quot;id&quot;</span>:<span class="string">&quot;11&quot;</span>,<span class="string">&quot;uid&quot;</span>:<span class="string">&quot;888&quot;</span>&#125;</span><br><span class="line">r = requests.get(<span class="string">&#x27;https://api.github.com/events&#x27;</span>, params=payload)</span><br><span class="line">r = requests.get(<span class="string">&quot;http://httpbin.org/get&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(response.status_code)  <span class="comment"># 打印状态码</span></span><br><span class="line"><span class="built_in">print</span>(response.url)          <span class="comment"># 打印请求url</span></span><br><span class="line"><span class="built_in">print</span>(response.headers)      <span class="comment"># 打印头信息</span></span><br><span class="line">r.headers[<span class="string">&#x27;Content-Type&#x27;</span>]    <span class="comment"># 访问响应头信息</span></span><br><span class="line"><span class="built_in">print</span>(response.cookies)      <span class="comment"># 打印cookie信息</span></span><br><span class="line"><span class="built_in">print</span>(response.text)         <span class="comment">#以文本形式打印网页源码</span></span><br><span class="line"><span class="built_in">print</span>(response.content)      <span class="comment">#以字节流形式打印</span></span><br><span class="line">bb = <span class="built_in">open</span>(<span class="string">&quot;content.txt&quot;</span>,<span class="string">&quot;ab+&quot;</span>)</span><br><span class="line">bb.write(response.content)</span><br></pre></td></tr></table></figure>
+
+<p><strong>post请求</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">payload = &#123;</span><br><span class="line">    <span class="string">&quot;i&quot;</span>:<span class="string">&quot;%E5%A5%BD%E7%9A%84&quot;</span>,</span><br><span class="line">    <span class="string">&quot;from&quot;</span>:<span class="string">&quot;AUTO&quot;</span>,</span><br><span class="line">    <span class="string">&quot;to&quot;</span>:<span class="string">&quot;AUTO&quot;</span>,</span><br><span class="line">    <span class="string">&quot;smartresult&quot;</span>:<span class="string">&quot;dict&quot;</span>,</span><br><span class="line">    <span class="string">&quot;client&quot;</span>:<span class="string">&quot;fanyideskweb&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://fanyi.youdao.com/translate_o?smartresult=dict&amp;smartresult=rule&quot;</span></span><br><span class="line">r = requests.post(url,data=payload)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(r.text)</span><br></pre></td></tr></table></figure>
+
+<p><strong>json请求</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;https://api.github.com/some/endpoint&#x27;</span></span><br><span class="line">payload = &#123;<span class="string">&#x27;some&#x27;</span>: <span class="string">&#x27;data&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">r = requests.post(url, json=payload)</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置编码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r.encoding								<span class="comment">#返回编码</span></span><br><span class="line">r.encoding = <span class="string">&#x27;ISO-8859-1&#x27;</span>				<span class="comment">#设置编码</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>原始请求</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r = requests.get(<span class="string">&#x27;https://api.github.com/events&#x27;</span>, stream=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>自定义请求头</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;https://api.github.com/some/endpoint&#x27;</span></span><br><span class="line">headers = &#123;<span class="string">&#x27;user-agent&#x27;</span>: <span class="string">&#x27;my-app/0.0.1&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">r = requests.get(url, headers=headers)</span><br></pre></td></tr></table></figure>
+
+<p><strong>文件上传</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;http://httpbin.org/post&#x27;</span></span><br><span class="line">files = &#123;<span class="string">&#x27;file&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;report.xls&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>)&#125;</span><br><span class="line"></span><br><span class="line">r = requests.post(url, files=files)</span><br><span class="line">r.text</span><br></pre></td></tr></table></figure>
+
+<p><strong>携带Cookie</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">url = <span class="string">&#x27;http://httpbin.org/cookies&#x27;</span></span><br><span class="line">cookies = <span class="built_in">dict</span>(php_session=<span class="string">&#x27;working&#x27;</span>)</span><br><span class="line"></span><br><span class="line">r = requests.get(url, cookies=cookies)</span><br><span class="line">r.text</span><br></pre></td></tr></table></figure>
+
+<p><strong>重定向</strong></p>
+<p>requests 默认跟踪重定向,使用<strong>allow_redirects=False</strong>可以禁用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">r = requests.get(<span class="string">&#x27;http://github.com&#x27;</span>, allow_redirects=<span class="literal">False</span>)</span><br><span class="line">r.status_code</span><br><span class="line"></span><br><span class="line">r.history</span><br></pre></td></tr></table></figure>
+
+<p><strong>代理</strong></p>
+<p>http代理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">proxies = &#123;</span><br><span class="line">  <span class="string">&quot;http&quot;</span>: <span class="string">&quot;http://10.10.1.10:3128&quot;</span>,</span><br><span class="line">  <span class="string">&quot;https&quot;</span>: <span class="string">&quot;http://10.10.1.10:1080&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">requests.get(<span class="string">&quot;http://example.org&quot;</span>, proxies=proxies)</span><br></pre></td></tr></table></figure>
+
+<p>socks5代理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">proxies = &#123;</span><br><span class="line">    <span class="string">&#x27;http&#x27;</span>: <span class="string">&#x27;socks5://user:pass@host:port&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;https&#x27;</span>: <span class="string">&#x27;socks5://user:pass@host:port&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="fake-useragent"><a href="#fake-useragent" class="headerlink" title="fake-useragent"></a>fake-useragent</h2><p>随机获取user_agent</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fake_useragent <span class="keyword">import</span> UserAgent</span><br><span class="line">ua = UserAgent()</span><br><span class="line"><span class="comment">#随机获取一个ie浏览器ua</span></span><br><span class="line"><span class="built_in">print</span>(ua.ie <span class="keyword">or</span> ua.firefox <span class="keyword">or</span> ua.chrome)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Beautiful-soup"><a href="#Beautiful-soup" class="headerlink" title="Beautiful soup"></a>Beautiful soup</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line">file = <span class="built_in">open</span>(<span class="string">&#x27;./content.txt&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>) </span><br><span class="line">html = file.read() </span><br><span class="line">bs = BeautifulSoup(html,<span class="string">&quot;html.parser&quot;</span>) <span class="comment"># 缩进格式</span></span><br><span class="line"><span class="comment"># print(bs.prettify()) # 格式化html结构</span></span><br><span class="line"><span class="comment"># print(bs.title) # 获取title标签的名称</span></span><br><span class="line"><span class="comment"># print(bs.title.name) # 获取title的name</span></span><br><span class="line"><span class="comment"># print(bs.title.string) # 获取head标签的所有内容</span></span><br><span class="line"><span class="comment"># print(bs.head) </span></span><br><span class="line"><span class="comment"># print(bs.div.a)  # 获取第一个div标签中的所有内容</span></span><br><span class="line"><span class="comment"># print(bs.div[&quot;id&quot;]) # 获取第一个div标签的id的值</span></span><br><span class="line"><span class="comment"># print(bs.a) </span></span><br><span class="line"><span class="comment"># print(bs.find_all(&quot;a&quot;)) # 获取所有的a标签</span></span><br><span class="line"><span class="comment"># print(bs.find(id=&quot;u1&quot;)) # 获取id=&quot;u1&quot;</span></span><br><span class="line"><span class="comment"># for item in bs.find_all(&quot;a&quot;): </span></span><br><span class="line"><span class="comment">#     print(item.get(&quot;href&quot;)) # 获取所有的a标签，并遍历打印a标签中的href的值</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> bs.find_all(<span class="string">&quot;a&quot;</span>): </span><br><span class="line">    <span class="built_in">print</span>(item.get_text())</span><br></pre></td></tr></table></figure>
+
+<h2 id="lxml"><a href="#lxml" class="headerlink" title="lxml"></a>lxml</h2><p>lxml 是 Python 的第三方解析库，完全使用 Python 语言编写，它对 Xpath 表达式提供了良好的支持，因此能够了高效地解析 HTML/XML 文档。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip3 install lxml    <span class="comment">#安装模块</span></span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree <span class="comment">#导入模块</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>提取所有a标签内的文本信息</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:UTF-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://news.sina.com.cn/&quot;</span></span><br><span class="line"></span><br><span class="line">c = requests.get(url)</span><br><span class="line">doc = c.content.decode(<span class="string">&#x27;utf8&#x27;</span>)</span><br><span class="line">parse_html=etree.HTML(doc)</span><br><span class="line">xpath_bds=<span class="string">&#x27;//*[@id=&quot;blk_gnxw_011&quot;]/li/a/text()\n&#x27;</span></span><br><span class="line"><span class="comment"># xpath_bds=&#x27;//*[@id=&quot;blk_gnxw_011&quot;]/li/a/@href&#x27;   #获取A标签 href的属性值</span></span><br><span class="line"></span><br><span class="line">r_list=parse_html.xpath(xpath_bds)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(r_list)</span><br><span class="line"><span class="built_in">print</span>(r_list[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+
+<h2 id="urllib"><a href="#urllib" class="headerlink" title="urllib"></a>urllib</h2><p>Python urllib 库用于操作网页 URL，并对网页的内容进行抓取处理,默认url不进行编码,requests库默认会对url进行编码,编写工具时需要用这个库.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">urllib.request - 打开和读取 URL。</span><br><span class="line">urllib.error - 包含 urllib.request 抛出的异常。</span><br><span class="line">urllib.parse - 解析 URL。</span><br><span class="line">urllib.robotparser - 解析 robots.txt 文件。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line">string = <span class="string">&#x27;%E7%88%AC%E8%99%AB&#x27;</span>     </span><br><span class="line">string1 = &#123;<span class="string">&quot;wd&quot;</span>:<span class="string">&#x27;爬虫&#x27;</span>&#125;           <span class="comment"># 这里参数必须是字典</span></span><br><span class="line">result = parse.unquote(string)   <span class="comment">#url解码</span></span><br><span class="line">result1 = parse.urlencode(string1)  <span class="comment">#url编码</span></span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="built_in">print</span>(result1)</span><br></pre></td></tr></table></figure>
+
+<h2 id="openpyxl"><a href="#openpyxl" class="headerlink" title="openpyxl"></a>openpyxl</h2><p><strong>引入库</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> openpyxl <span class="keyword">import</span> Workbook</span><br></pre></td></tr></table></figure>
+
+<p><strong>基本操作</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wb1 = Workbook(encoding=<span class="string">&#x27;UTF-8&#x27;</span>)</span><br><span class="line">wb 	= Workbook()  </span><br><span class="line">wb = load_workbook(<span class="string">&#x27;./000.xlsx&#x27;</span>)   <span class="comment">#加载一个文件.</span></span><br><span class="line">ws1 = wb.create_sheet(<span class="string">&#x27;111&#x27;</span>)       <span class="comment">#设置工作表名</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>写入数据</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">table[<span class="string">&#x27;A2&#x27;</span>] = <span class="number">4</span>    			 <span class="comment">#单元格写入</span></span><br><span class="line">table[<span class="string">&#x27;A1&#x27;</span>] = <span class="string">&#x27;=SUM(1,1)&#x27;</span>    <span class="comment">#按公式写入</span></span><br><span class="line"></span><br><span class="line">table.cell(row = <span class="number">3</span>,column = <span class="number">1</span>,value = <span class="number">10</span>)      <span class="comment">#按行列写入</span></span><br><span class="line">table.cell(row = <span class="number">3</span>,column = <span class="number">1</span>).value = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">row = [<span class="string">&quot;a&quot;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,]			<span class="comment">#写入一行</span></span><br><span class="line">sheet.append(row)                    </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl <span class="comment">#写入</span></span><br><span class="line"><span class="comment">#这个库的行列索引是从1开始的</span></span><br><span class="line">writeBook_in = openpyxl.load_workbook(<span class="string">&#x27;追加.xlsx&#x27;</span>)</span><br><span class="line">writeSheet_in = writeBook_in[<span class="string">&quot;Sheet1&quot;</span>]</span><br><span class="line"></span><br><span class="line">writeRow_in = <span class="number">6</span><span class="comment">#从第6排开始</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):<span class="comment">#循环两次，所以到第7排</span></span><br><span class="line">    </span><br><span class="line">    writeSheet_in.cell(writeRow_in, <span class="number">2</span>, <span class="string">&#x27;李四&#x27;</span>) </span><br><span class="line">    writeSheet_in.cell(writeRow_in, <span class="number">3</span>, <span class="string">&#x27;女&#x27;</span>) </span><br><span class="line">    writeSheet_in.cell(writeRow_in, <span class="number">4</span>, <span class="string">&#x27;55566620121010123456&#x27;</span>) </span><br><span class="line">    writeSheet_in.cell(writeRow_in, <span class="number">6</span>, <span class="string">&#x27;1-101&#x27;</span>) </span><br><span class="line">    writeSheet_in.cell(writeRow_in, <span class="number">9</span>, <span class="number">15611112222</span>) </span><br><span class="line">    </span><br><span class="line">    writeRow_in += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">writeBook_in.save(<span class="string">&quot;追加第二版.xlsx&quot;</span>)<span class="comment">#在源文件当前目录新建一个文件</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>读取数据</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">f = openpyxl.load_workbook(<span class="string">&#x27;test.xlsx&#x27;</span>)  <span class="comment">#读取一个excel文件</span></span><br><span class="line">						<span class="comment">#读取单元格或范围切片</span></span><br><span class="line">c = table[<span class="string">&#x27;A1&#x27;</span>]			<span class="comment">#获取&#x27;A1&#x27;，返回class</span></span><br><span class="line">c = table.cell(row = <span class="number">1</span>,column = <span class="number">1</span>)	<span class="comment">#按行列数获读取</span></span><br><span class="line"></span><br><span class="line">row5 = table[<span class="number">5</span>]     	<span class="comment">#获取第5行，返回元组</span></span><br><span class="line">colA = table[<span class="string">&#x27;C&#x27;</span>]    	<span class="comment">#获取C列</span></span><br><span class="line">cell_range = table[<span class="string">&#x27;A1&#x27;</span>:<span class="string">&#x27;B4&#x27;</span>]    <span class="comment">#获取范围切片元组</span></span><br><span class="line">row_range = table[<span class="number">5</span>:<span class="number">8</span>]	<span class="comment">#5到8行</span></span><br><span class="line">col_range[<span class="string">&#x27;A:D&#x27;</span>]		<span class="comment">#A到D列</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#按行列数读取范围切片</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> table.iter_rows(min_row=<span class="number">1</span>, max_col=<span class="number">3</span>, max_row=<span class="number">2</span>):    <span class="comment">#按行读取</span></span><br><span class="line"><span class="keyword">for</span> col <span class="keyword">in</span> table.iter_cols(min_row=<span class="number">1</span>, max_col=<span class="number">3</span>, max_row=<span class="number">2</span>):    <span class="comment">#按列读取</span></span><br><span class="line"></span><br><span class="line">table.max_row    <span class="comment">#最大行数</span></span><br><span class="line">table.max_column <span class="comment">#最大列数</span></span><br><span class="line">table.rows    	 <span class="comment">#按行遍历</span></span><br><span class="line">table.columns    <span class="comment">#按列遍历</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#读取单元格的值</span></span><br><span class="line">c = table[<span class="string">&#x27;A2&#x27;</span>].value	<span class="comment">#按位置读取</span></span><br><span class="line">c = table.cell(row = <span class="number">1</span>,column = <span class="number">1</span>).value	<span class="comment">#按行列数读取 </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>保存</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wb.save(<span class="string">&#x27;sanguo.xlsx&#x27;</span>)  <span class="comment"># 保存文件，注意以xlsx为文件扩展名</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="系统模块-json"><a href="#系统模块-json" class="headerlink" title="系统模块 json"></a>系统模块 json</h2><p>用于json的解析后在使用jsonpath取提取</p>
+<table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>json.dumps()</td>
+<td>将 Python 对象转换成 JSON 字符串。</td>
+</tr>
+<tr>
+<td>json.loads()</td>
+<td>将 JSON 字符串转换成 Python 对象。<strong>引入字符串</strong></td>
+</tr>
+<tr>
+<td>json.dump()</td>
+<td>将 Python 中的对象转化成 JSON 字符串储存到文件中。</td>
+</tr>
+<tr>
+<td>json.load()</td>
+<td>将文件中的 JSON 字符串转化成 Python 对象提取出来。 <strong>加载文件</strong></td>
+</tr>
+</tbody></table>
+<h2 id="JsonPath"><a href="#JsonPath" class="headerlink" title="JsonPath"></a>JsonPath</h2><p>使用例子:必须导入两个库, json,jsonpath,先用json.loads(字符串)转换,再用jsonpath().</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pip install jsonpath</span><br><span class="line">pip install json</span><br><span class="line"></span><br><span class="line">response = requests.get(url,headers=headers)	<span class="comment">#requests请求JSON内容</span></span><br><span class="line">html = response.text</span><br><span class="line">data = json.loads(html)					    <span class="comment">#json.loads把json数据转换成python字典</span></span><br><span class="line"><span class="comment"># 使用 jsonpath 提取数据</span></span><br><span class="line">rjson = jsonpath.jsonpath(data,<span class="string">&#x27;$.data[*].cover&#x27;</span>) <span class="comment">#jsonpath 语句提取</span></span><br><span class="line"><span class="built_in">print</span>(rjson)</span><br></pre></td></tr></table></figure>
+
+<p>JsonPath语法要点：</p>
+<ul>
+<li><code>$</code> 表示文档的根元素</li>
+<li><code>@</code> 表示文档的当前元素</li>
+<li><code>.node_name</code> 或 <code>[&#39;node_name&#39;]</code> 匹配下级节点</li>
+<li><code>[index]</code> 检索数组中的元素</li>
+<li><code>[start:end:step]</code> 支持数组切片语法</li>
+<li><code>*</code> 作为通配符，匹配所有成员</li>
+<li><code>..</code> 子递归通配符，匹配成员的所有子元素</li>
+<li><code>(&lt;expr&gt;)</code> 使用表达式</li>
+<li><code>?(&lt;boolean expr&gt;)</code>进行数据筛选</li>
+</ul>
+<p>在线语法解析器:<a target="_blank" rel="noopener" href="https://www.ivtool.com/jsonpath-parser/">https://www.ivtool.com/jsonpath-parser/</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/43153/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-02-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E7%BC%96%E7%A8%8B/" title="编程">
+                        <b>#</b> 编程
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/41283/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#requests"><span class="toc-text">requests</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fake-useragent"><span class="toc-text">fake-useragent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Beautiful-soup"><span class="toc-text">Beautiful soup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lxml"><span class="toc-text">lxml</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#urllib"><span class="toc-text">urllib</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#openpyxl"><span class="toc-text">openpyxl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97-json"><span class="toc-text">系统模块 json</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JsonPath"><span class="toc-text">JsonPath</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + python%20%E5%B8%B8%E8%A7%81%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BD%BF%E7%94%A8 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F17098%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/17098/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

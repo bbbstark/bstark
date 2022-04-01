@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      frida rpc 远程主动调用APP加密函数 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">frida rpc 远程主动调用APP加密函数</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-18 15:01:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                    <b>#</b> 逆向
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><strong>抓包分析app:</strong></p>
+<p>登录POST请求:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST /loginUser HTTP/1.1</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 322</span><br><span class="line">Host: api.passport.test.com</span><br><span class="line">Connection: close</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">User-Agent: okhttp/3.11.0</span><br><span class="line"></span><br><span class="line">apiaccount=vrpuc-aaf91f835147ce2d01216bd3bd5c3516&amp;phone=18812345600&amp;sign=A31C4B536BA9BE0916548DD34BEB0985&amp;enc=Uz8aJcfYfJbdFo797QKb4SN3LQGA%2FFNY6qIBl046sSGco7r0PgNV67K6jIzgI7E9Y9Ag4%2FpctSEJrDey6qU33na%2Beci9FvB%2FgczumGGbxKXjxkO3qqfoZkRKsuy%2Bbf%2FBS7ZvgYj%2BhFXZixchs9QTgtf8uqFC4C8BjnBvqfVcCCk%3D&amp;timestamp=1647961433279</span><br></pre></td></tr></table></figure>
+
+<p>经过分析 sign,enc加密,导致无法篡改请求包,其中密码也加密了.</p>
+<p>逆向APP:</p>
+<p>搜索请求参数名定位相关代码,在一通hook分析验证,确定了两个代码位置函数加密点.</p>
+<p>enc:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> O <span class="title">d</span><span class="params">(String str, String str2)</span> </span>&#123;</span><br><span class="line">       HashMap hashMap = <span class="keyword">new</span> HashMap();</span><br><span class="line">       hashMap.put(<span class="string">&quot;phone&quot;</span>, str);</span><br><span class="line">       hashMap.put(<span class="string">&quot;enc&quot;</span>, e(str2)); <span class="comment">//根据hook分析代码得知,enc用e方法进行了加密</span></span><br><span class="line">       <span class="keyword">return</span> b.c(f.h(), a(hashMap));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>enc生成</strong></p>
+<p>e方法:,password传入点.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">e</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">       String a2 = a(<span class="number">10</span>);</span><br><span class="line">       <span class="keyword">return</span> d(<span class="string">&quot;password=&quot;</span> + str + <span class="string">&quot;&amp;salt=&quot;</span> + a2); <span class="comment">//可见密码在str进行了拼接,a2为生成10为随机int整数.跟踪d方法发现有经过了各种骚操作,RSA加密等</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>sign分析:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, String&gt; <span class="title">a</span><span class="params">(Map&lt;String, String&gt; map)</span> </span>&#123;</span><br><span class="line">       HashMap hashMap = <span class="keyword">new</span> HashMap();<span class="comment">//大致看一下符合我们抓包的请求参数,hook验证</span></span><br><span class="line">       hashMap.put(<span class="string">&quot;apiaccount&quot;</span>, <span class="string">&quot;vrpuc-aaf91f835147ce2d01216bd3bd5c3516&quot;</span>);</span><br><span class="line">       hashMap.put(<span class="string">&quot;timestamp&quot;</span>, String.valueOf(System.currentTimeMillis()));</span><br><span class="line">       TreeMap treeMap = <span class="keyword">new</span> TreeMap();</span><br><span class="line">       treeMap.putAll(hashMap);</span><br><span class="line">       <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">           treeMap.putAll(map);</span><br><span class="line">       &#125;</span><br><span class="line">       hashMap.put(<span class="string">&quot;sign&quot;</span>, a((SortedMap&lt;String, String&gt;) treeMap));<span class="comment">//跟踪a方法</span></span><br><span class="line">       <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">           hashMap.putAll(map);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> hashMap;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>a方法传入了一个sortedMap参数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">a</span><span class="params">(SortedMap&lt;String, String&gt; sortedMap)</span> </span>&#123;</span><br><span class="line">        StringBuffer stringBuffer = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, String&gt; entry : sortedMap.entrySet()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!TextUtils.isEmpty(entry.getValue())) &#123;</span><br><span class="line">                stringBuffer.append(entry.getKey() + <span class="string">&quot;=&quot;</span> + entry.getValue() + <span class="string">&quot;&amp;&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stringBuffer.append(<span class="string">&quot;key=a0f723c011346j39w049d7bf0356b34b&quot;</span>);<span class="comment">//添加Key到列表</span></span><br><span class="line">        <span class="keyword">return</span> D.d(stringBuffer.toString()).toUpperCase();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>hook打印a传的sortedMap值,先用.$className方法判断是什么类型</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Java.perform(</span><br><span class="line">   <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">       <span class="keyword">var</span> up = Java.use(<span class="string">&#x27;com.picovr.asstantphone.update.UpdateDialog&#x27;</span>)</span><br><span class="line">       up.a.overload(<span class="string">&#x27;com.picovr.asstantphone.update.UpdateDialog$a&#x27;</span>).implementation = <span class="function"><span class="keyword">function</span>(<span class="params">q</span>)</span>&#123;</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">&#x27;111111&#x27;</span>)</span><br><span class="line">       &#125;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;coming&#x27;</span>) </span><br><span class="line">        <span class="keyword">var</span> dd = Java.use(<span class="string">&#x27;com.picovr.assistantphone.c.a.e&#x27;</span>) </span><br><span class="line">        dd.a.overload(<span class="string">&#x27;java.util.Map&#x27;</span>).implementation = <span class="function"><span class="keyword">function</span>(<span class="params">v</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> p = Java.use(<span class="string">&#x27;java.util.HashMap&#x27;</span>).$new(v)</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;map:&#x27;</span>+p)<span class="comment">//p.$className判断类型</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.a(v)</span><br><span class="line">   &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#登录触发</span><br><span class="line"><span class="attr">map</span>:&#123;phone=<span class="number">18812345600</span>, enc=MVPmyQlPSf2n1T+JLgVqGG7KeWM19riPffsgeDKe66Eq4wpe0EMEpicfbYpvmDe38PNOnPkRsGrNi4CkdBQIytn1h6wNR9GVLjljndIkRM441q9RbrXUPA/h3X5VK3CEt5K71E6iZofyDOb/6HaqhG404jHrLCG/jwHOMCrfU1Q=&#125;<span class="comment">//+key=a0f723c011346j39w049d7bf0356b34b</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>sign生成</strong></p>
+<p>跟踪d方法:</p>
+<p>根据上面的分析我们就确定了d方法为生成sign的加密函数</p>
+<p>我们就利用d方法进行远程调用,构造出map列表传入到d方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">d</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (str == <span class="keyword">null</span> || str.length() == <span class="number">0</span>) ? <span class="string">&quot;&quot;</span> : d(str.getBytes());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>经过分析,我们对<strong>enc</strong>的操作较为简单,只需要把密码传进入接收return值即可拼接出enc</p>
+<p><strong>sign</strong>的操作需要把上一步return的enc值放到sign里面,再有d处理即可.</p>
+<p>找到了我们需要的enc,和sign的两处加密代码,我们开始写frida-rpc和拼接请求参数</p>
+<p><strong>RPC ｄｏｍｅ：</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">test=<span class="string">&#x27;&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">rpc.exports = &#123;</span></span><br><span class="line"><span class="string"> testfunc: function(str)&#123;//PS: 函数名不要大写</span></span><br><span class="line"><span class="string"> var enc = &#x27;</span><span class="string">&#x27; </span></span><br><span class="line"><span class="string"> Java.perform(function () &#123;</span></span><br><span class="line"><span class="string"> var a = Java.use(&quot;XXXXXXXXXXX&quot;);</span></span><br><span class="line"><span class="string"> enc = a.a(str)</span></span><br><span class="line"><span class="string"> &#125;);</span></span><br><span class="line"><span class="string"> return enc</span></span><br><span class="line"><span class="string"> &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span><span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>hook.py:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida,sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span>(<span class="params">message, data</span>):</span></span><br><span class="line">    <span class="keyword">if</span> message[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;send&#x27;</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[*] &#123;0&#125;&quot;</span>.<span class="built_in">format</span>(message[<span class="string">&#x27;payload&#x27;</span>]))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(message)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">test = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">rpc.exports = &#123;</span></span><br><span class="line"><span class="string">func1: function(str)&#123;  //定义函数名</span></span><br><span class="line"><span class="string">var enc = &#x27;&#x27; </span></span><br><span class="line"><span class="string">Java.perform(function () &#123;</span></span><br><span class="line"><span class="string">var a = Java.use(&quot;com.picovr.assistantphone.c.a.e&quot;);</span></span><br><span class="line"><span class="string">enc = a.e(str)</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">return enc</span></span><br><span class="line"><span class="string">&#125;,</span></span><br><span class="line"><span class="string">func2: function(str)&#123;  //定义函数名</span></span><br><span class="line"><span class="string"> var sign = &#x27;&#x27; </span></span><br><span class="line"><span class="string"> Java.perform(function () &#123;</span></span><br><span class="line"><span class="string"> var aa = Java.use(&quot;com.blankj.utilcode.util.D&quot;);</span></span><br><span class="line"><span class="string"> sign = aa.d(str)</span></span><br><span class="line"><span class="string"> &#125;);</span></span><br><span class="line"><span class="string"> return sign</span></span><br><span class="line"><span class="string"> &#125;</span></span><br><span class="line"><span class="string">&#125; </span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_rpc</span>():</span></span><br><span class="line">    process = frida.get_usb_device(-<span class="number">1</span>).attach(<span class="string">&#x27;text&#x27;</span>)</span><br><span class="line">    script = process.create_script(test)</span><br><span class="line">    script.on(<span class="string">&#x27;message&#x27;</span>, on_message)</span><br><span class="line">    script.load()</span><br><span class="line"></span><br><span class="line">    <span class="comment">#script.exports.func2() //调用方法</span></span><br><span class="line">    <span class="keyword">return</span> script.exports //把exports <span class="keyword">return</span>出去外面</span><br><span class="line">    <span class="comment">#sys.stdin.read()</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>rpc-hook.py:</strong></p>
+<p>从hook的两个加密函数,远程调用接收返回结果,在利用 requests库进行构造请求,从而达到不去逆向算法,直接调用的曲线救国方法.缺点是大规模发包可能不够稳定.如果放到服务器上可以进行端口转发穿透内网.如果要进一步测试需用flask模块进行中转,可配合sqlmap.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> hook  <span class="comment">#引入hook.py</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">exports = jj.start_rpc函数()	<span class="comment">#调用hook.py里的start_rpc函数</span></span><br><span class="line">apiaccount = <span class="string">&quot;vrpuc-aaf91f835147ce2d01216bd3bd5c3516&quot;</span></span><br><span class="line">phone = <span class="string">&#x27;18812345600&#x27;</span></span><br><span class="line">pwd= <span class="string">&quot;qwe123456&quot;</span></span><br><span class="line">timestamp = <span class="built_in">int</span>(time.time()*<span class="number">1000</span>)</span><br><span class="line">enc = exports.func1(pwd)  <span class="comment">#传入pwd值并接收返回结果</span></span><br><span class="line">signn = <span class="string">&quot;apiaccount=vrpuc-aaf91f835147ce2d01216bd3bd5c3516&amp;enc=&#123;0&#125;&amp;phone=18812345600&amp;timestamp=&#123;1&#125;&amp;key=a0f723c011346j39w049d7bf0356b34b&quot;</span>.<span class="built_in">format</span>(enc,timestamp)</span><br><span class="line">sign = exports.func2(signn) <span class="comment">#传入signn值并接收返回结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;sign:&#x27;</span>,sign)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;enc:&#x27;</span>,enc)</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://api.passport.text.com/loginUser&#x27;</span></span><br><span class="line">data= &#123;<span class="string">&quot;apiaccount&quot;</span>:apiaccount,<span class="string">&quot;timestamp&quot;</span>:timestamp,<span class="string">&quot;phone&quot;</span>:phone,<span class="string">&quot;enc&quot;</span>:enc,<span class="string">&quot;sign&quot;</span>:sign&#125;</span><br><span class="line">header = &#123;</span><br><span class="line">    <span class="string">&quot;Host&quot;</span>:<span class="string">&quot;api.passport.picovr.com&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Accept-Encoding&quot;</span>:<span class="string">&quot;gzip&quot;</span>,</span><br><span class="line">    <span class="string">&quot;User-Agent&quot;</span>:<span class="string">&quot;okhttp/3.11.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Content-Type&quot;</span>:<span class="string">&quot;application/x-www-form-urlencoded&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Accept&quot;</span>:<span class="literal">None</span>    <span class="comment">#把请求参数置空</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ret = requests.post(url,data=data,headers=header)</span><br><span class="line">res = ret.text</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>请求成功:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">&quot;data&quot;</span>:&#123;<span class="attr">&quot;refresh_token&quot;</span>:<span class="string">&quot;LJA0GGff3veBktlBkEnLBmHryI0TAuhDSTups94RWZj4LPKbpQqUZJuvfjvt+8NPaHz41oSyObaLwJYLoUenSQO9g8D37LT3Mw5/RI2FNHHAHDuqJ36cMRlPQy8TgVisHV/pYDlXsVI1a34g9JHSpfqFKgYlaMJaLLM1Fk52924=&quot;</span>,<span class="attr">&quot;user_token_expire_time&quot;</span>:<span class="number">5183999</span>,<span class="attr">&quot;sign&quot;</span>:<span class="string">&quot;6486813B4CDFC31F7A00A9B9C37D0E36&quot;</span>,<span class="attr">&quot;user_fresh_token_expire_time&quot;</span>:<span class="number">5184000</span>,<span class="attr">&quot;token&quot;</span>:<span class="string">&quot;009052b7951f4da844be006bd239759ec70493520b992ce37381bb3fd4b0c0fbef7842572a9feb6ecf236ccc89ece46dd6f1afba86d1a403ee801fbbf3c196dd2a96f6770fc0e6a18420ed8aa3093f777342d0fd36dcf1dcaa0815c5aaab85e7a2490-1.0.1&quot;</span>,<span class="attr">&quot;timestamp&quot;</span>:<span class="string">&quot;1647965072111&quot;</span>&#125;,<span class="attr">&quot;ret_msg&quot;</span>:<span class="string">&quot;成功&quot;</span>,<span class="attr">&quot;ret_code&quot;</span>:<span class="string">&quot;success&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/21446/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-18 15:01:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                        <b>#</b> 逆向
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/22137/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + frida%20rpc%20%E8%BF%9C%E7%A8%8B%E4%B8%BB%E5%8A%A8%E8%B0%83%E7%94%A8APP%E5%8A%A0%E5%AF%86%E5%87%BD%E6%95%B0 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F58074%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/58074/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

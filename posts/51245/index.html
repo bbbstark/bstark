@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      APP抓包解决方案,没有抓不到的包 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">APP抓包解决方案,没有抓不到的包</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-02-08 15:01:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                    <b>#</b> 逆向
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>编辑中…</p>
+<h2 id="手机抓包"><a href="#手机抓包" class="headerlink" title="手机抓包"></a>手机抓包</h2><p>  优点: 无法对抗,全部能抓,没有抓不到的包.</p>
+<ul>
+<li>手机上抓:Nethunter  可视化抓包.</li>
+</ul>
+<p>​     ①优点:直观,所见即所得</p>
+<p>​     ②缺点:没有内容,粒度太粗,简单看下</p>
+<ul>
+<li>手机上抓:Wireshark  抓包转存.</li>
+</ul>
+<p>​     ①优点:可以转储内容,存下来稍后分析.</p>
+<p>​     ②只能看明文,不能发解加密协议.</p>
+<ul>
+<li>手机上抓:tcpdump  抓包转存.</li>
+</ul>
+<p>​     ①优点:不需要刷Nethunter.</p>
+<p>​     ②缺点:没有界面</p>
+<ul>
+<li><p>电脑+手机:hook  Socket  抓包.</p>
+</li>
+<li><p>电脑+手机:Frida Hook  模拟抓包,改包,重放.</p>
+</li>
+<li><p>电脑+手机:Charles  协议层抓包</p>
+</li>
+</ul>
+<h2 id="hook抓包"><a href="#hook抓包" class="headerlink" title="hook抓包"></a>hook抓包</h2><p>  ①优点:为所欲为,可以对包的内容进行进一步的更改和定制.</p>
+<p>  ②优点:抓包全面,直接就是明文,不需要协议(无需绕过证书绑定)</p>
+<p>  ③缺点:可能会不全,可能会漏.hook点是有限的.万一它在用其它的框架做网络传输就会漏掉.</p>
+<p>工具:okhttplogger-frida</p>
+<h2 id="协议层抓包"><a href="#协议层抓包" class="headerlink" title="协议层抓包"></a>协议层抓包</h2><p>  <strong>Charles + Postern</strong> </p>
+<p>①优点:全面.已经解好了协议,HTTP,WebSocket直接解好.</p>
+<p>②缺点:配置证书稍微麻烦,解不了纯Socket.</p>
+<h2 id="BurpSuite"><a href="#BurpSuite" class="headerlink" title="BurpSuite"></a>BurpSuite</h2><p>略………………….</p>
+<h2 id="强制手机所有的流量走vpn-路由"><a href="#强制手机所有的流量走vpn-路由" class="headerlink" title="强制手机所有的流量走vpn(路由)"></a>强制手机所有的流量走vpn(路由)</h2><p>撰写中……………….</p>
+<h2 id="抓不到包的解决方案"><a href="#抓不到包的解决方案" class="headerlink" title="抓不到包的解决方案"></a>抓不到包的解决方案</h2><h4 id="APP不走代理"><a href="#APP不走代理" class="headerlink" title="APP不走代理"></a>APP不走代理</h4><p>打开抓包软件，抓不到包，但APP能正常访问；关闭抓包软件后 APP仍然能正常访</p>
+<p><strong>解决</strong></p>
+<p>ProxyDroid APP 全局代理 强制把IP转发到代理端口上</p>
+<h4 id="APP有做ssl证书校验"><a href="#APP有做ssl证书校验" class="headerlink" title="APP有做ssl证书校验"></a>APP有做ssl证书校验</h4><p>打开抓包软件后 APP不能访问</p>
+<p><strong>解决</strong></p>
+<p>使用justtrustme等Hook 校验代码 让APP 信任代理证书或不做证书校验</p>
+<h4 id="APP有做双向证书校验"><a href="#APP有做双向证书校验" class="headerlink" title="APP有做双向证书校验"></a>APP有做双向证书校验</h4><p>打开抓包软件后 APP不能访问，但抓包软件上会有服务端返回的错误</p>
+<p><strong>解决</strong></p>
+<p>抠出APP里的SSL证书，导入抓包软件中</p>
+<h4 id="APP网络请求混淆"><a href="#APP网络请求混淆" class="headerlink" title="APP网络请求混淆"></a>APP网络请求混淆</h4><p>网络请求库代码有混淆（okhttp HttpURLConnection等等有混淆）打开抓包软件后 APP不能访问</p>
+<p><strong>解决</strong></p>
+<p>方1.使用升级版JustMePlus 自适配Hook混淆后的网络请求库代码（自适配okhttp）</p>
+<p>方2.使用ssl_logger Hook 系统ssl_read ssl_write函数，在手机上抓包，无需配置代理 和安装证书。</p>
+<h4 id="APP走TCP协议"><a href="#APP走TCP协议" class="headerlink" title="APP走TCP协议"></a>APP走TCP协议</h4><p>APP不是发的应用层http协议，使用socket走的是网络层tcp,跟不走代理现象相似，配置好代理后，打开或关闭抓包软件，APP都能正常访问，抓包软件也抓不到包。</p>
+<p><strong>解决</strong></p>
+<p>tcpdump或wireshark抓包 抓tcp包 找线索Hook APP代码 抓到发包和解包的代码处</p>
+<p>发送的数据通常是私有协议，需要逆向解密</p>
+<h4 id="返回数据加密"><a href="#返回数据加密" class="headerlink" title="返回数据加密"></a>返回数据加密</h4><p>能抓到包，但返回数据是乱码,或加密字符串.</p>
+<p><strong>解决:</strong> 找线索Hook APP 找到加解密的代码处</p>
+<p><strong>案例:</strong></p>
+<h2 id="工具的配合用法"><a href="#工具的配合用法" class="headerlink" title="工具的配合用法"></a>工具的配合用法</h2><p>先用Httpcanary抓包，找到该APP发送TCP的IP地址</p>
+<p>再用tcpdump重新在手机上抓包，拷贝到本地电脑上来</p>
+<p>使用wireshark打开该数据包，过滤出目标IP的数据包</p>
+<p>通过抓包tcp包里的可见字符作为线索，反向定位代码，实现Tcp 的Hook抓取</p>
+<h2 id="证书锁定"><a href="#证书锁定" class="headerlink" title="证书锁定"></a>证书锁定</h2><p>客户端关于证书处理的逻辑如下分类:</p>
+<table>
+<thead>
+<tr>
+<th>等级</th>
+<th>策略</th>
+<th>信任范围</th>
+<th>破解方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>完全兼容策略</td>
+<td>信任所有证书包括自签发证书</td>
+<td>无需特殊操作</td>
+</tr>
+<tr>
+<td>1</td>
+<td>系统/浏览器默认策略</td>
+<td>信任系统或浏览内置CA证书以及用户安装证书</td>
+<td>设备安装代理证书</td>
+</tr>
+<tr>
+<td>2</td>
+<td>system CA pinning</td>
+<td>只信任系统根证书,不信任用户安装的证书 (android 7.0支持配置network-security-config)</td>
+<td>注入或者root后将用户证书拷贝到系统证书目录</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CA Pinning Root (intermediate) certificate pinning</td>
+<td>信任指定CA颁发的证书</td>
+<td>hook注入等方式篡改锁定逻辑</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Leaf Certificate pinning</td>
+<td>信任指定站点证书</td>
+<td>hook注入等方式篡改锁定逻辑 如遇双向锁定需将app自带证书导入代理软件</td>
+</tr>
+</tbody></table>
+<p><strong>system CA pinning 抓包</strong></p>
+<p>只信任系统根证书,不信任用户安装的证书,我们可以注入或者root后将用户证书拷贝到系统证书目录,下面将的是把用户证书拷贝到系统证书目录的安装方法</p>
+<p>1.导出抓包软件pem证书 *.如果导出cer证书要转换证书为pem格式<br>.pem证书转.cer证书 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -outform der -in demo.pem -out demo.cer </span><br></pre></td></tr></table></figure>
+
+<p>.cer证书转.pem证书 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform der -in demo.cer -out demo.pem</span><br></pre></td></tr></table></figure>
+
+<p>将 der 格式的证书转为 pem 证书</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform der -in cacert.der -out burp.pem </span><br></pre></td></tr></table></figure>
+
+
+
+<p>2.输出证书内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform PEM -subject_hash_old -in xxx.pem </span><br></pre></td></tr></table></figure>
+
+<p>4.证书改名（第三步输出的第一行为证书名），证书文件名后加一个 .0</p>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220317154731043.png" alt="image-20220317154731043"></p>
+<p>5.adb push 证书到手机 /sdcard/  </p>
+<p>6.进入手机到/sdcard/，su到root用户，执行命令： 更改用户组： chgrp root 证书名 更改文件权限：chmod <strong>644</strong> 证书名   </p>
+<p>7.mv 证书到 /system/etc/security/cacerts/   如果遇到 Read-only file system  执行命令： mount -o rw,remount /system 重新挂在/system目录为可读写 有些手机无法解决 Read-only file system </p>
+<p>8.重启手机 旧版本fiddler生成的证书在手机上可能有问题，用最新版的fiddler 下载并安装证书生成插件 <a target="_blank" rel="noopener" href="https://www.telerik.com/fiddler/add-ons">https://www.telerik.com/fiddler/add-ons</a> </p>
+<p><strong>3,4种的对抗解决方案参考:</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/WooyunDota/DroidDrops/blob/master/2018/Frida.Android.Practice.md">https://github.com/WooyunDota/DroidDrops/blob/master/2018/Frida.Android.Practice.md</a></p>
+<p><strong>adb代理</strong></p>
+<p>设置代理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell settings put global http_proxy ip:port</span><br></pre></td></tr></table></figure>
+
+
+<p>关闭代理（无需重启）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell settings put global http_proxy :0</span><br></pre></td></tr></table></figure>
+
+
+<p>移除代理（需要重启）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb shell settings delete global http_proxy</span><br><span class="line">adb shell settings delete global global_http_proxy_host</span><br><span class="line">adb shell settings delete global global_http_proxy_port</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/23136/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-02-08 15:01:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                        <b>#</b> 逆向
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/43153/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E6%9C%BA%E6%8A%93%E5%8C%85"><span class="toc-text">手机抓包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hook%E6%8A%93%E5%8C%85"><span class="toc-text">hook抓包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%B1%82%E6%8A%93%E5%8C%85"><span class="toc-text">协议层抓包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BurpSuite"><span class="toc-text">BurpSuite</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%88%B6%E6%89%8B%E6%9C%BA%E6%89%80%E6%9C%89%E7%9A%84%E6%B5%81%E9%87%8F%E8%B5%B0vpn-%E8%B7%AF%E7%94%B1"><span class="toc-text">强制手机所有的流量走vpn(路由)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%93%E4%B8%8D%E5%88%B0%E5%8C%85%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">抓不到包的解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#APP%E4%B8%8D%E8%B5%B0%E4%BB%A3%E7%90%86"><span class="toc-text">APP不走代理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APP%E6%9C%89%E5%81%9Assl%E8%AF%81%E4%B9%A6%E6%A0%A1%E9%AA%8C"><span class="toc-text">APP有做ssl证书校验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APP%E6%9C%89%E5%81%9A%E5%8F%8C%E5%90%91%E8%AF%81%E4%B9%A6%E6%A0%A1%E9%AA%8C"><span class="toc-text">APP有做双向证书校验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APP%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E6%B7%B7%E6%B7%86"><span class="toc-text">APP网络请求混淆</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APP%E8%B5%B0TCP%E5%8D%8F%E8%AE%AE"><span class="toc-text">APP走TCP协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86"><span class="toc-text">返回数据加密</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E7%9A%84%E9%85%8D%E5%90%88%E7%94%A8%E6%B3%95"><span class="toc-text">工具的配合用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E9%94%81%E5%AE%9A"><span class="toc-text">证书锁定</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + APP%E6%8A%93%E5%8C%85%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%2C%E6%B2%A1%E6%9C%89%E6%8A%93%E4%B8%8D%E5%88%B0%E7%9A%84%E5%8C%85 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F51245%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/51245/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

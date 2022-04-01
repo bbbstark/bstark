@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      常用内网信息搜集 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">常用内网信息搜集</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                    <b>#</b> 内网
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="Windows-主机"><a href="#Windows-主机" class="headerlink" title="Windows 主机"></a>Windows 主机</h2><p><strong>发现扫描</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用nmap扫描存活主机（icmp扫描）</span></span><br><span class="line">• 命令：nmap -sn -PE -n –v -oN result.txt 目标IP</span><br><span class="line">• 参数说明：-sn 不进行端口扫描；-PE 进行icmp <span class="built_in">echo</span>扫描；-n 不进行反向解析 ；–v 输出调试信息；–oN 输出</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用nmap扫描存活主机（arp扫描）</span></span><br><span class="line">• 命令：nmap -sn -PR -n –v 目标IP</span><br><span class="line">• 参数说明：-PR代表arp扫描，在内网中arp扫描速度最快而且准确率较高</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用netdiscover扫描（一个arp扫描工具，既可以主动扫描也可以被动嗅探）</span></span><br><span class="line">• netdiscover -i eth0 -r 目标IP</span><br><span class="line">• 参数说明：-i：指定一个接口；-r：指定扫描范围</span><br><span class="line">• 注意：netdiscover时间越久越精确，可以发现某一台主机在一段时间内介入了那些网段，从而发现其他新的网段地址</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用nbtscan工具进行快速扫描存活PC端，同时获得NETBIOS</span></span><br><span class="line">• 命令： nbtscan -r 目标IP</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#扫探测目标开放端口</span></span><br><span class="line">• nmap探测：nmap -Pn -n 目标IP地址</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#masscan扫描</span></span><br><span class="line">• masscan –p 端口号 目标IP地址 --rate=10000 <span class="comment">#用10kpps的速度扫描网络端口</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#探测目标操作系统</span></span><br><span class="line">• 使用NSE脚本： nmap --script smb-os-discovery.nse -p445 目标IP地址</span><br><span class="line">• 其中：smb-os-discovery.nse 脚本通过smb来探测操作系统版本、计算机名、工作组名、域名等等信息。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#扫描主机存在的CVE漏洞</span></span><br><span class="line">• 命令：nmap --script=vuln 目标IP地址</span><br></pre></td></tr></table></figure>
+
+<p><strong>常用命令</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>net user</td>
+<td>本机用户列表</td>
+</tr>
+<tr>
+<td>net view</td>
+<td>查询同一域内的机器列表</td>
+</tr>
+<tr>
+<td>net localgroup administrators</td>
+<td>本机管理员</td>
+</tr>
+<tr>
+<td>net user /domain</td>
+<td>查询域用户</td>
+</tr>
+<tr>
+<td>net group /domain</td>
+<td>查询域里面的工作组</td>
+</tr>
+<tr>
+<td>net group “domain admins” /domain</td>
+<td>查询域管理员用户组</td>
+</tr>
+<tr>
+<td>net localgroup administrators /domain</td>
+<td>登陆本机的域管理员</td>
+</tr>
+<tr>
+<td>net localgroup administrators workgroup \user /add</td>
+<td>域用户添加到本机</td>
+</tr>
+<tr>
+<td>net group “Domain controllers”</td>
+<td>查看域控制器</td>
+</tr>
+</tbody></table>
+<p><strong>Dsquery</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dsquery computer domainroot -limit 65535 &amp;&amp; net group “domain computers” <br> /domain</td>
+<td>列出域中内所有机器名</td>
+</tr>
+<tr>
+<td>dsquery user domainroot -limit 65535 &amp;&amp; net user /domain</td>
+<td>列出该域内所有用户名</td>
+</tr>
+<tr>
+<td>dsquery subnet</td>
+<td>列出该域内网段划分</td>
+</tr>
+<tr>
+<td>dsquery group &amp;&amp; net group /domain</td>
+<td>列出该域内分组</td>
+</tr>
+<tr>
+<td>dsquery ou</td>
+<td>列出该域内组织单位</td>
+</tr>
+<tr>
+<td>dsquery server &amp;&amp; net time /domain</td>
+<td>列出该域内控制器</td>
+</tr>
+</tbody></table>
+<p> <strong>后渗透阶段的信息收集</strong></p>
+<ol>
+<li><p>windows密码获取工具：</p>
+<p>• mimikatz<br>• wce<br>• getpass<br>• QuarksPwDump<br>• reg-sam<br>• pwdump7</p>
+</li>
+<li><p>cmdkey：用于保存用户名和密码的凭证。</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmdkey /list</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>​        当知道密码后，下次登陆就不用输入密码了,获取方式：使用netpass.exe即可得到密码</p>
+<ol start="3">
+<li>获取无线网络密码<br> • 将所有无线密码都导出到指定的文件夹位置</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh wlan export profile interface=WLAN key=clear folder=C:\</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li> 获取浏览器的cookies和存储密码（chrome为例）</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%localappdata%\google\chrome\USERDATA\default\cookies</span><br><span class="line">%localappdata%\google\chrome\USERDATA\default\Login Data</span><br></pre></td></tr></table></figure>
+
+<pre><code>chrome的用户信息保存在本地文件为 sqlite 数据库 格式
+</code></pre>
+<p>  使用 mimikatz 读取内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe privilege::debug log &quot;dpapi::chrome </span><br><span class="line">/in:%localappdata%\google\chrome\USERDATA\default\cookies /unprotect&quot;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>smb重放攻击 DNS ARP攻击 获取密码 等</li>
+</ol>
+<p><strong>MSF下信息搜集</strong></p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>post/windows/gather/forensics/enum_drives</td>
+<td>获取目标主机的磁盘分区情况</td>
+</tr>
+<tr>
+<td>post/windows/gather/checkvm</td>
+<td>判断目标主机是否为虚拟机</td>
+</tr>
+<tr>
+<td>post/windows/gather/enum_services</td>
+<td>查看开启的服务</td>
+</tr>
+<tr>
+<td>post/windows/gather/enum_applications</td>
+<td>查看安装的应用</td>
+</tr>
+<tr>
+<td>post/windows/gather/enum_shares</td>
+<td>查看共享</td>
+</tr>
+<tr>
+<td>post/windows/gather/dumplinks</td>
+<td>查看目标主机最近的操作</td>
+</tr>
+<tr>
+<td>post/windows/gather/enum_patches</td>
+<td>查看补丁信息</td>
+</tr>
+<tr>
+<td>scraper</td>
+<td>导出多个信息</td>
+</tr>
+</tbody></table>
+<h2 id="Linux-主机信息搜集"><a href="#Linux-主机信息搜集" class="headerlink" title="Linux 主机信息搜集"></a>Linux 主机信息搜集</h2><p><strong>常用命令</strong></p>
+<p>history命令</p>
+<p>last命令</p>
+<p>arp -vn命令</p>
+<p>/etc/hosts文件</p>
+<p><strong>Msf下信息搜集</strong></p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>post/linux/gather/checkvm</td>
+<td>判断目标主机是否为虚拟机</td>
+</tr>
+<tr>
+<td>post/linux/gather/enum_configs</td>
+<td>查看配置信息</td>
+</tr>
+<tr>
+<td>post/linux/gather/enum_network</td>
+<td>查看网络</td>
+</tr>
+<tr>
+<td>post/linux/gather/enum_protections</td>
+<td>查看共享</td>
+</tr>
+<tr>
+<td>post/linux/gather/enum_system</td>
+<td>查看系统和用户信息</td>
+</tr>
+<tr>
+<td>post/linux/gather/enum_users_histroy</td>
+<td>查看目标主机最近的操作</td>
+</tr>
+<tr>
+<td>post/linux/gather/hashdump</td>
+<td>得到linux中的hash</td>
+</tr>
+</tbody></table>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/26091/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                        <b>#</b> 内网
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/15360/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-%E4%B8%BB%E6%9C%BA"><span class="toc-text">Windows 主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-%E4%B8%BB%E6%9C%BA%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86"><span class="toc-text">Linux 主机信息搜集</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%B8%B8%E7%94%A8%E5%86%85%E7%BD%91%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F40782%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/40782/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

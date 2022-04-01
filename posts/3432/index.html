@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      Frida 基础 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Frida 基础</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-20 15:01:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                    <b>#</b> 逆向
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="APP文件结构"><a href="#APP文件结构" class="headerlink" title="APP文件结构"></a>APP文件结构</h2><p><strong>apk</strong>文件，一种压缩包:</p>
+<p><strong>classes.dex</strong>：编译后的代码<br><strong>AndroidManifest.xml</strong>：重要配置文件，APP启动入口，界面信息等等<br><strong>assets</strong>：资源目录，没被编译    存放本地<strong>证书</strong><br><strong>lib</strong>：so文件, C++开发的动态链接库  so文件有很多系统架构如x86_64,arm64_a, 导致模拟器闪退的原因<br><strong>res</strong>：资源目录，被编译了<br><strong>resources.arsc</strong>：资源文件索引</p>
+<h3 id="AndroidManifest-xml"><a href="#AndroidManifest-xml" class="headerlink" title="AndroidManifest.xml"></a>AndroidManifest.xml</h3><p>用来了解APP的启动加载流程</p>
+<p>package    包名  一般存在在第一行.</p>
+<p>android.intent.action.MAIN  上一行为启动界面</p>
+<p>MainActivty    主界面</p>
+<h3 id="签名证书的使用"><a href="#签名证书的使用" class="headerlink" title="签名证书的使用"></a>签名证书的使用</h3><p>apktool 重打包成apk：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apktool d test.apk  #反编译</span><br><span class="line">apktool b test      #重新打包</span><br></pre></td></tr></table></figure>
+
+<p>apktool反编译生成出来的是smail文件,可以用jeb可视化源码对比 smail文件来修改源代码,修改完后,在进行重新打包.</p>
+<p>未签名APK不能在安卓手机上安装, APP在启动时会对签名校验：重打包的APP可能需要逆向，跳过校验</p>
+<p><strong>keytool jarsigner</strong>   工具是JAVA JDK自带的<br> 生成证书:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -keystore my-release-key.keystore -alias my_alias -keyalg RSA -</span><br><span class="line">keysize <span class="number">4096</span> -validity <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+<p>用证书给apk签名:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jarsigner -sigalg MD5withRSA -digestalg SHA1 -keystore my-release-key.keystore -</span><br><span class="line">signedjar 签名后.apk 签名前.apk my_alias</span><br></pre></td></tr></table></figure>
+
+<h2 id="插桩技术"><a href="#插桩技术" class="headerlink" title="插桩技术"></a>插桩技术</h2><p>插桩技术是指将额外的代码注入程序中以收集运行时的信息，<strong>可分为两种：</strong></p>
+<p>(1)源代码插桩[Source Code Instrumentation(SCI)]：额外代码注入到程序源代码中。</p>
+<p>(2)二进制插桩（Binary Instrumentation）：额外代码注入到二进制可执行文件中。</p>
+<h3 id="二进制插桩"><a href="#二进制插桩" class="headerlink" title="二进制插桩"></a><strong>二进制插桩</strong></h3><p>●静态二进制插桩[Static Binary Instrumentation(SBI)]：在程序执行前插入额外的代码和数据，生成一个永久改变的可执行文件。</p>
+<p>●动态二进制插桩[Dynamic Binary Instrumentation(DBI)]：在程序运行时实时地插入额外代码和数据，对可执行文件没有任何永久改变。</p>
+<h3 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h3><p>（1）访问进程的内存</p>
+<p>（2）在应用程序运行时覆盖一些功能</p>
+<p>（3）从导入的类中调用函数</p>
+<p>（4）在堆上查找对象实例并使用这些对象实例</p>
+<p>（5）Hook，跟踪和拦截函数等等</p>
+<h2 id="frida"><a href="#frida" class="headerlink" title="frida"></a><strong>frida</strong></h2><p>frida是一款基于python + javascript 的hook框架，可运行在android ios linux winosx等各平台，主要使用动态二进制插桩技术。</p>
+<p><strong>HOOK</strong>：在系统没有调用该方法（函数）前，获得该方法（函数)的控制权，从而改写该方法。</p>
+<h3 id="ADB-exe"><a href="#ADB-exe" class="headerlink" title="ADB.exe"></a>ADB.exe</h3><p>Adb常用命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">adb shell 进入手机</span><br><span class="line">adb install xxx.apk 安装apk</span><br><span class="line">adb install -r xxx.apk 覆盖安装 </span><br><span class="line">adb uninstall 包名 卸载</span><br><span class="line">adb push 电脑端源文件路径 手机端目标路径 最好把文件放在/sdcard/ 目录下面</span><br><span class="line">adb pull 手机端源文件路径 电脑源文件路径 </span><br><span class="line">adb logcat 查看日志</span><br></pre></td></tr></table></figure>
+
+<h3 id="frida安装"><a href="#frida安装" class="headerlink" title="frida安装"></a><strong>frida</strong>安装</h3><p>frida框架分为两部分： 一部分是运行在系统上的交互工具frida CLI; 另一部分是运行在目标机器上的代码注入工具 frida-server,手机需要root.</p>
+<p>Python代码作用是控制，写法固定，负责跟frida-server通信，把JS代码传递给frida-serve,Javascript代码作用是Hook操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Frida 常用模块API：</span><br><span class="line"> Java 模块：Hook Java 层的类 方法 相关</span><br><span class="line"> Process 模块：处理当前线程相关</span><br><span class="line"> Interceptor 模块：操作指针相关，多用来Hook Native 相关</span><br><span class="line"> Memory 模块：内存操作相关</span><br><span class="line"> Module 模块：处理so相关</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装</strong></p>
+<p>1)、下载frida-server 解压 push到手机 增加可执行权限 运行起来,Frida-server. 运行在手机上<br> <a target="_blank" rel="noopener" href="https://github.com/frida/frida/releases">https://github.com/frida/frida/releases</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getprop ro.product.cpu.abi				   #确认手机的系统架构</span><br><span class="line">adb push frida-server /data/local/tmp/    #adb 把执行文件 push到手机</span><br><span class="line">adb shell								   #进入shell</span><br><span class="line">su										   #root</span><br><span class="line">cd /data/local/tmp</span><br></pre></td></tr></table></figure>
+
+<p> 确定手机当前用户是root用户或拥有root权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 frida-server</span><br><span class="line">./frida-server&amp;</span><br></pre></td></tr></table></figure>
+
+<p> 2)、电脑上安装frida</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install frida</span><br></pre></td></tr></table></figure>
+
+<p> 安装很慢 20分钟<br> <a target="_blank" rel="noopener" href="https://pypi.org/project/frida/#files">https://pypi.org/project/frida/#files</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install frida-tools</span><br></pre></td></tr></table></figure>
+
+<p> 3)、测试安装<br> 电脑上运行<br> frida-ps -U 电脑上运行 android.process.acore 字样表示成功<br> windows运行 端口转发到PC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb forward tcp:27043 tcp:27043			#必要时进行端口转发</span><br><span class="line">adb forward tcp:27042 tcp:27042</span><br></pre></td></tr></table></figure>
+
+<h3 id="HOOk使用"><a href="#HOOk使用" class="headerlink" title="HOOk使用"></a>HOOk使用</h3><p>hook的python代码是固定的:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida, sys</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_message</span>(<span class="params">message, data</span>):</span></span><br><span class="line">    <span class="keyword">if</span> message[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;send&#x27;</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[*] &#123;0&#125;&quot;</span>.<span class="built_in">format</span>(message[<span class="string">&#x27;payload&#x27;</span>]))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(message)</span><br><span class="line">        </span><br><span class="line">test=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Java.perform(</span></span><br><span class="line"><span class="string">    function()&#123;</span></span><br><span class="line"><span class="string">        console.log(&#x27;i am coming&#x27;)   #判断是否已经进来</span></span><br><span class="line"><span class="string">        var MainActivity = Java.use(&#x27;com.example.seccon2015.rock_paper_scissors.MainActivity&#x27;) #类名 绝对路径,直接复制</span></span><br><span class="line"><span class="string">        MainActivity.onClick.implementation = function(v)&#123;</span></span><br><span class="line"><span class="string">            this.onClick(v)</span></span><br><span class="line"><span class="string">            console.log(&#x27;mmm:&#x27;+this.m.value)</span></span><br><span class="line"><span class="string">            console.log(&#x27;nnn:&#x27;+this.n.value)</span></span><br><span class="line"><span class="string">            </span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        var TT = Java.use(&#x27;com.example.seccon2015.rock_paper_scissors.MainActivity$1&#x27;)</span></span><br><span class="line"><span class="string">        TT.run.implementation = function()&#123;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            this.this$0.value.m.value = 1</span></span><br><span class="line"><span class="string">            this.this$0.value.n.value = 2</span></span><br><span class="line"><span class="string">            this.run()</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>    </span><br><span class="line"><span class="comment">#两种启动方式</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#attach 进程名 ：APP启动后再hook，不能hook app启动阶段 </span></span><br><span class="line">process = frida.get_usb_device(-<span class="number">1</span>).attach(<span class="string">&#x27;com.example.seccon2015.rock_paper_scissors&#x27;</span>)</span><br><span class="line">											<span class="comment">##进程名 也是AndroidManifest.xml 里的包名,可以通过</span></span><br><span class="line">    										<span class="comment">##如果找不到可通过 frida-ps -U 来查找进程名.</span></span><br><span class="line">script = process.create_script(test)</span><br><span class="line">script.on(<span class="string">&#x27;message&#x27;</span>, on_message)</span><br><span class="line">script.load()</span><br><span class="line">sys.stdin.read()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#启动方式2 spawn 重启APP 可以hook APP启动阶段</span></span><br><span class="line"><span class="comment"># device = frida.get_usb_device(-1)</span></span><br><span class="line"><span class="comment"># pid = device.spawn([&#x27;com.example.seccon2015.rock_paper_scissors&#x27;])</span></span><br><span class="line"><span class="comment"># process = device.attach(pid)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># script = process.create_script(test)</span></span><br><span class="line"><span class="comment"># script.on(&#x27;message&#x27;, on_message)</span></span><br><span class="line"><span class="comment"># print(&#x27;[*] Running&#x27;)</span></span><br><span class="line"><span class="comment"># script.load()</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># device.resume(pid)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sys.stdin.read()</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>打印手机所有运行包名</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida, sys</span><br><span class="line"></span><br><span class="line">process = frida.get_usb_device().enumerate_processes()</span><br><span class="line"><span class="built_in">print</span>(process)</span><br></pre></td></tr></table></figure>
+
+<p><strong>两种启动hook方式</strong>：</p>
+<ol>
+<li>attach 进程名 ：APP启动后再hook，不能hook app启动阶段</li>
+<li>spawn ：重启APP，适合hook app 启动阶段</li>
+</ol>
+<p><strong>常用的hook方法:</strong></p>
+<p>java代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.flag != <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.flag = <span class="number">1</span>;</span><br><span class="line">            TextView tv3 = (TextView) findViewById(R.id.textView3);</span><br><span class="line">            tv3.setText(<span class="string">&quot;&quot;</span>);</span><br><span class="line">            TextView tv = (TextView) findViewById(R.id.textView);</span><br><span class="line">            TextView tv2 = (TextView) findViewById(R.id.textView2);</span><br><span class="line">            <span class="keyword">this</span>.m = <span class="number">0</span>;</span><br><span class="line">            Random rm = <span class="keyword">new</span> Random();</span><br><span class="line">            <span class="keyword">this</span>.n = rm.nextInt(<span class="number">3</span>);</span><br><span class="line">            String[] ss = &#123;<span class="string">&quot;CPU: Paper&quot;</span>, <span class="string">&quot;CPU: Rock&quot;</span>, <span class="string">&quot;CPU: Scissors&quot;</span>&#125;;</span><br><span class="line">            tv2.setText(ss[<span class="keyword">this</span>.n]);</span><br><span class="line">            <span class="keyword">if</span> (v == <span class="keyword">this</span>.P) &#123;</span><br><span class="line">                tv.setText(<span class="string">&quot;YOU: Paper&quot;</span>);</span><br><span class="line">                <span class="keyword">this</span>.m = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (v == <span class="keyword">this</span>.r) &#123;</span><br><span class="line">                tv.setText(<span class="string">&quot;YOU: Rock&quot;</span>);</span><br><span class="line">                <span class="keyword">this</span>.m = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (v == <span class="keyword">this</span>.S) &#123;</span><br><span class="line">                tv.setText(<span class="string">&quot;YOU: Scissors&quot;</span>);</span><br><span class="line">                <span class="keyword">this</span>.m = <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">this</span>.handler.postDelayed(<span class="keyword">this</span>.showMessageTask, <span class="number">1000L</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>hook 类方和访问成员变量</strong></p>
+<p>先java.use()一个类名,然后在调用它的方法,从而进行改写.这里用<strong>this.成员变量.value</strong>来访问成员变量.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Java.perform(				<span class="comment">//固定的js函数写法</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;				</span><br><span class="line"><span class="keyword">var</span> activity = Java.use(<span class="string">&#x27;com.example.seccon2015.rock_paper_scissors.MainActivity&#x27;</span>)</span><br><span class="line">								<span class="comment">//Java.use 一个类名到变量activity,类名从jadx复制.</span></span><br><span class="line">activity.onClick.implementation = <span class="function"><span class="keyword">function</span>(<span class="params">v</span>)</span>&#123;	 <span class="comment">//这里调用onClick方法</span></span><br><span class="line">    <span class="built_in">this</span>.onClick(v)									<span class="comment">//这里重写方法</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;me:&#x27;</span>+<span class="built_in">this</span>.m.value)				<span class="comment">//这里访问成员变量m</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;jj:&#x27;</span>+<span class="built_in">this</span>.n.value)				<span class="comment">//这里访问成员变量n</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>hook 匿名类</strong></p>
+<p>java代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span> </span>&#123;</span><br><span class="line">    Button P;</span><br><span class="line">    Button S;</span><br><span class="line">    <span class="keyword">int</span> flag;</span><br><span class="line">    <span class="keyword">int</span> m;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    Button r;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Handler handler = <span class="keyword">new</span> Handler(); <span class="comment">//当用final修饰一个类时，表明这个类不能被继承</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Runnable showMessageTask = <span class="keyword">new</span> Runnable() &#123; <span class="comment">// from class: com.example.seccon2015.rock_paper_scissors.MainActivity.1</span></span><br><span class="line">        <span class="meta">@Override</span> <span class="comment">// java.lang.Runnable</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;   <span class="comment">//void 是java中的关键字,定义方法用它修饰表示什么也不返回.</span></span><br><span class="line">            TextView tv3 = (TextView) MainActivity.<span class="keyword">this</span>.findViewById(R.id.textView3);</span><br><span class="line">            <span class="keyword">if</span> (MainActivity.<span class="keyword">this</span>.n - MainActivity.<span class="keyword">this</span>.m == <span class="number">1</span>) &#123;</span><br><span class="line">                MainActivity.<span class="keyword">this</span>.cnt++;</span><br><span class="line">                tv3.setText(<span class="string">&quot;WIN! +&quot;</span> + String.valueOf(MainActivity.<span class="keyword">this</span>.cnt));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (MainActivity.<span class="keyword">this</span>.m - MainActivity.<span class="keyword">this</span>.n == <span class="number">1</span>) &#123;</span><br><span class="line">                MainActivity.<span class="keyword">this</span>.cnt = <span class="number">0</span>;</span><br><span class="line">                tv3.setText(<span class="string">&quot;LOSE +0&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (MainActivity.<span class="keyword">this</span>.m == MainActivity.<span class="keyword">this</span>.n) &#123;</span><br><span class="line">                tv3.setText(<span class="string">&quot;DRAW +&quot;</span> + String.valueOf(MainActivity.<span class="keyword">this</span>.cnt));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (MainActivity.<span class="keyword">this</span>.m &lt; MainActivity.<span class="keyword">this</span>.n) &#123;</span><br><span class="line">                MainActivity.<span class="keyword">this</span>.cnt = <span class="number">0</span>;</span><br><span class="line">                tv3.setText(<span class="string">&quot;LOSE +0&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                MainActivity.<span class="keyword">this</span>.cnt++;</span><br><span class="line">                tv3.setText(<span class="string">&quot;WIN! +&quot;</span> + String.valueOf(MainActivity.<span class="keyword">this</span>.cnt));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (<span class="number">1000</span> == MainActivity.<span class="keyword">this</span>.cnt) &#123;</span><br><span class="line">                tv3.setText(<span class="string">&quot;SECCON&#123;&quot;</span> + String.valueOf((MainActivity.<span class="keyword">this</span>.cnt + MainActivity.<span class="keyword">this</span>.calc()) * <span class="number">107</span>) + <span class="string">&quot;&#125;&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            MainActivity.<span class="keyword">this</span>.flag = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>hook 匿名类方法:</p>
+<p> 类名去apktools -d 包名    然后到smali文件里搜索方法,存在这个方法的文件名,就是这个类名.</p>
+<p>文件路径:com/example/seccon2015/rock_paper_scissors/MainActivity$1</p>
+<p>类名:com.example.seccon2015.rock_paper_scissors.MainActivity$1</p>
+<p>如代码例1-1:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Java.use(&#x27;类$类&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>从匿名类/内部类访问外部类的属性</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.this$0.value.外部类的属性名.value</span><br></pre></td></tr></table></figure>
+
+<p>例1-1:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Java.perform(				<span class="comment">//固定的js函数写法</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;	</span><br><span class="line"><span class="keyword">var</span> act = Java.use(<span class="string">&#x27;com.example.seccon2015.rock_paper_scissors.MainActivity$1&#x27;</span>)</span><br><span class="line">														<span class="comment">//hook匿名类</span></span><br><span class="line">act.run.implementation = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.this$0.value.m.value = <span class="number">1</span>			<span class="comment">//访问外部类,或者匿名类.</span></span><br><span class="line">    <span class="built_in">this</span>.this$0.value.n.value = <span class="number">2</span></span><br><span class="line">    <span class="built_in">this</span>.run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/22137/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-20 15:01:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E9%80%86%E5%90%91/" title="逆向">
+                        <b>#</b> 逆向
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/24561/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#APP%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-text">APP文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AndroidManifest-xml"><span class="toc-text">AndroidManifest.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%BE%E5%90%8D%E8%AF%81%E4%B9%A6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">签名证书的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E6%A1%A9%E6%8A%80%E6%9C%AF"><span class="toc-text">插桩技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%8F%92%E6%A1%A9"><span class="toc-text">二进制插桩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="toc-text">实现功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#frida"><span class="toc-text">frida</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ADB-exe"><span class="toc-text">ADB.exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#frida%E5%AE%89%E8%A3%85"><span class="toc-text">frida安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HOOk%E4%BD%BF%E7%94%A8"><span class="toc-text">HOOk使用</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Frida%20%E5%9F%BA%E7%A1%80 + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F3432%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/3432/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

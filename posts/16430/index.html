@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      安全加固 
+      
+      
+      |
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">安全加固</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-08 20:54:52
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%AE%89%E5%85%A8%E6%9C%8D%E5%8A%A1/" title="安全服务">
+                    <b>#</b> 安全服务
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><h3 id="Windows日志"><a href="#Windows日志" class="headerlink" title="Windows日志"></a>Windows日志</h3><p>事件类型：分为4种，分别为 “应用程序日志” 、”系统日志” 、”安全日志” 和 “转发事件” ，前三个为核心日志文件,Windows日志分析工具Log Parser.</p>
+<ol>
+<li>应用程序日志<br> • 包含由应用程序或系统程序记录的事件，主要记录程序运行方面的事件,其中远程桌面连接日志就在这里,Microsoft/Windows/remote*</li>
+</ol>
+<p>  • 日志默认位置： %SystemRoot%\System32\Winevt\Logs\Application.evtx</p>
+<ol start="2">
+<li>系统日志<br> • 记录操作系统组件产生的事件，主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等</li>
+</ol>
+<p>  日志默认位置： %SystemRoot%\System32\Winevt\Logs\System.evtx</p>
+<ol start="3">
+<li>安全日志<br> • 包含安全性相关的事件，如用户权限变更，登录及注销，文件及文件夹访问，打印等信息</li>
+</ol>
+<p>  日志默认位置： %SystemRoot%\System32\Winevt\Logs\Security.evtx</p>
+<p>常见的事件ID:</p>
+<table>
+<thead>
+<tr>
+<th>事件ID</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4634</td>
+<td>注销成功</td>
+</tr>
+<tr>
+<td>4624</td>
+<td>账号成功登录</td>
+</tr>
+<tr>
+<td>4625</td>
+<td>账号登录失败</td>
+</tr>
+<tr>
+<td>4720</td>
+<td>创建用户</td>
+</tr>
+<tr>
+<td>4726</td>
+<td>删除用户</td>
+</tr>
+<tr>
+<td>4672</td>
+<td>使用超级用户（如管理员）进行登录</td>
+</tr>
+<tr>
+<td>4647</td>
+<td>用户启动的注销</td>
+</tr>
+</tbody></table>
+<p>事件ID在线搜索:  <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/">https://docs.microsoft.com/en-us/windows/security/threat-protection/</a> </p>
+<p>常见的登录类型:</p>
+<table>
+<thead>
+<tr>
+<th>类型ID</th>
+<th>描述</th>
+<th>说明</th>
+<th>典型情况</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td>本地交互式</td>
+<td>用户在本地登录</td>
+<td>使用域或者本地账户登录本地主机</td>
+</tr>
+<tr>
+<td>3</td>
+<td>网络方式</td>
+<td>从网络访问主机</td>
+<td>例如访问一台主机的某个共享文件夹</td>
+</tr>
+<tr>
+<td>4</td>
+<td>批处理</td>
+<td>作为批处理登录</td>
+<td>指定计划任务时指定的以某个具体账户来运行</td>
+</tr>
+<tr>
+<td>5</td>
+<td>服务</td>
+<td>以服务方式登录</td>
+<td>指在指定服务器运行时以本地系统账户或者时具体某个账户运行</td>
+</tr>
+<tr>
+<td>8</td>
+<td>网络明文</td>
+<td>密码在网络上明文传输</td>
+<td>如登录FTP是通过明文传输</td>
+</tr>
+<tr>
+<td>10</td>
+<td>远程交互</td>
+<td>通过终端服务、远程桌面访问计算机</td>
+<td>使用本地mstsc客户端远程登录某台主机</td>
+</tr>
+</tbody></table>
+<h3 id="Linux日志"><a href="#Linux日志" class="headerlink" title="Linux日志"></a>Linux日志</h3><p><strong>linux日志的分类:</strong></p>
+<ol>
+<li>内核及系统日志<br> • 由系统服务rsyslog统一进行管理，日志格式基本相似</li>
+<li>用户日志<br> • 记录系统用户登录及退出系统的相关信息</li>
+<li>程序日志<br> • 由相应的应用程序进行独立管理。如：web服务，ftp服务</li>
+</ol>
+<p><strong>日志默认保存位置:</strong><br>• 默认位于：/var/log/ 或创建子目录再创建日志文件</p>
+<p><strong>系统日志概述:</strong></p>
+<p>• 由系统服务 rsyslog 统一管理，默认的日志守护进程为 rsyslog , rsyslog 是 syslog 的升级版本，默认安装，随机启动。<br>• 主要程序：/sbin/rsyslog<br>• 主配置文件：/etc/rsyslog.conf 和 /etc/rsyslog.d</p>
+<p>• 查看日志配置情况：more /etc/rsyslog.conf</p>
+<p><strong>linux日志类型:</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>auth</td>
+<td>用户认证时产生的日志。如：login命令、su命令</td>
+</tr>
+<tr>
+<td>authpriv</td>
+<td>与auth类似，只能特定用户查看</td>
+</tr>
+<tr>
+<td>console</td>
+<td>系统控制台的消息</td>
+</tr>
+<tr>
+<td>cron</td>
+<td>计划任务产生的日志</td>
+</tr>
+<tr>
+<td>daemon</td>
+<td>某些守护进程产生的日志 ftp ftp服务</td>
+</tr>
+<tr>
+<td>kern</td>
+<td>系统内核消息</td>
+</tr>
+<tr>
+<td>local0-local7</td>
+<td>由自定义程序使用</td>
+</tr>
+<tr>
+<td>lpr</td>
+<td>与打印机活动有关</td>
+</tr>
+<tr>
+<td>mail</td>
+<td>邮件日志</td>
+</tr>
+<tr>
+<td>mark</td>
+<td>产生时间戳，可以推断系统发生故障的大致时间。</td>
+</tr>
+<tr>
+<td>news</td>
+<td>网络新闻传输协议（nntp）产生的消息</td>
+</tr>
+<tr>
+<td>ntp</td>
+<td>网络时间协议（ntp）产生的消息 user 用户进程</td>
+</tr>
+</tbody></table>
+<p><strong>Linux常见日志文件</strong></p>
+<table>
+<thead>
+<tr>
+<th>日志</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>/var/log/boot.log</td>
+<td>记录了系统在引导过程中发生的事件，就是Linux系统开机自检过程显示的信息</td>
+</tr>
+<tr>
+<td>/var/log/lastlog</td>
+<td>记录最后一次用户成功登录的时间、登录IP等信息</td>
+</tr>
+<tr>
+<td>/var/log/messages</td>
+<td>记录Linux操作系统常见的系统和服务错误信息</td>
+</tr>
+<tr>
+<td>/var/log/secure</td>
+<td>Linux系统安全日志，记录用户和工作组变化情况、用户登录认证情况</td>
+</tr>
+<tr>
+<td>/var/log/btmp</td>
+<td>记录Linux登录失败的用户、时间及远程IP地址</td>
+</tr>
+<tr>
+<td>/var/log/wtmp</td>
+<td>该日志文件永久记录每个登录、注销及系统的启动、停机的时间</td>
+</tr>
+<tr>
+<td>/var/log/utmp</td>
+<td>该日志文件记录有关当前登录的每个用户的信息</td>
+</tr>
+</tbody></table>
+<p><strong>常用命令:</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+<th>对应日志</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>lastlog</td>
+<td>查看的某系统用户最后一次登录的记录</td>
+<td>/var/log/lastlog</td>
+</tr>
+<tr>
+<td>who&amp;W</td>
+<td>访问utmp记录，显示当前正在登录的用户信息</td>
+<td>/var/log/utmp</td>
+</tr>
+<tr>
+<td>lastb</td>
+<td>记录Linux登陆失败的用户、时间以及远程IP地址</td>
+<td>/var/log/btmp</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>日志分析技巧</strong></p>
+<p>分析安全日志：/var/log/secure</p>
+<ol>
+<li>定位有多少IP在爆破主机的root帐号：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Failed password for root&quot;</span> /var/<span class="built_in">log</span>/secure | awk <span class="string">&#x27;&#123;print $11&#125;&#x27;</span> | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>定位有哪些IP在爆破：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Failed password&quot;</span> /var/<span class="built_in">log</span>/secure|grep -E -o <span class="string">&quot;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;</span>|uniq -c</span><br></pre></td></tr></table></figure></li>
+<li>爆破用户名字典是什么？<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Failed password&quot;</span> /var/<span class="built_in">log</span>/secure|perl -e <span class="string">&#x27;while($_=&lt;&gt;)&#123; /for(.*?) from/; print &quot;$1\n&quot;;&#125;&#x27;</span>|uniq -c|sort -nr</span><br></pre></td></tr></table></figure></li>
+<li>定位有多少IP在爆破主机的root帐号：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Accepted &quot;</span> /var/<span class="built_in">log</span>/secure | awk <span class="string">&#x27;&#123;print $11&#125;&#x27;</span> | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure></li>
+<li>定位有哪些IP在爆破：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;Accepted &quot;</span> /var/<span class="built_in">log</span>/secure | awk <span class="string">&#x27;&#123;print $1,$2,$3,$9,$11&#125;&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="中间件日志"><a href="#中间件日志" class="headerlink" title="中间件日志"></a>中间件日志</h3><h4 id="Apache日志"><a href="#Apache日志" class="headerlink" title="Apache日志"></a><strong>Apache日志</strong></h4><p>Apache日志存放位置:<br>• windows系统，日志文件保存在Apache安装目录的logs子目录中 </p>
+<p>• Linux系统，默认安装的情况下，在 /usr/local/apache/logs 下</p>
+<p>Apache日志类型:</p>
+<ol>
+<li><strong>访问日志</strong></li>
+</ol>
+<p>access_log 为访问日志，记录所有对 apache 服务器进行请求的访问</p>
+<ol>
+<li><strong>错误日志</strong> </li>
+</ol>
+<p>错误日志记录了服务器运行期间遇到的各种错误，以及一些普通的诊断信息，比如服务器何时启动、何时关闭等 </p>
+<ol>
+<li>传输日志 </li>
+<li>Cookie日志</li>
+</ol>
+<p>Apache日志分析技巧:</p>
+<ol>
+<li>查看 IP<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access_log | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li>显示访问前10 位的IP 地址，便于查找攻击源</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access_log|awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>|sort|uniq -c|sort -nr|head -10</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><p>显示指定时间以后的日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access_log |awk <span class="string">&#x27;$4&gt;=&quot;[1/Jan/2020:00:00:00&quot;&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>查看某一时间内的 IP 连接情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;2020:05&quot;</span>access_log |awk <span class="string">&#x27;&#123;print $4&#125;&#x27;</span>|sort|uniq –c |sort -nr</span><br></pre></td></tr></table></figure></li>
+<li><p>查看指定的 IP 做了什么b查看最近访问量最高的文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access_log |tail 10000| awk <span class="string">&#x27;&#123;print $7&#125;&#x27;</span>| sort|uniq –c |sort –nr|less</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="iiS日志"><a href="#iiS日志" class="headerlink" title="iiS日志"></a>iiS日志</h4><p> <strong>日志文件默认位置</strong><br>• IIS7.5：%SystemDrive%\inetpub\logs\LogFiles<br>• IIS6.0：%systemroot%\system32\logfiles\w3svc1\</p>
+<p><strong>通过日志发现攻击</strong><br>日志是可以在记事本中打开的，因此在编辑菜单里选择查找，针对攻击者可能进行的操作，查找相关的关键词</p>
+<ol>
+<li>select、insert、delete,%20和 ‘ 单引号是与数据库操作相关的SQL语句，看用户是否进行了这方面的操作</li>
+<li>.mdb：看有没有用户想下载MDB数据库</li>
+<li>upfile、upload、file：通过这三个关键字的查找有可能找到用户挂木马，利用系统漏洞上传一些自己想用的文件</li>
+<li>post：这是网页的响应方式即上传到服务器的一些信息，从中能找到用户上传的东西</li>
+<li>404：没有正常响应的找不到的页面，由于用户如果危害到了网络的安全，就有可能不断的尝试，那么就很有可能出现找不到的页面</li>
+<li>当发现几次可疑操作都是同一IP时，查找这一IP用户，他极有可能所做的所有操作都是与破坏网络安全有关的，就有可能找到蛛丝马迹</li>
+</ol>
+<h3 id="mysql数据库日志"><a href="#mysql数据库日志" class="headerlink" title="mysql数据库日志"></a>mysql数据库日志</h3><p>分类:</p>
+<ol>
+<li>错误日志</li>
+</ol>
+<p>主要用于定位mysql启动和运行中的一些问题，错误日志是默认开启的 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_error%&#x27;</span>;   #查询日志位置</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/my.cnf								<span class="comment">#配置文件查询日志位置</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>查询日志</li>
+</ol>
+<p>查询日志用于记录所用的增删查改信息，由于在并发量大时会产生大量信息，所以默认是关闭的 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%general_log%&#x27;</span>;		#查询日志位置</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log <span class="operator">=</span> <span class="keyword">on</span>;  				#开启查询日志</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>慢查询日志</li>
+</ol>
+<p>慢查询日志是对调试程序最有用的日志，可以通过慢查询日志找到哪些sql语句是性能瓶颈，慢查询默认记录超过10秒 的查询语句,可以精确到毫秒</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span>  <span class="keyword">GLOBAL</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;%slow%&#x27;</span>;		#查询日志位置</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>二进制日志</li>
+</ol>
+<p>二进制日志也叫作变更日志，主要用于记录修改数据或有可能引起数据改变的mysql语句 </p>
+<h2 id="Linux入侵排查"><a href="#Linux入侵排查" class="headerlink" title="Linux入侵排查"></a>Linux入侵排查</h2><p><strong>入侵排查思路:</strong></p>
+<p>攻击类型定位–&gt;时间范围–&gt;文件分析–&gt;进程分析–&gt;系统分析–&gt;日志分析–&gt;关联分析–&gt;逻辑推理–事件总结</p>
+<p><strong>文件分析</strong> </p>
+<p>• 文件日期、新增文件、可疑/异常文件、最近使用文件、浏览器下载文件 </p>
+<p>• Webshell 排查与分析 </p>
+<p>• 核心应用关联目录文件分析</p>
+<p><strong>进程分析</strong> </p>
+<p>• 当前活动进程 &amp; 远程连接 </p>
+<p>• 启动进程 &amp; 计划任务 </p>
+<p>• 进程工具分析 —— Windows：Pchunter、Linux：Chkrootkit&amp;Rkhunter</p>
+<p><strong>系统分析</strong></p>
+<p>• 环境变量 </p>
+<p>• 帐号信息 </p>
+<p>• History </p>
+<p>• 系统配置</p>
+<p><strong>日志分析</strong></p>
+<p>• 操作系统日志 —— Windows: 事件查看器（eventvwr）、Linux: /var/log/ </p>
+<p>• 应用日志分析 —— Access.log、Error.log</p>
+<p><strong>账号安全</strong> </p>
+<ol>
+<li>查询特权用户（uid为0） </li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">awk -F: <span class="string">&#x27;$3==0&#123;print $1&#125;&#x27;</span> /etc/passwd</span><br><span class="line">grep <span class="string">&quot;0&quot;</span> /etc/passwd</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>查询可以远程登录的帐号信息 </li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk <span class="string">&#x27;/\$1|\$6/&#123;print $1&#125;&#x27;</span> /etc/shadow</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li> 除root账号外，其他账号是否存在sudo权限，如果非管理需要，普通用户应删除sudo权限</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">more /etc/sudoers | grep -v <span class="string">&quot;^#\|^$&quot;</span> | grep <span class="string">&quot;ALL=(ALL)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li> 将可疑及多余的账号删除或禁用 </li>
+</ol>
+<p><strong>历史命令</strong></p>
+<p>查找~/.bash_history命令执行记录，主要分析是否有账户执行过恶意操作,那么我们就可以锁定这个线索，去做下一步的排查.</p>
+<p>查看历史命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /root/.bash_history | more</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat .bash_history &gt;&gt; history.tx</span><br></pre></td></tr></table></figure>
+
+<p><strong>端口</strong></p>
+<p>使用 netstat 网络连接命令，查看服务器是否有未被授权的端口被监听，分析可疑端口、IP、PID等可疑连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netstat –antlp | more</span><br><span class="line">ss -antlp</span><br></pre></td></tr></table></figure>
+
+<p>结合netstat查看非授权进程的文件路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls -l /proc/<span class="variable">$PID</span>/exe</span><br><span class="line">file /proc/<span class="variable">$PID</span>/exe</span><br></pre></td></tr></table></figure>
+
+<p><strong>进程</strong></p>
+<p>使用 ps 命令 和 top 命令，查看是否有异常进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps -aux</span><br><span class="line">ps -ef</span><br><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>如果发现有名称不断变化的非授权进程占用大量系统CPU或内存资源时，则可能为恶意程序,再者通过肉眼分辩结合Google进一步判断是否为恶意进程.</p>
+<p><strong>开机启动项</strong></p>
+<p>命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">chkconfig --list	 #查看启动项</span><br><span class="line">chkconfig 服务名 off  #关闭</span><br><span class="line">systemctl disable postfix.service  #centos7 </span><br><span class="line"></span><br><span class="line">/etc/rc.d/rc.local #查看用户自定义开机启动程序 </span><br><span class="line">/etc/rc.d/init	   #查看Linux系统服务</span><br></pre></td></tr></table></figure>
+
+<p><strong>计划任务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">crontab -l 列出某个用户cron服务的详细内容</span><br><span class="line">crontab –r 删除每个用户cron任务</span><br><span class="line">crontab –e 使用编辑器编辑当前的crontab文件</span><br></pre></td></tr></table></figure>
+
+<p>cron 文件目录，查看是否存在非法定时任务脚本</p>
+<p>/etc/crontab </p>
+<p>/etc/cron.d </p>
+<p>/etc/cron.daily </p>
+<p>cron.hourly/ </p>
+<p>cron.monthly </p>
+<p>cron.weekly/</p>
+<h2 id="Windows-入侵排查"><a href="#Windows-入侵排查" class="headerlink" title="Windows 入侵排查"></a>Windows 入侵排查</h2><p><strong>账号安全</strong></p>
+<ol>
+<li><p>查看服务器是否有弱口令，远程管理端口是否对公网开放</p>
+</li>
+<li><p>查看服务器是否存在可疑账号、新增账号 lusrmgr.msc</p>
+</li>
+<li><p>查看服务器是否存在隐藏账号、克隆账号(注册表,d盾等工具)</p>
+</li>
+<li><p>结合系统登陆日志，查看管理员登录时间、用户名是否存在异常 eventvwr.msc</p>
+</li>
+</ol>
+<p><strong>检查异常端口</strong></p>
+<ol>
+<li>检查端口连接情况，是否有远程连接、可疑连接,netstat -ano 查看目前的网络连接，定位可疑的ESTABLISHED,再通过 tasklist 命令进行进程定位 tasklist | findstr “PID.</li>
+</ol>
+<p><strong>检查异常进程</strong></p>
+<ol>
+<li><p>运行”msinfo32”依次点击“软件环境→正在运行任务”就可以查看到进程的详细信息，比 如进程路径、进程ID、文件创建日期、启动时间等,或者火绒剑,D盾,Process Explorer等工具进行排查</p>
+</li>
+<li><p><code>wmic process get caption,commandline /value &gt;&gt; tmp.txt</code>分析进程参数，可以查看每个进程执行的详细信息</p>
+</li>
+<li><p>观察如下可疑的进程及其子进程:</p>
+</li>
+<li><p>没有签名验证信息的进程</p>
+</li>
+<li><p>没有描述信息的进程</p>
+</li>
+<li><p>进程的属主</p>
+</li>
+<li><p>进程的路径是否合法</p>
+</li>
+<li><p>查看CPU或内存资源占用长时间过高的进程</p>
+</li>
+</ol>
+<p><strong>检查启动项</strong></p>
+<p>1.【开始】&gt;【所有程序】&gt;【启动】</p>
+<p>2.msconfig，启动项</p>
+<p>3.regedit 注册表启动项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HKEY_CURRENT_USER\software\micorsoft\windows\currentversion\run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br></pre></td></tr></table></figure>
+
+<p>4.组策略，运行 gpedit.msc</p>
+<p>5.服务自启动 运行 services.msc</p>
+<p><strong>检查计划任务</strong></p>
+<ol>
+<li><p>【控制面板】&gt;【系统和安全】&gt;【管理工具】&gt;【任务计划】</p>
+</li>
+<li><p>在cmd中，然后输入命令 at &amp; schtasks.exe</p>
+</li>
+</ol>
+<p><strong>系统信息</strong></p>
+<p>systeminfo 查看补丁</p>
+<p>查看可疑目录及文件信息  如家目录,最近打开的文件 运行–&gt;%UserProfile%\Recent,等个目录服务器文件</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/15360/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-08 20:54:52
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%AE%89%E5%85%A8%E6%9C%8D%E5%8A%A1/" title="安全服务">
+                        <b>#</b> 安全服务
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/48384/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97"><span class="toc-text">日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows%E6%97%A5%E5%BF%97"><span class="toc-text">Windows日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%97%A5%E5%BF%97"><span class="toc-text">Linux日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%97%A5%E5%BF%97"><span class="toc-text">中间件日志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Apache%E6%97%A5%E5%BF%97"><span class="toc-text">Apache日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iiS%E6%97%A5%E5%BF%97"><span class="toc-text">iiS日志</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97"><span class="toc-text">mysql数据库日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5"><span class="toc-text">Linux入侵排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5"><span class="toc-text">Windows 入侵排查</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F16430%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/16430/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

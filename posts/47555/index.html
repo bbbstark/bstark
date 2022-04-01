@@ -161,14 +161,36 @@ MathJax = {
 <p>rename  </p>
 <p>tasklist  查看进程</p>
 <p>kill /pid id 杀进程</p>
+<p>chcp -65001    # Unicode (UTF-8)</p>
 <p>查看防火墙</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall show allprofiles</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh advfirewall show rule dir=<span class="keyword">in</span> name=all</span><br></pre></td></tr></table></figure>
 
 <p>添加防火墙规则</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh advfirewall firewall add rule name=icqtest dir=<span class="keyword">in</span>  action=allow protocol=tcp localport=3389</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh advfirewall firewall add rule name=icqtest dir=<span class="keyword">in</span> action=allow protocol=tcp localport=3389</span><br></pre></td></tr></table></figure>
 
 <p>删除防火墙规则</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh advfirewall firewall delete rule name=icqtest protocol=tcp localport=3389</span><br></pre></td></tr></table></figure>
+
+<p>关闭防火墙</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;&gt; netsh firewall <span class="built_in">set</span> opmode mode=<span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>常见端口</strong>:</p>
+<p>weblogc : 7001</p>
+<p>mongodb :27017</p>
+<p>redis   :5379</p>
+<p><strong>开启3389:</strong></p>
+<p>windows2008</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#设置远程桌面端口</span><br><span class="line">reg add &quot;HKLM\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp&quot; /t REG_DWORD /v portnumber /d 3389 /f</span><br><span class="line">#开启远程桌面</span><br><span class="line">wmic RDTOGGLE WHERE ServerName=&#x27;%COMPUTERNAME%&#x27; call SetAllowTSConnections 1</span><br><span class="line">#检查端口状态</span><br><span class="line">netstat -an|find &quot;3389&quot;</span><br><span class="line">#关闭远程桌面</span><br><span class="line">wmic RDTOGGLE WHERE ServerName=&#x27;%COMPUTERNAME%&#x27; call SetAllowTSConnections 0</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
 
 
       </div>
